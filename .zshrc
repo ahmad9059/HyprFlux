@@ -78,7 +78,8 @@ alias i='yay -S '
 alias u='yay -Syu '
 alias tk='tmux kill-server'
 alias ntest='bash /home/ahmad/.config/hypr/UserScripts/networkTest.sh'
-alias server='ssh -i ~/.ssh/ssh-key-2025-09-06.key ubuntu@140.245.24.242'
+alias server2='ssh -i ~/.ssh/ssh-key-2025-09-06.key ubuntu@140.245.24.242'
+alias server='ssh -i ~/.ssh/myVM.pem ubuntu@15.206.122.181'
 
 # Set-up FZF key bindings (CTRL R for fuzzy history finder)
 source <(fzf --zsh)
@@ -97,3 +98,20 @@ eval "$(zoxide init zsh)"
 eval "$(tmuxifier init -)"
 export PATH=$PATH:/home/ahmad/.spicetify
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+
+# # >>> conda initialize >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$('/home/ahmad/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/home/ahmad/anaconda3/etc/profile.d/conda.sh" ]; then
+#         . "/home/ahmad/anaconda3/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/home/ahmad/anaconda3/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda initialize <<<
+#
