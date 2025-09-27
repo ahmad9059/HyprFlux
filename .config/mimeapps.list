@@ -29,6 +29,7 @@ application/x-extension-xht=firefox.desktop
 x-scheme-handler/magnet=freedownloadmanager_magnet_up.desktop
 application/x-bittorrent=freedownloadmanager_torrent.desktop
 inode/symlink=org.xfce.mousepad.desktop
+x-scheme-handler/postman=Postman.desktop
 
 [Added Associations]
 text/markdown=org.xfce.mousepad.desktop;
@@ -36,10 +37,10 @@ text/plain=org.xfce.mousepad.desktop;
 x-scheme-handler/tonsite=io.github.tdesktop_x64.TDesktop.desktop;
 application/schema+json=org.xfce.mousepad.desktop;
 text/css=org.xfce.mousepad.desktop;nvim.desktop;code.desktop;
-video/mp4=vlc.desktop;
+video/mp4=mpv.desktop;vlc.desktop;
 video/x-matroska=mpv.desktop;vlc.desktop;
 application/x-shellscript=org.xfce.mousepad.desktop;code.desktop;
-image/svg+xml=firefox.desktop;org.xfce.mousepad.desktop;org.gnome.Loupe.desktop;
+image/svg+xml=org.xfce.mousepad.desktop;firefox.desktop;org.gnome.Loupe.desktop;
 application/json=org.xfce.mousepad.desktop;
 x-scheme-handler/http=firefox.desktop;
 x-scheme-handler/https=firefox.desktop;
