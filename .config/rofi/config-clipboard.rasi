@@ -6,7 +6,7 @@
 entry {
   width: 37%;
   placeholder: "   Clipboard Manager";
-	font: "JetBrains Mono 12";
+	font: "JetBrains Mono 9";
 }
 
 /* ---- Listview ---- */

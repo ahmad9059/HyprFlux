@@ -74,7 +74,7 @@ inputbar {
 
 /* ---- Entry input ---- */
 entry {
-    font: "JetBrainsMono Nerd Font 13";
+    font: "JetBrainsMono Nerd Font 10";
     enabled:                     true;
     expand:                      false;
     width:                       100%;
