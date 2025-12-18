@@ -3,6 +3,24 @@
 set -e
 
 # ===========================
+# HyprFlux Dotfiles Setup
+# Modular Version with Backward Compatibility
+# ===========================
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check if modular system is available
+if [[ -f "$SCRIPT_DIR/lib/colors.sh" && -f "$SCRIPT_DIR/lib/utils.sh" && -f "$SCRIPT_DIR/lib/config.sh" ]]; then
+  # Use modular system
+  echo "Using modular system..."
+  exec bash "$SCRIPT_DIR/dotsSetup_modular.sh" "$@"
+fi
+
+# Fallback to legacy monolithic system
+echo "Using legacy monolithic system..."
+
+# ===========================
 # Color-coded status labels
 # ===========================
 ERROR="$(tput setaf 1)[ERROR]$(tput sgr0)"
