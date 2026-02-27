@@ -62,7 +62,6 @@ PLYMOUTH_DIR="/usr/share/plymouth/themes"
 MKINITCPIO_CONF="/etc/mkinitcpio.conf"
 GRUB_CONF="/etc/default/grub"
 
-
 # ===========================
 # Log Details
 # ===========================
@@ -81,13 +80,12 @@ PACMAN_PACKAGES=(
   foot alacritty lsd bat tmux neovim tldr
   obs-studio vlc yazi luacheck luarocks hyprpicker
   obsidian github-cli noto-fonts-emoji
-  ttf-noto-nerd noto-fonts
+  ttf-noto-nerd noto-fonts proton-vpn-gtk-app
 )
 # Yay Packages (Optional)
 YAY_PACKAGES=(
   visual-studio-code-bin 64gram-desktop-bin vesktop
-  foliate whatsapp-for-linux stacer-bin localsend-bin
-  kiro-bin
+  foliate stacer-bin localsend-bin
 )
 
 # ===========================
@@ -408,11 +406,11 @@ echo -e "${ACTION} Updating GTK theme settings...${RESET}" | tee -a "$LOG_FILE"
 {
   mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
 
-  gsettings set org.gnome.desktop.interface gtk-theme 'Material-DeepOcean-BL'
+  gsettings set org.gnome.desktop.interface gtk-theme 'HyprFlux-Compact'
   gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
   gsettings set org.gnome.desktop.interface cursor-theme 'Future-black Cursors'
   gsettings set org.gnome.desktop.interface font-name 'Adwaita Sans 11'
-  gsettings set org.gnome.desktop.wm.preferences theme 'Material-DeepOcean-BL'
+  gsettings set org.gnome.desktop.wm.preferences theme 'HyprFlux-Compact'
 
   echo -e "${OK} GTK Theme, Icon, and Cursor applied.${RESET}"
 } >>"$LOG_FILE" 2>&1

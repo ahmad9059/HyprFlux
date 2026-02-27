@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=HyprFlux-Compact
+Comment=An flat Materia Gtk+ theme based on Elegant Design
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=HyprFlux-Compact
+MetacityTheme=HyprFlux-Compact
+IconTheme=Tela-circle-dark
+CursorTheme=Vimix-dark
+ButtonLayout=close,minimize,maximize:menu
