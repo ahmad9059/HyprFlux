@@ -36,6 +36,11 @@ echo -e "\n"
 # ====== Sudo ======
 setup_sudo
 
+# ====== System update & prerequisites ======
+log_info "Updating system and ensuring git & vim are installed..."
+sudo pacman -Syu --noconfirm git vim
+log_ok "System updated, git & vim are ready."
+
 # ====== Configurable URLs ======
 ARCH_HYPRLAND_REPO="${ARCH_HYPRLAND_REPO:-https://github.com/ahmad9059/Arch-Hyprland.git}"
 ARCH_HYPRLAND_DIR="${ARCH_HYPRLAND_DIR:-$HOME/Arch-Hyprland}"
