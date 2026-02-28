@@ -114,10 +114,14 @@ chmod +x "$HYPRFLUX_DIR/dotsSetup.sh"
 bash "$HYPRFLUX_DIR/dotsSetup.sh"
 
 # ====== Step 4: Reboot prompt ======
-# BUG FIX: added -r flag to read
-if ask_yes_no "Do you want to reboot now?"; then
-  log_ok "Rebooting..."
-  sudo reboot
+# When HYPRFLUX_ISO_MODE=1, the ISO installer handles reboot — skip the prompt
+if [[ -z "${HYPRFLUX_ISO_MODE:-}" ]]; then
+  if ask_yes_no "Do you want to reboot now?"; then
+    log_ok "Rebooting..."
+    sudo reboot
+  else
+    log_ok "You chose NOT to reboot. Please reboot later."
+  fi
 else
-  log_ok "You chose NOT to reboot. Please reboot later."
+  log_ok "HyprFlux setup complete (ISO mode — reboot handled by installer)."
 fi
