@@ -48,7 +48,9 @@ ensure_repo "$ARCH_HYPRLAND_REPO" "$ARCH_HYPRLAND_DIR" --depth=1
 log_info "Running Arch-Hyprland/install.sh with preset answers..."
 sed -i '/^[[:space:]]*read HYP$/c\HYP="n"' "$ARCH_HYPRLAND_DIR/install.sh"
 chmod +x "$ARCH_HYPRLAND_DIR/install.sh"
-bash "$ARCH_HYPRLAND_DIR/install.sh"
+# IMPORTANT: Must cd into the directory because Arch-Hyprland's install.sh
+# uses relative paths (e.g., install-scripts/) that only resolve from there.
+(cd "$ARCH_HYPRLAND_DIR" && bash install.sh)
 log_ok "Arch-Hyprland script installed!"
 
 # ====== Step 2: HyprFlux banner ======
