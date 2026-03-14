@@ -7,13 +7,11 @@ Window.SetBackgroundTopColor(0, 0, 0);
 Window.SetBackgroundBottomColor(0, 0, 0);
 
 # Load and position the logo (centered)
+logo_gap = 45;
+
 logo.image = Image("logo.png");
 logo.sprite = Sprite(logo.image);
 logo.x = Window.GetWidth() / 2 - logo.image.GetWidth() / 2;
-logo.y = Window.GetHeight() / 2 - logo.image.GetHeight() / 2 - 35;
-logo.sprite.SetX(logo.x);
-logo.sprite.SetY(logo.y);
-logo.sprite.SetZ(100);
 
 # Load all 161 progress frames (0-160)
 frame_count = 160;
@@ -32,7 +30,18 @@ for (i = 0; i <= frame_count; i++) {
 # Progress bar sprite
 progressbar.sprite = Sprite(progress_images[0]);
 progressbar.x = Window.GetWidth() / 2 - progress_images[0].GetWidth() / 2;
-progressbar.y = logo.y + logo.image.GetHeight() + 12;
+
+# Center the logo and progress bar as one vertical group
+group_height = logo.image.GetHeight() + logo_gap + progress_images[0].GetHeight();
+group_y = Window.GetHeight() / 2 - group_height / 2;
+
+logo.y = group_y;
+progressbar.y = logo.y + logo.image.GetHeight() + logo_gap;
+
+logo.sprite.SetX(logo.x);
+logo.sprite.SetY(logo.y);
+logo.sprite.SetZ(100);
+
 progressbar.sprite.SetX(progressbar.x);
 progressbar.sprite.SetY(progressbar.y);
 progressbar.sprite.SetZ(100);
