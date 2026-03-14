@@ -1,6 +1,6 @@
 #!/bin/bash
 # HyprFlux - Zsh and Oh My Zsh Installation Script
-# Based on JaKooLit's zsh script with modifications
+# Based on JaKooLit's zsh script with sudo chsh workaround for non-interactive install
 
 zsh_pkg=(
   lsd
@@ -16,18 +16,18 @@ zsh_pkg2=(
 # Get the current username
 USER_NAME=$(whoami)
 
-# Temporary sudoers line
+# Temporary sudoers line for passwordless chsh
 SUDO_LINE="$USER_NAME ALL=(ALL) NOPASSWD: /usr/bin/chsh # TEMP-CHSH-ALLOW"
 
 # Function to clean up sudoers on exit
 cleanup_sudoers() {
   echo "Cleaning up temporary sudoers entry..."
-  sudo sed -i '/# TEMP-CHSH-ALLOW/d' /etc/sudoers
+  sudo sed -i '/# TEMP-CHSH-ALLOW/d' /etc/sudoers 2>/dev/null || true
 }
 trap cleanup_sudoers EXIT
 
 # Add temporary sudoers entry if not already present
-if ! sudo grep -qF "$SUDO_LINE" /etc/sudoers; then
+if ! sudo grep -qF "$SUDO_LINE" /etc/sudoers 2>/dev/null; then
   echo "Adding temporary sudoers entry for $USER_NAME..."
   echo "$SUDO_LINE" | sudo tee -a /etc/sudoers >/dev/null
 fi
@@ -38,12 +38,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Change the working directory to the parent directory of the script
 PARENT_DIR="$SCRIPT_DIR/.."
 cd "$PARENT_DIR" || {
-  echo "${ERROR} Failed to change directory to $PARENT_DIR"
+  echo "[ERROR] Failed to change directory to $PARENT_DIR"
   exit 1
 }
 
 # Source the global functions script
-if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
+if ! source "$SCRIPT_DIR/Global_functions.sh"; then
   echo "Failed to source Global_functions.sh"
   exit 1
 fi
@@ -101,19 +101,26 @@ if command -v zsh >/dev/null; then
   current_shell=$(basename "$SHELL")
   if [ "$current_shell" != "zsh" ]; then
     printf "${NOTE} Changing default shell to ${MAGENTA}zsh${RESET}...\n"
+    printf "\n%.0s" {1..2}
 
-    # Loop until sudo chsh succeeds
-    while ! sudo chsh -s "$(command -v zsh)" "$USER_NAME"; do
-      echo "${ERROR} Failed to change shell. Please ensure you have sudo permissions." 2>&1 | tee -a "$LOG"
-      sleep 1
-    done
-    printf "${INFO} Shell changed successfully to ${MAGENTA}zsh${RESET}\n" 2>&1 | tee -a "$LOG"
+    # Use sudo chsh (with temporary sudoers entry) for non-interactive shell change
+    if sudo chsh -s "$(command -v zsh)" "$USER_NAME"; then
+      printf "${INFO} Shell changed successfully to ${MAGENTA}zsh${RESET}\n" 2>&1 | tee -a "$LOG"
+    else
+      echo "${ERROR} Failed to change shell. Will retry..." 2>&1 | tee -a "$LOG"
+      # Retry loop as fallback
+      while ! sudo chsh -s "$(command -v zsh)" "$USER_NAME"; do
+        echo "${ERROR} Failed to change shell. Retrying..." 2>&1 | tee -a "$LOG"
+        sleep 1
+      done
+      printf "${INFO} Shell changed successfully to ${MAGENTA}zsh${RESET}\n" 2>&1 | tee -a "$LOG"
+    fi
   else
     echo "${NOTE} Your shell is already set to ${MAGENTA}zsh${RESET}."
   fi
 fi
 
-# Installing core zsh packages
+# Installing fzf
 printf "\n%s - Installing ${SKY_BLUE}fzf${RESET} .... \n" "${NOTE}"
 for ZSH2 in "${zsh_pkg2[@]}"; do
   install_package "$ZSH2" "$LOG"
