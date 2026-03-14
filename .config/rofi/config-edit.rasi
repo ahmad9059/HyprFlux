@@ -1,4 +1,4 @@
-/* KooL Hyprland Edit Rofi Config */
+/* HyprFlux Edit Rofi Config */
 
 @import "~/.config/rofi/config.rasi"  
 
@@ -34,7 +34,7 @@ listview {
 /* ---- Entry input ---- */
 entry {
   expand: true;
-  placeholder: "  Customize KooL Hyprland";
+  placeholder: "  Customize HyprFlux";
 }
 
 

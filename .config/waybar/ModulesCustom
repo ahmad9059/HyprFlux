@@ -47,9 +47,9 @@
 
 "custom/settings": {
 	"format": " ",
-	"on-click": "$HOME/.config/hypr/scripts/Kool_Quick_Settings.sh",
+	"on-click": "$HOME/.config/hypr/scripts/HyprFlux_Quick_Settings.sh",
 	"tooltip": true,
-	"tooltip-format": "Launch KooL Hyprland Settings Menu",
+	"tooltip-format": "Launch HyprFlux Settings Menu",
 },
 
 "custom/cycle_wall": {
@@ -71,9 +71,10 @@
 
 "custom/dot_update": {
 	"format": " 󰁈 ",
-	"on-click": "$HOME/.config/hypr/scripts/KooLsDotsUpdate.sh",
+	"on-click": "$HOME/.config/hypr/scripts/HyprFluxUpdate.sh",
 	"tooltip": true,
-	"tooltip-format": "Check KooL Dots update\nIf available",
+	"tooltip-format": "Check HyprFlux update
+If available",
 },
 
 // Hypridle inhibitor

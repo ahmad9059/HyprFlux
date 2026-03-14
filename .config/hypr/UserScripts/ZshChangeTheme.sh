@@ -10,7 +10,7 @@ iDIR="$HOME/.config/swaync/images"
 rofi_theme="$HOME/.config/rofi/config-zsh-theme.rasi"
 
 if [ -n "$(grep -i nixos < /etc/os-release)" ]; then
-  notify-send -i "$iDIR/note.png" "NOT Supported" "Sorry NixOS does not support this KooL feature"
+  notify-send -i "$iDIR/note.png" "NOT Supported" "Sorry NixOS does not support this HyprFlux feature"
   exit 1
 fi
 

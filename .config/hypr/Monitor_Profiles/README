@@ -9,6 +9,6 @@
 
 # Note, after selecting Profiles wanted via Rofi (SUPER SHIFT E), previous content of ~/.config/hypr/monitors.conf will be backed up and named as Previous_Profile.conf
 
-# Monitor profile should be loaded automatically once selected by KooL Rofi Settings ROfi Menu, unless you disabled the auto-reload function on Hyprland settings.
+# Monitor profile should be loaded automatically once selected by HyprFlux Rofi Settings Menu, unless you disabled the auto-reload function on Hyprland settings.
 # However, if it does not load, kindly log out and re-login. This seem apparent if you are using a Virtual Environment.
 

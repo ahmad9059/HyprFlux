@@ -1,6 +1,6 @@
 #!/bin/bash
 # /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
-# Rofi menu for KooL Hyprland Quick Settings (SUPER SHIFT E)
+# Rofi menu for HyprFlux Quick Settings (SUPER SHIFT E)
 
 # Modify this config file for default terminal and EDITOR
 config_file="$HOME/.config/hypr/UserConfigs/01-UserDefaults.conf"
