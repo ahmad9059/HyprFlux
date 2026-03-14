@@ -1,6 +1,10 @@
 #!/bin/bash
+# ============================================================
 # HyprFlux - Replace Reads Script
-# Automates user prompts in the dotfiles copy script for non-interactive installation
+# https://github.com/ahmad9059/HyprFlux
+# ============================================================
+# Automates user prompts in the dotfiles copy script for
+# non-interactive installation.
 # 
 # The Hyprland-Dots copy.sh has been refactored to use helper functions in:
 # - scripts/copy_menu.sh (install/upgrade/express menu)
@@ -14,12 +18,20 @@ set -e
 # ===========================
 # Color-coded status labels
 # ===========================
-ERROR="$(tput setaf 1)[ERROR]$(tput sgr0)"
-WARN="$(tput setaf 3)[WARN]$(tput sgr0)"
-OK="$(tput setaf 2)[OK]$(tput sgr0)"
-NOTE="$(tput setaf 6)[NOTE]$(tput sgr0)"
-ACTION="$(tput setaf 5)[ACTION]$(tput sgr0)"
+ERROR="$(tput setaf 1)[HyprFlux] [ERROR]$(tput sgr0)"
+WARN="$(tput setaf 3)[HyprFlux] [WARN]$(tput sgr0)"
+OK="$(tput setaf 2)[HyprFlux] [OK]$(tput sgr0)"
+NOTE="$(tput setaf 6)[HyprFlux] [NOTE]$(tput sgr0)"
+INFO="$(tput setaf 4)[HyprFlux] [INFO]$(tput sgr0)"
 RESET="$(tput sgr0)"
+MAGENTA="$(tput setaf 5)"
+CYAN="$(tput setaf 6)"
+
+echo ""
+echo "${CYAN}============================================${RESET}"
+echo "${MAGENTA}  HyprFlux Non-Interactive Setup${RESET}"
+echo "${CYAN}============================================${RESET}"
+echo ""
 
 # ===========================
 # Log Details
@@ -31,9 +43,9 @@ LOG_FILE="$HOME/installer_log/replace_reads.log"
 # 1. Clone the Hyprland-Dots repo
 # ===========================
 if [ -d "$HOME/Arch-Hyprland/Hyprland-Dots" ]; then
-  echo "${NOTE} Folder 'Hyprland-Dots' already exists in ~/Arch-Hyprland, using it...${RESET}"
+  echo "${NOTE} Folder 'Hyprland-Dots' already exists, using it...${RESET}"
 else
-  echo "${NOTE} Cloning Hyprland-Dots repo into ~/Arch-Hyprland...${RESET}"
+  echo "${NOTE} Cloning Hyprland-Dots repo...${RESET}"
   if git clone --depth=1 https://github.com/ahmad9059/Hyprland-Dots.git "$HOME/Arch-Hyprland/Hyprland-Dots"; then
     echo "${OK} Repo cloned successfully.${RESET}"
   else
@@ -60,7 +72,7 @@ for f in "$COPY_SH" "$COPY_MENU" "$LIB_PROMPTS" "$LIB_APPS"; do
   fi
 done
 
-echo "${NOTE} Applying HyprFlux non-interactive modifications...${RESET}"
+echo "${INFO} Applying HyprFlux non-interactive modifications...${RESET}"
 
 # ===========================
 # 3. Remove git stash/pull from dotfiles-main.sh
@@ -73,13 +85,12 @@ fi
 # ===========================
 # 4. Modify copy_menu.sh - Auto-select "Install"
 # ===========================
-# Replace the show_copy_menu function to auto-return "install"
 cat > "$COPY_MENU" << 'EOF'
 #!/usr/bin/env bash
 # Modified by HyprFlux for non-interactive installation
 
 show_copy_menu() {
-  # Auto-select Install for HyprFlux non-interactive mode
+  # HyprFlux: Auto-select Install for non-interactive mode
   COPY_MENU_CHOICE="install"
 }
 EOF
@@ -88,7 +99,6 @@ echo "${OK} Modified copy_menu.sh to auto-select Install${RESET}"
 # ===========================
 # 5. Modify lib_prompts.sh - Auto-accept defaults
 # ===========================
-# Backup original
 cp "$LIB_PROMPTS" "$LIB_PROMPTS.bak"
 
 # Replace keyboard layout prompt to auto-accept detected layout
@@ -100,10 +110,10 @@ prompt_keyboard_layout() {\
   if [ "$layout" = "(unset)" ]; then\
     layout="us"\
   fi\
-  printf "${NOTE:-[NOTE]} Auto-configuring keyboard layout: ${MAGENTA:-}$layout${RESET:-}\\n"\
+  printf "${NOTE:-[NOTE]} [HyprFlux] Auto-configuring keyboard layout: ${MAGENTA:-}$layout${RESET:-}\\n"\
   awk -v layout="$layout" '"'"'/kb_layout/ {$0 = "  kb_layout = " layout} 1'"'"' config/hypr/configs/SystemSettings.conf >temp.conf\
   mv temp.conf config/hypr/configs/SystemSettings.conf\
-  echo "${OK:-[OK]} kb_layout $layout configured in settings." 2>\&1 | tee -a "$log"\
+  echo "${OK:-[OK]} [HyprFlux] kb_layout $layout configured." 2>\&1 | tee -a "$log"\
 }' "$LIB_PROMPTS"
 
 # Replace clock format prompt to auto-select 12H format
@@ -111,7 +121,7 @@ sed -i '/^prompt_clock_12h()/,/^}/c\
 prompt_clock_12h() {\
   local log="$1"\
   # HyprFlux: Auto-select 12H (AM/PM) format\
-  echo "${NOTE:-[NOTE]} HyprFlux: Configuring 12H (AM/PM) clock format..." 2>\&1 | tee -a "$log"\
+  echo "${NOTE:-[NOTE]} [HyprFlux] Configuring 12H (AM/PM) clock format..." 2>\&1 | tee -a "$log"\
   \
   # waybar clocks\
   sed -i '"'"'s#^\\(\\s*\\)//\\("format": " {:%I:%M %p}",\\) #\\1\\2 #g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
@@ -136,7 +146,7 @@ prompt_clock_12h() {\
     sed -i '"'"'s/^\\(\\s*\\)# *text = cmd\\[update:1000\\] echo "\\$(date +"%S %p")" #AM\\/PM/\\1    text = cmd[update:1000] echo "$(date +"%S %p")" #AM\\/PM/'"'"' "$HYPRLOCK_FILE" 2>\&1 | tee -a "$log"\
   fi\
   \
-  echo "${OK:-[OK]} 12H (AM/PM) clock format configured." 2>\&1 | tee -a "$log"\
+  echo "${OK:-[OK]} [HyprFlux] 12H (AM/PM) clock format configured." 2>\&1 | tee -a "$log"\
 }' "$LIB_PROMPTS"
 
 # Replace express upgrade prompt to skip
@@ -145,7 +155,7 @@ prompt_express_upgrade() {\
   local express_supported="$1"\
   local log="$2"\
   # HyprFlux: Skip express prompt, use standard install\
-  echo "${NOTE:-[NOTE]} HyprFlux: Continuing with standard install prompts." 2>\&1 | tee -a "$log"\
+  echo "${NOTE:-[NOTE]} [HyprFlux] Continuing with standard install..." 2>\&1 | tee -a "$log"\
 }' "$LIB_PROMPTS"
 
 echo "${OK} Modified lib_prompts.sh for non-interactive prompts${RESET}"
@@ -153,20 +163,18 @@ echo "${OK} Modified lib_prompts.sh for non-interactive prompts${RESET}"
 # ===========================
 # 6. Modify lib_apps.sh - Auto-select neovim as editor
 # ===========================
-# Backup original
 cp "$LIB_APPS" "$LIB_APPS.bak"
 
-# Replace choose_default_editor to auto-select nvim if available
 sed -i '/^choose_default_editor()/,/^}/c\
 choose_default_editor() {\
   local log="$1"\
   # HyprFlux: Auto-select neovim as default editor if available\
   if command -v nvim \&>/dev/null; then\
     sed -i "s/#env = EDITOR,.*/env = EDITOR,nvim #default editor/" config/hypr/UserConfigs/01-UserDefaults.conf\
-    echo "${OK:-[OK]} Default editor auto-set to ${MAGENTA:-}nvim${RESET:-}." 2>\&1 | tee -a "$log"\
+    echo "${OK:-[OK]} [HyprFlux] Default editor set to ${MAGENTA:-}nvim${RESET:-}." 2>\&1 | tee -a "$log"\
   elif command -v vim \&>/dev/null; then\
     sed -i "s/#env = EDITOR,.*/env = EDITOR,vim #default editor/" config/hypr/UserConfigs/01-UserDefaults.conf\
-    echo "${OK:-[OK]} Default editor auto-set to ${MAGENTA:-}vim${RESET:-}." 2>\&1 | tee -a "$log"\
+    echo "${OK:-[OK]} [HyprFlux] Default editor set to ${MAGENTA:-}vim${RESET:-}." 2>\&1 | tee -a "$log"\
   fi\
 }' "$LIB_APPS"
 
@@ -175,12 +183,11 @@ echo "${OK} Modified lib_apps.sh to auto-select editor${RESET}"
 # ===========================
 # 7. Modify copy.sh - Auto-select resolution and skip prompts
 # ===========================
-# Replace the resolution prompt loop with auto-select < 1440p
 sed -i '/^resolution=""/,/^done$/c\
 resolution="< 1440p"\
-echo "${OK} HyprFlux: Auto-selected $resolution resolution." 2>\&1 | tee -a "$LOG"' "$COPY_SH"
+echo "${OK} [HyprFlux] Auto-selected $resolution resolution." 2>\&1 | tee -a "$LOG"' "$COPY_SH"
 
-# Auto-answer Ubuntu/Debian warning (skip the while loop)
+# Auto-answer Ubuntu/Debian warning
 sed -i '/Do you want to continue anyway/,/esac/s/read _continue/_continue="y"/' "$COPY_SH"
 
 # Auto-answer AGS config overwrite prompt
@@ -201,10 +208,11 @@ echo "${OK} Modified copy.sh for non-interactive installation${RESET}"
 # 8. Summary
 # ===========================
 echo ""
-echo "${OK} ========================================${RESET}"
-echo "${OK} HyprFlux non-interactive setup complete!${RESET}"
-echo "${OK} ========================================${RESET}"
-echo "${NOTE} The following defaults will be used:${RESET}"
+echo "${CYAN}============================================${RESET}"
+echo "${OK} HyprFlux Non-Interactive Setup Complete!${RESET}"
+echo "${CYAN}============================================${RESET}"
+echo ""
+echo "${INFO} The following defaults will be used:${RESET}"
 echo "  - Workflow: Install (fresh copy)"
 echo "  - Keyboard layout: Auto-detected (fallback: us)"
 echo "  - Resolution: < 1440p"

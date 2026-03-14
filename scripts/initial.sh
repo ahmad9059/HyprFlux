@@ -1,5 +1,8 @@
 #!/bin/bash
+# ============================================================
 # HyprFlux - Initial Setup Script
+# https://github.com/ahmad9059/HyprFlux
+# ============================================================
 # Sets up Chaotic-AUR, wallust, quickshell, and yay
 
 set -e
@@ -7,10 +10,20 @@ set -e
 # ===========================
 # Color-coded status labels
 # ===========================
-ERROR="$(tput setaf 1)[ERROR]$(tput sgr0)"
-OK="$(tput setaf 2)[OK]$(tput sgr0)"
-NOTE="$(tput setaf 6)[NOTE]$(tput sgr0)"
+ERROR="$(tput setaf 1)[HyprFlux] [ERROR]$(tput sgr0)"
+OK="$(tput setaf 2)[HyprFlux] [OK]$(tput sgr0)"
+NOTE="$(tput setaf 6)[HyprFlux] [NOTE]$(tput sgr0)"
+INFO="$(tput setaf 4)[HyprFlux] [INFO]$(tput sgr0)"
+WARN="$(tput setaf 3)[HyprFlux] [WARN]$(tput sgr0)"
 RESET="$(tput sgr0)"
+MAGENTA="$(tput setaf 5)"
+CYAN="$(tput setaf 6)"
+
+echo ""
+echo "${CYAN}============================================${RESET}"
+echo "${MAGENTA}  HyprFlux Initial Setup${RESET}"
+echo "${CYAN}============================================${RESET}"
+echo ""
 
 echo "${NOTE} Adding Chaotic-AUR repository...${RESET}"
 
@@ -45,11 +58,11 @@ if ! command -v yay &>/dev/null; then
   sudo pacman -S --needed --noconfirm go base-devel git
 
   while ! command -v yay &>/dev/null; do
-    echo "${NOTE} Attempting to build and install yay...${RESET}"
+    echo "${INFO} Attempting to build and install yay...${RESET}"
 
     rm -rf /tmp/yay
     git clone https://aur.archlinux.org/yay.git /tmp/yay || {
-      echo "${ERROR} Failed to clone yay repo, retrying in 5s...${RESET}"
+      echo "${WARN} Failed to clone yay repo, retrying in 5s...${RESET}"
       sleep 5
       continue
     }
@@ -58,10 +71,10 @@ if ! command -v yay &>/dev/null; then
     if makepkg -si --noconfirm; then
       echo "${OK} yay installed successfully!${RESET}"
     else
-      echo "${ERROR} Failed to build yay, retrying in 5s...${RESET}"
+      echo "${WARN} Failed to build yay, retrying in 5s...${RESET}"
       sleep 5
     fi
-    cd -
+    cd - >/dev/null
   done
 
   rm -rf /tmp/yay
@@ -69,4 +82,8 @@ else
   echo "${NOTE} yay is already installed, skipping.${RESET}"
 fi
 
-echo "${OK} Initial Installation complete!${RESET}"
+echo ""
+echo "${CYAN}============================================${RESET}"
+echo "${OK} HyprFlux Initial Setup Complete!${RESET}"
+echo "${CYAN}============================================${RESET}"
+echo ""
