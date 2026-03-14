@@ -1,0 +1,80 @@
+# HyprFlux Plymouth Theme Script
+# https://github.com/ahmad9059/HyprFlux
+# Logo with frame-based progress bar animation
+
+# Set background color (black)
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+
+# Load and position the logo (centered)
+logo.image = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+logo.x = Window.GetWidth() / 2 - logo.image.GetWidth() / 2;
+logo.y = Window.GetHeight() / 2 - logo.image.GetHeight() / 2 - 35;
+logo.sprite.SetX(logo.x);
+logo.sprite.SetY(logo.y);
+logo.sprite.SetZ(100);
+
+# Load all 161 progress frames (0-160)
+frame_count = 160;
+current_frame = 0;
+target_frame = 0;
+
+for (i = 0; i <= frame_count; i++) {
+    if (i < 10)
+        progress_images[i] = Image("progress-00" + i + ".png");
+    else if (i < 100)
+        progress_images[i] = Image("progress-0" + i + ".png");
+    else
+        progress_images[i] = Image("progress-" + i + ".png");
+}
+
+# Progress bar sprite
+progressbar.sprite = Sprite(progress_images[0]);
+progressbar.x = Window.GetWidth() / 2 - progress_images[0].GetWidth() / 2;
+progressbar.y = logo.y + logo.image.GetHeight() + 12;
+progressbar.sprite.SetX(progressbar.x);
+progressbar.sprite.SetY(progressbar.y);
+progressbar.sprite.SetZ(100);
+
+# Boot progress callback
+fun boot_progress_callback(duration, prog) {
+    if (prog >= 0 && prog <= 1) {
+        # Map progress (0-1) to frame index (0-160)
+        frame = Math.Int(prog * frame_count);
+        if (frame > frame_count)
+            frame = frame_count;
+        if (frame < 0)
+            frame = 0;
+
+        target_frame = frame;
+    }
+}
+
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+
+# Refresh callback
+fun refresh_callback() {
+    if (current_frame < target_frame) {
+        current_frame = current_frame + 2;
+        if (current_frame > target_frame)
+            current_frame = target_frame;
+        progressbar.sprite.SetImage(progress_images[current_frame]);
+    }
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+# Message callback
+fun message_callback(text) {
+    # Can display messages if needed
+}
+
+Plymouth.SetMessageFunction(message_callback);
+
+# Quit callback
+fun quit_callback() {
+    # Clean up
+}
+
+Plymouth.SetQuitFunction(quit_callback);

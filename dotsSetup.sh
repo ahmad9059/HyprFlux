@@ -75,8 +75,8 @@ WALLPAPER_REPO="${WALLPAPER_REPO:-https://github.com/ahmad9059/wallpapers-bank}"
 WALLPAPER_DIR="${WALLPAPER_DIR:-$HOME/Pictures/wallpapers}"
 
 # Plymouth
-PLYMOUTH_THEME_DIR="${PLYMOUTH_THEME_DIR:-$REPO_DIR/utilities/hyprland-mac-style}"
-PLYMOUTH_THEME_NAME="${PLYMOUTH_THEME_NAME:-hyprland-mac-style}"
+PLYMOUTH_THEME_DIR="${PLYMOUTH_THEME_DIR:-$REPO_DIR/utilities/hyprflux-plymouth}"
+PLYMOUTH_THEME_NAME="${PLYMOUTH_THEME_NAME:-hyprflux}"
 
 # Bibata cursor
 # BUG FIX: cursor size unified to 24 (was 20 in sed update path, 24 in create path)

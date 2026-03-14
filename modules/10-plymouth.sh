@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# modules/10-plymouth.sh — Plymouth theme + mkinitcpio + GRUB
+# modules/10-plymouth.sh — HyprFlux Plymouth theme + mkinitcpio + GRUB
 # ============================================================
 # BUG FIX: Plymouth failure no longer kills the entire install.
 # This is a cosmetic boot screen — failure should be non-fatal.
@@ -21,8 +21,8 @@ else
 fi
 
 # Copy Plymouth theme
-_plymouth_theme_dir="${PLYMOUTH_THEME_DIR:-$REPO_DIR/utilities/hyprland-mac-style}"
-_plymouth_theme_name="${PLYMOUTH_THEME_NAME:-hyprland-mac-style}"
+_plymouth_theme_dir="${PLYMOUTH_THEME_DIR:-$REPO_DIR/utilities/hyprflux-plymouth}"
+_plymouth_theme_name="${PLYMOUTH_THEME_NAME:-hyprflux}"
 _plymouth_dest="/usr/share/plymouth/themes"
 _mkinitcpio_conf="/etc/mkinitcpio.conf"
 _grub_conf="/etc/default/grub"

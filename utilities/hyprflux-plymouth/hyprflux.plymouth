@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=HyprFlux
+Description=HyprFlux boot animation with logo and spinner
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/hyprflux/images
+ScriptFile=/usr/share/plymouth/themes/hyprflux/hyprflux.script
