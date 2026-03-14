@@ -20,26 +20,37 @@ else
   log_info "Plymouth already installed."
 fi
 
-# Copy Plymouth theme
-_plymouth_theme_dir="${PLYMOUTH_THEME_DIR:-$REPO_DIR/utilities/hyprflux-plymouth}"
+# Extract/copy Plymouth theme
+_plymouth_theme_archive="${PLYMOUTH_THEME_ARCHIVE:-$REPO_DIR/utilities/hyprflux-plymouth.tar.xz}"
+_plymouth_theme_dir="${PLYMOUTH_THEME_DIR:-/tmp/hyprflux-plymouth}"
 _plymouth_theme_name="${PLYMOUTH_THEME_NAME:-hyprflux}"
 _plymouth_dest="/usr/share/plymouth/themes"
 _mkinitcpio_conf="/etc/mkinitcpio.conf"
 _grub_conf="/etc/default/grub"
 
-if [[ -d "$_plymouth_theme_dir" ]]; then
-  log_action "Copying theme '$_plymouth_theme_name' to $_plymouth_dest..."
-  sudo mkdir -p "$_plymouth_dest"
-  if ! sudo cp -r "$_plymouth_theme_dir" "$_plymouth_dest/"; then
-    log_warn "Failed to copy Plymouth theme. Skipping."
+if [[ -f "$_plymouth_theme_archive" ]]; then
+  log_action "Extracting Plymouth theme archive..."
+  rm -rf "$_plymouth_theme_dir"
+  mkdir -p "$_plymouth_theme_dir"
+  if ! tar -C "$_plymouth_theme_dir" --strip-components=1 -xJf "$_plymouth_theme_archive"; then
+    log_warn "Failed to extract Plymouth theme archive. Skipping."
     return 0
   fi
-  log_ok "Theme '$_plymouth_theme_name' installed."
+elif [[ -d "$_plymouth_theme_dir" ]]; then
+  log_info "Using existing extracted Plymouth theme directory $_plymouth_theme_dir."
 else
-  # BUG FIX: was exit 1, now just a warning + return
-  log_warn "Theme directory $_plymouth_theme_dir not found. Skipping Plymouth setup."
+  log_warn "Plymouth theme archive $_plymouth_theme_archive not found. Skipping Plymouth setup."
   return 0
 fi
+
+log_action "Copying theme '$_plymouth_theme_name' to $_plymouth_dest..."
+sudo mkdir -p "$_plymouth_dest"
+sudo rm -rf "$_plymouth_dest/$_plymouth_theme_name"
+if ! sudo cp -r "$_plymouth_theme_dir" "$_plymouth_dest/$_plymouth_theme_name"; then
+  log_warn "Failed to copy Plymouth theme. Skipping."
+  return 0
+fi
+log_ok "Theme '$_plymouth_theme_name' installed."
 
 # Enable Plymouth in mkinitcpio
 if grep -q "plymouth" "$_mkinitcpio_conf"; then
@@ -84,4 +95,4 @@ fi
 
 log_ok "Plymouth with theme '$_plymouth_theme_name' is ready! Reboot to see it."
 
-unset _plymouth_theme_dir _plymouth_theme_name _plymouth_dest _mkinitcpio_conf _grub_conf
+unset _plymouth_theme_archive _plymouth_theme_dir _plymouth_theme_name _plymouth_dest _mkinitcpio_conf _grub_conf

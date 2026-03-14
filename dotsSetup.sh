@@ -75,7 +75,8 @@ WALLPAPER_REPO="${WALLPAPER_REPO:-https://github.com/ahmad9059/wallpapers-bank}"
 WALLPAPER_DIR="${WALLPAPER_DIR:-$HOME/Pictures/wallpapers}"
 
 # Plymouth
-PLYMOUTH_THEME_DIR="${PLYMOUTH_THEME_DIR:-$REPO_DIR/utilities/hyprflux-plymouth}"
+PLYMOUTH_THEME_ARCHIVE="${PLYMOUTH_THEME_ARCHIVE:-$REPO_DIR/utilities/hyprflux-plymouth.tar.xz}"
+PLYMOUTH_THEME_DIR="${PLYMOUTH_THEME_DIR:-/tmp/hyprflux-plymouth}"
 PLYMOUTH_THEME_NAME="${PLYMOUTH_THEME_NAME:-hyprflux}"
 
 # Bibata cursor
