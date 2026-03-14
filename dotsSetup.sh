@@ -61,8 +61,8 @@ SDDM_THEME_DEST="${SDDM_THEME_DEST:-/usr/share/sddm/themes/$SDDM_THEME_NAME}"
 SDDM_CONF="${SDDM_CONF:-/etc/sddm.conf}"
 
 # GRUB theme
-GRUB_THEME_ARCHIVE="${GRUB_THEME_ARCHIVE:-$REPO_DIR/utilities/Vimix-1080p.tar.xz}"
-GRUB_THEME_DIR="${GRUB_THEME_DIR:-/tmp/vimix-grub}"
+GRUB_THEME_ARCHIVE="${GRUB_THEME_ARCHIVE:-$REPO_DIR/utilities/HyprFlux-1080p.tar.xz}"
+GRUB_THEME_DIR="${GRUB_THEME_DIR:-/tmp/hyprflux-grub}"
 
 # Web apps
 DESKTOP_DIR="${DESKTOP_DIR:-$HOME/.local/share/applications}"
