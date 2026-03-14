@@ -5,7 +5,7 @@
 should_skip "themes" && return 0
 
 # ====== GTK Themes ======
-log_action "Installing themes from ${REPO_DIR}.themes..."
+log_action "Installing themes from ${REPO_DIR}/.themes..."
 
 if [[ -d "$REPO_DIR/.themes" ]]; then
   mkdir -p "$HOME/.themes"
