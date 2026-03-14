@@ -106,12 +106,37 @@ prompt_keyboard_layout() {\
   echo "${OK:-[OK]} kb_layout $layout configured in settings." 2>\&1 | tee -a "$log"\
 }' "$LIB_PROMPTS"
 
-# Replace clock format prompt to auto-select 24H (no change needed)
+# Replace clock format prompt to auto-select 12H format
 sed -i '/^prompt_clock_12h()/,/^}/c\
 prompt_clock_12h() {\
   local log="$1"\
-  # HyprFlux: Auto-select 24H format (no changes needed)\
-  echo "${NOTE:-[NOTE]} Using default 24H clock format." 2>\&1 | tee -a "$log"\
+  # HyprFlux: Auto-select 12H (AM/PM) format\
+  echo "${NOTE:-[NOTE]} HyprFlux: Configuring 12H (AM/PM) clock format..." 2>\&1 | tee -a "$log"\
+  \
+  # waybar clocks\
+  sed -i '"'"'s#^\\(\\s*\\)//\\("format": " {:%I:%M %p}",\\) #\\1\\2 #g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)\\("format": " {:%H:%M:%S}",\\) #\\1//\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)\\("format": "  {:%H:%M}",\\) #\\1//\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)//\\("format": "{:%I:%M %p - %d/%b}",\\) #\\1\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)\\("format": "{:%H:%M - %d/%b}",\\) #\\1//\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)//\\("format": "{:%B | %a %d, %Y | %I:%M %p}",\\) #\\1\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)\\("format": "{:%B | %a %d, %Y | %H:%M}",\\) #\\1//\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)//\\("format": "{:%A, %I:%M %P}",\\) #\\1\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  sed -i '"'"'s#^\\(\\s*\\)\\("format": "{:%a %d | %H:%M}",\\) #\\1//\\2#g'"'"' config/waybar/Modules 2>\&1 | tee -a "$log"\
+  \
+  # hyprlock\
+  local HYPRLOCK_FILE="config/hypr/hyprlock.conf"\
+  if [ ! -f "$HYPRLOCK_FILE" ] \\&\\& [ -f "config/hypr/hyprlock-1080p.conf" ]; then\
+    HYPRLOCK_FILE="config/hypr/hyprlock-1080p.conf"\
+  fi\
+  if [ -f "$HYPRLOCK_FILE" ]; then\
+    sed -i '"'"'s/^\\s*text = cmd\\[update:1000\\] echo "\\$(date +"%H")"/# \\&/'"'"' "$HYPRLOCK_FILE" 2>\&1 | tee -a "$log"\
+    sed -i '"'"'s/^\\(\\s*\\)# *text = cmd\\[update:1000\\] echo "\\$(date +"%I")" #AM\\/PM/\\1    text = cmd[update:1000] echo "$(date +"%I")" #AM\\/PM/'"'"' "$HYPRLOCK_FILE" 2>\&1 | tee -a "$log"\
+    sed -i '"'"'s/^\\s*text = cmd\\[update:1000\\] echo "\\$(date +"%S")"/# \\&/'"'"' "$HYPRLOCK_FILE" 2>\&1 | tee -a "$log"\
+    sed -i '"'"'s/^\\(\\s*\\)# *text = cmd\\[update:1000\\] echo "\\$(date +"%S %p")" #AM\\/PM/\\1    text = cmd[update:1000] echo "$(date +"%S %p")" #AM\\/PM/'"'"' "$HYPRLOCK_FILE" 2>\&1 | tee -a "$log"\
+  fi\
+  \
+  echo "${OK:-[OK]} 12H (AM/PM) clock format configured." 2>\&1 | tee -a "$log"\
 }' "$LIB_PROMPTS"
 
 # Replace express upgrade prompt to skip
@@ -150,9 +175,9 @@ echo "${OK} Modified lib_apps.sh to auto-select editor${RESET}"
 # ===========================
 # 7. Modify copy.sh - Auto-select resolution and skip prompts
 # ===========================
-# Replace the resolution prompt loop with auto-select >= 1440p
+# Replace the resolution prompt loop with auto-select < 1440p
 sed -i '/^resolution=""/,/^done$/c\
-resolution="≥ 1440p"\
+resolution="< 1440p"\
 echo "${OK} HyprFlux: Auto-selected $resolution resolution." 2>\&1 | tee -a "$LOG"' "$COPY_SH"
 
 # Auto-answer Ubuntu/Debian warning (skip the while loop)
@@ -182,8 +207,8 @@ echo "${OK} ========================================${RESET}"
 echo "${NOTE} The following defaults will be used:${RESET}"
 echo "  - Workflow: Install (fresh copy)"
 echo "  - Keyboard layout: Auto-detected (fallback: us)"
-echo "  - Resolution: >= 1440p"
-echo "  - Clock format: 24H"
+echo "  - Resolution: < 1440p"
+echo "  - Clock format: 12H (AM/PM)"
 echo "  - Default editor: nvim (if available)"
 echo "  - AGS/Quickshell config: Overwrite"
 echo "  - SDDM wallpaper: Apply current wallpaper"
