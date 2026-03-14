@@ -98,10 +98,10 @@ menu() {
   done
 }
 
-# # Offer SDDM Simple Wallpaper Option (only for non-video wallpapers)
+# # Offer SDDM HyprFlux Wallpaper Option (only for non-video wallpapers)
 # set_sddm_wallpaper() {
 #   sleep 1
-#   sddm_simple="/usr/share/sddm/themes/simple_sddm_2"
+#   sddm_simple="/usr/share/sddm/themes/HyprFlux-sddm-theme"
 #
 #   if [ -d "$sddm_simple" ]; then
 #
@@ -110,7 +110,7 @@ menu() {
 #       killall yad
 #     fi
 #
-#     if yad --info --text="Set current wallpaper as SDDM background?\n\nNOTE: This only applies to SIMPLE SDDM v2 Theme" \
+#     if yad --info --text="Set current wallpaper as SDDM background?\n\nNOTE: This only applies to HyprFlux SDDM Theme" \
 #       --text-align=left \
 #       --title="SDDM Background" \
 #       --timeout=5 \

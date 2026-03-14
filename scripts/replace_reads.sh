@@ -197,7 +197,7 @@ sed -i 's/read -p "\${CAT} Do you want to overwrite your existing \${YELLOW}ags\
 sed -i 's/read -p "\${CAT} Do you want to overwrite your existing \${YELLOW}quickshell\${RESET} config? \[y\/N\] " answer_qs/answer_qs="y"/' "$COPY_SH"
 
 # Auto-answer SDDM wallpaper prompt
-sed -i '/SDDM simple_sddm_2 theme detected/,/esac/s/read SDDM_WALL/SDDM_WALL="y"/' "$COPY_SH"
+sed -i '/SDDM HyprFlux-sddm-theme detected\|SDDM simple_sddm_2 theme detected/,/esac/s/read SDDM_WALL/SDDM_WALL="y"/' "$COPY_SH"
 
 # Auto-answer additional wallpapers download (skip - too large)
 sed -i '/Would you like to download additional wallpapers/,/esac/s/read WALL/WALL="n"/' "$COPY_SH"
