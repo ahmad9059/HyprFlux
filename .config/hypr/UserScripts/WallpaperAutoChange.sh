@@ -6,7 +6,7 @@
 #
 # NOTE: this script uses bash (not POSIX shell) for the RANDOM variable
 
-wallust_refresh=$HOME/.config/hypr/scripts/RefreshNoWaybar.sh
+wallpaper_refresh=$HOME/.config/hypr/scripts/RefreshNoWaybar.sh
 
 focused_monitor=$(hyprctl monitors | awk '/^Monitor/{name=$2} /focused: yes/{print name}')
 
@@ -31,7 +31,7 @@ while true; do
     sort -n | cut -d':' -f2- |
     while read -r img; do
       swww img -o $focused_monitor "$img"
-      $wallust_refresh
+      $wallpaper_refresh
       sleep $INTERVAL
 
     done

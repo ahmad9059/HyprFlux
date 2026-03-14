@@ -12,8 +12,8 @@ wallpaper_current="$HOME/.config/hypr/wallpaper_effects/.wallpaper_current"
 wallpaper_modified="$HOME/.config/hypr/wallpaper_effects/.wallpaper_modified"
 sddm_simple="/usr/share/sddm/themes/HyprFlux-sddm-theme"
 
-# rofi-wallust-sddm colors path
-rofi_wallust="$HOME/.config/rofi/wallust/colors-rofi.rasi"
+# rofi HyprFlux colors path
+rofi_colors="$HOME/.config/rofi/wallust/hyprflux-colors.rasi"
 sddm_theme_conf="$sddm_simple/theme.conf"
 
 # Directory for swaync
@@ -28,16 +28,16 @@ elif [[ "$1" == "--effects" ]]; then
   mode="effects"
 fi
 
-# Extract colors from rofi wallust config
+# Extract colors from HyprFlux rofi palette
 
-color0=$(grep -oP 'color1:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
-color1=$(grep -oP 'color0:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
-color7=$(grep -oP 'color14:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
-color10=$(grep -oP 'color10:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
-color12=$(grep -oP 'color12:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
-color13=$(grep -oP 'color13:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
-foreground=$(grep -oP 'foreground:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
-#background-color=$(grep -oP 'background:\s*\K#[A-Fa-f0-9]+' "$rofi_wallust")
+color0=$(grep -oP 'color1:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
+color1=$(grep -oP 'color0:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
+color7=$(grep -oP 'color14:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
+color10=$(grep -oP 'color10:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
+color12=$(grep -oP 'color12:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
+color13=$(grep -oP 'color13:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
+foreground=$(grep -oP 'foreground:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
+#background-color=$(grep -oP 'background:\s*\K#[A-Fa-f0-9]+' "$rofi_colors")
 
 # wallpaper to use
 if [[ "$mode" == "normal" ]]; then

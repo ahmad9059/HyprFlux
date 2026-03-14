@@ -3,7 +3,7 @@
 # HyprFlux - Initial Setup Script
 # https://github.com/ahmad9059/HyprFlux
 # ============================================================
-# Sets up Chaotic-AUR, wallust, quickshell, and yay
+# Sets up Chaotic-AUR, quickshell, and yay
 
 set -e
 
@@ -47,9 +47,9 @@ fi
 echo "${NOTE} Updating system with Chaotic-AUR mirrors...${RESET}"
 sudo pacman -Syu --noconfirm
 
-# Install wallust and quickshell
-echo "${NOTE} Installing wallust and quickshell...${RESET}"
-sudo pacman -S --noconfirm wallust quickshell
+# Install quickshell
+echo "${NOTE} Installing quickshell...${RESET}"
+sudo pacman -S --noconfirm quickshell
 
 echo "${NOTE} Installing yay (AUR helper)...${RESET}"
 

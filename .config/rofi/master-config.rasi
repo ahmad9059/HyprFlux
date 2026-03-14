@@ -17,8 +17,8 @@ configuration {
 	  dpi:						1;
 }
 
-/* ---- Load wallust colors ---- */
-@theme "~/.config/rofi/wallust/colors-rofi.rasi"
+/* ---- Load HyprFlux colors ---- */
+@theme "~/.config/rofi/wallust/hyprflux-colors.rasi"
 
 /* ---- Global Properties ---- */
 * {

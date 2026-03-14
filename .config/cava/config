@@ -1,5 +1,5 @@
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
-# wallust template - colors-cava */
+# HyprFlux static color palette
 
 ## Configuration file for CAVA.
 # Remove the ; to change parameters.
@@ -240,7 +240,7 @@
 ; gradient_color_7 = '#cc5933'
 ; gradient_color_8 = '#cc3333'
 
-# for wallust
+# gradient colors
 gradient = 1
 gradient_count = 8
 gradient_color_1 = '#FFF4EC'

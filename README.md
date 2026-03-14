@@ -124,7 +124,7 @@ The installer will request sudo password **2-3 times** during the process:
 
 - Once for initial system setup
 - Once for Zsh configuration
-- Once for wallust installation
+
 - Additional prompts for optional packages
 
 ## Features

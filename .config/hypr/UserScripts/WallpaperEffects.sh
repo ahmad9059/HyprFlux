@@ -47,9 +47,7 @@ declare -A effects=(
 no-effects() {
     swww img -o "$focused_monitor" "$wallpaper_current" $SWWW_PARAMS &&
     wait $!
-    wallust run "$wallpaper_current" -s &&
-    wait $!
-    # Refresh rofi, waybar, wallust palettes
+    # Refresh rofi, waybar
 	sleep 2
 	"$SCRIPTSDIR/Refresh.sh"
 
@@ -87,9 +85,7 @@ main() {
 
             sleep 2
   
-            wallust run "$wallpaper_output" -s &
-            sleep 1
-            # Refresh rofi, waybar, wallust palettes
+            # Refresh rofi, waybar
             "${SCRIPTSDIR}/Refresh.sh"
             notify-send -u low -i "$iDIR/ja.png" "$choice" "effects applied"
         else

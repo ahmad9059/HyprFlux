@@ -31,7 +31,7 @@ done
 #pkill qs && qs &
 
 # Wallust refresh
-${SCRIPTSDIR}/WallustSwww.sh &
+${SCRIPTSDIR}/WallpaperSwww.sh &
 
 # reload swaync
 swaync-client --reload-config

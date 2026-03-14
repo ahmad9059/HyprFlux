@@ -12,13 +12,10 @@ swaync_style="$HOME/.config/swaync/style.css"
 ags_style="$HOME/.config/ags/user/style.css"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
 notif="$HOME/.config/swaync/images/bell.png"
-wallust_rofi="$HOME/.config/wallust/templates/colors-rofi.rasi"
+hyprflux_rofi="$HOME/.config/rofi/wallust/hyprflux-colors.rasi"
 
 kitty_conf="$HOME/.config/kitty/kitty.conf"
 
-wallust_config="$HOME/.config/wallust/wallust.toml"
-pallete_dark="dark16"
-pallete_light="light16"
 
 # intial kill process
 for pid in waybar rofi swaync ags swaybg; do
@@ -54,12 +51,6 @@ notify_user() {
     notify-send -u low -i "$notif" " Switching to" " $1 mode"
 }
 
-# Use sed to replace the palette setting in the wallust config file
-if [ "$next_mode" = "Dark" ]; then
-    sed -i 's/^palette = .*/palette = "'"$pallete_dark"'"/' "$wallust_config" 
-else
-    sed -i 's/^palette = .*/palette = "'"$pallete_light"'"/' "$wallust_config" 
-fi
 
 # Function to set Waybar style
 set_waybar_style() {
@@ -148,9 +139,9 @@ kvantummanager --set "$kvantum_theme"
 
 # set the rofi color for background
 if [ "$next_mode" = "Dark" ]; then
-    sed -i '/^background:/s/.*/background: rgba(0,0,0,0.7);/' $wallust_rofi
+    sed -i '/^background:/s/.*/background: rgba(0,0,0,0.7);/' $hyprflux_rofi
 else
-    sed -i '/^background:/s/.*/background: rgba(255,255,255,0.9);/' $wallust_rofi
+    sed -i '/^background:/s/.*/background: rgba(255,255,255,0.9);/' $hyprflux_rofi
 fi
 
 
@@ -235,9 +226,6 @@ set_custom_gtk_theme "$next_mode"
 update_theme_mode
 
 
-${SCRIPTSDIR}/WallustSwww.sh &&
-
-sleep 2
 # kill process
 for pid1 in waybar rofi swaync ags swaybg; do
     killall "$pid1"

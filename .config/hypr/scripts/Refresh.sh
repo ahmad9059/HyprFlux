@@ -1,6 +1,6 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
-# Scripts for refreshing ags, waybar, rofi, swaync, wallust
+# Scripts for refreshing waybar, rofi, swaync
 
 SCRIPTSDIR=$HOME/.config/hypr/scripts
 UserScripts=$HOME/.config/hypr/UserScripts
@@ -22,7 +22,7 @@ for _prs in "${_ps[@]}"; do
     fi
 done
 
-# added since wallust sometimes not applying
+# ensure waybar fully reloads
 killall -SIGUSR2 waybar 
 
 # quit ags & relaunch ags
