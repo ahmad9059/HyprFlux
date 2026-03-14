@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # This script starts the first available Polkit agent from a list of possible locations
 
 # List of potential Polkit agent file paths

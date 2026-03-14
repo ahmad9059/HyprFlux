@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  #
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Wallpaper Effects using ImageMagick (SUPER SHIFT W)
 
 # Variables

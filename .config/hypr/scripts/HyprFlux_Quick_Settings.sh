@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Rofi menu for HyprFlux Quick Settings (SUPER SHIFT E)
 
 # Modify this config file for default terminal and EDITOR

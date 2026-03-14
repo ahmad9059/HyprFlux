@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Not my own work. This was added through Github PR. Credit to original author
 
 #----- Optimized bars animation without much CPU usage increase --------

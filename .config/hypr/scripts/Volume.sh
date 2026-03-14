@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Scripts for volume controls for audio and mic 
 
 iDIR="$HOME/.config/swaync/icons"

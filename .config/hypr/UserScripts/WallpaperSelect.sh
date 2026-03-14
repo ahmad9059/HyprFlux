@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # This script for selecting wallpapers (SUPER W)
 
 # WALLPAPERS PATH

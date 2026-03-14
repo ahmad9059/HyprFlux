@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Dropdown Terminal
 # Usage: ./Dropdown.sh [-d] <terminal_command>
 # Example: ./Dropdown.sh foot

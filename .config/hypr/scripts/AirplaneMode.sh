@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Airplane Mode. Turning on or off all wifi using rfkill.
 
 notif="$HOME/.config/swaync/images/ja.png"

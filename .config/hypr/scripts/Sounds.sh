@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # This script is used to play system sounds.
 # Script is used by Volume.Sh and ScreenShots.sh 
 

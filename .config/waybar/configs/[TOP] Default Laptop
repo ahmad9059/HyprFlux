@@ -1,6 +1,5 @@
-/* ---- 💫 https://github.com/JaKooLit 💫 ---- */
-
-// ### DEFAULT Laptop  - Top ### //
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
+# DEFAULT Laptop  - Top ### //
 {
 "include": [
   "$HOME/.config/waybar/Modules",

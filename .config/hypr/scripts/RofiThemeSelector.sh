@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  #
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Rofi Themes - Script to preview and apply themes by live-reloading the config.
 
 # --- Configuration ---

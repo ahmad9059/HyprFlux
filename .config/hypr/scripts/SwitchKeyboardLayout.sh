@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # This is for changing kb_layouts. Set kb_layouts in $settings_file
 
 layout_file="$HOME/.cache/kb_layout"

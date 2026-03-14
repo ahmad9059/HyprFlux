@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  #
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # original code https://gist.github.com/Surendrajat/ff3876fd2166dd86fb71180f4e9342d7
 # weather using python
 

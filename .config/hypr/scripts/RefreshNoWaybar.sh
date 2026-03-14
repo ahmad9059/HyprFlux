@@ -1,6 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
-
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Modified version of Refresh.sh but waybar wont refresh
 # Used by automatic wallpaper change
 # Modified inorder to refresh rofi background, Wallust, SwayNC only

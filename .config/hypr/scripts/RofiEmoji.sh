@@ -1,6 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/JaKooLit 💫 ---- */  ##
-
+# HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Variables
 rofi_theme="$HOME/.config/rofi/config-emoji.rasi"
 msg='** note ** 👀 Click or Return to choose || Ctrl V to Paste'
