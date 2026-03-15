@@ -1,5 +1,3 @@
-# HyprFlux — https://github.com/ahmad9059/HyprFlux
-# DEFAULT Top -Laptop ### //
 {
 "include": "~/.config/waybar/modules",
 "layer": "top",

@@ -1,6 +1,3 @@
-# HyprFlux — https://github.com/ahmad9059/HyprFlux
-# TOP Simpliests ## //
-
 {
 "include": [
   "$HOME/.config/waybar/Modules",
