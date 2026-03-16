@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-DOCS="$HOME/Documents/Projects/"
+DOCS="$HOME/Documents/Projects"
 TMUXIFIER_BIN="$HOME/.tmuxifier/bin/tmuxifier"
 
-project="$(find "$DOCS" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort \
-  | rofi -dmenu -i -p "Project")"
+project="$(find "$DOCS" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort |
+  rofi -dmenu -i -p "Project")" || exit 0
 
-[ -z "${project:-}" ] && exit 0
+[ -z "$project" ] && exit 0
 
 PROJECT_DIR="$DOCS/$project"
 SESSION_NAME="$project"

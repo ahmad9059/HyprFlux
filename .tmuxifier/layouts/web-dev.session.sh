@@ -1,25 +1,42 @@
-# Set a custom session root path. Default is $HOME.
-# Must be called before initialize_session.
-session_root "~/Documents/MovieDB"
+session_root "${PROJECT_DIR:-$HOME/Documents/Projects}"
 
-# Create session with specified name if it does not already exist.
-if initialize_session "Web"; then
+if initialize_session "${SESSION_NAME:-VieroMind}"; then
 
-  # Editor Window
   new_window "Editor"
-  run_cmd "nvim"
-  
-  # Terminal Window (for git, curl, or other tasks)
-  new_window "Terminal"
+  run_cmd "cd \"$session_root\" && nvim"
 
-  # Server Window
+  new_window "Agents"
+  run_cmd "cd \"$session_root\" && opencode"
+  # split_h 50
+  # split_v 50 2
+  # select_pane 1
+  # run_cmd "cd \"$session_root\" && opencode"
+  # select_pane 2
+  # run_cmd "cd \"$session_root\" && codex"
+  # select_pane 3
+  # run_cmd "cd \"$session_root\" && gemini"
+  # select_pane 1
+
+  new_window "LazyGit"
+  run_cmd "cd \"$session_root\" && lazygit"
+
+  new_window "Yazi"
+  run_cmd "cd \"$session_root\" && yazi"
+
+  # new_window "Music"
+  # run_cmd "cd \"$session_root\" && rmpc"
+
   new_window "Server"
-  run_cmd "npm install"             # Ensure dependencies are installed
-  run_cmd "npm run dev"             # Start development server
+  run_cmd "cd \"$session_root\" && (pnpm install && pnpm prisma generate && pnpm run dev)"
 
-  # Select the default window
+  # tmuxifier-tmux new-window -t "$session:10" -n "Terminal"
+  # run_cmd "cd \"$session_root\""
+  tmuxifier-tmux new-window -t "$session:10" -n "Terminal"
+  select_window 10
+  run_cmd "cd \"$session_root\""
+  run_cmd "clear"
+
   select_window "Editor"
 fi
 
-# Finalize session creation and switch/attach to it.
 finalize_and_go_to_session

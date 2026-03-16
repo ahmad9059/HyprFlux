@@ -1,0 +1,135 @@
+#!/bin/bash
+set -uo pipefail
+
+err() { echo "$*" >&2; }
+
+for cmd in git gh curl jq; do
+    if ! command -v "$cmd" &>/dev/null; then
+        err "Missing required command: $cmd"
+        exit 1
+    fi
+done
+
+TOKEN=$(gh auth token 2>/dev/null)
+if [ -z "$TOKEN" ]; then
+    err "gh auth token failed — run: gh auth login"
+    exit 1
+fi
+
+STAGED_FILES=$(git diff --cached --name-only 2>/dev/null)
+if [ -z "$STAGED_FILES" ]; then
+    err "No staged changes"
+    exit 1
+fi
+
+# Exclude noisy generated/lock files from the diff
+EXCLUDE_PATTERNS=(
+    ':(exclude)*.lock'
+    ':(exclude)package-lock.json'
+    ':(exclude)yarn.lock'
+    ':(exclude)pnpm-lock.yaml'
+    ':(exclude)*.min.js'
+    ':(exclude)*.min.css'
+    ':(exclude)dist/'
+    ':(exclude)*.sum'
+)
+
+DIFF=$(git diff --cached --no-color -- "${EXCLUDE_PATTERNS[@]}" 2>/dev/null || true)
+STAT=$(git diff --cached --stat --no-color -- "${EXCLUDE_PATTERNS[@]}" 2>/dev/null || true)
+# Full stat (no excludes) used as fallback context when all changes are in excluded files
+FULL_STAT=$(git diff --cached --stat --no-color 2>/dev/null || true)
+
+MAX_CHARS=30000
+DIFF_LEN=${#DIFF}
+
+if [ -n "$DIFF" ] && [ "$DIFF_LEN" -gt "$MAX_CHARS" ]; then
+    DIFF_CONTENT="[Summary of changes]
+$STAT
+
+[Partial diff (truncated from ${DIFF_LEN} chars)]
+${DIFF:0:$MAX_CHARS}"
+elif [ -n "$DIFF" ]; then
+    DIFF_CONTENT="$DIFF"
+else
+    # All staged changes are in excluded files (lock files, dist, etc.)
+    DIFF_CONTENT="[Changed files summary]
+$FULL_STAT"
+fi
+
+SYSTEM_PROMPT="You are an expert at writing git commit messages following the Conventional Commits specification.
+
+Given a git diff, generate exactly 5 commit message suggestions. Each must:
+- Follow the format: type(scope): description
+- Use accurate types: feat, fix, refactor, docs, style, test, chore, perf, ci, build
+- Use a specific scope derived from the actual file paths or module names changed (e.g. auth, api, ui, config)
+- Describe specifically WHAT changed — mention function names, component names, file names, or config keys when relevant
+- Be under 72 characters
+- Vary in specificity and type so the user has real choices
+
+Output ONLY the 5 messages, one per line. No numbering, no bullets, no explanation, no blank lines."
+
+call_api() {
+    local content="$1"
+    local payload
+    payload=$(jq -n \
+        --arg system "$SYSTEM_PROMPT" \
+        --arg diff "$content" \
+        '{
+            model: "gpt-4o",
+            max_tokens: 400,
+            temperature: 0.3,
+            messages: [
+                { role: "system", content: $system },
+                { role: "user",   content: $diff   }
+            ]
+        }') || return 1
+
+    local response http_code body
+    response=$(curl -s -w "\n%{http_code}" --max-time 30 \
+        "https://models.github.ai/inference/chat/completions" \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "$payload") || return 1
+
+    http_code=$(echo "$response" | tail -1)
+    body=$(echo "$response" | head -n -1)
+
+    [ "$http_code" = "200" ] && echo "$body"
+}
+
+extract_messages() {
+    echo "$1" \
+        | jq -r '.choices[0].message.content // empty' 2>/dev/null \
+        | sed 's/^[[:space:]]*[0-9]\+[.)][[:space:]]*//' \
+        | sed 's/^[[:space:]]*[-*•][[:space:]]*//' \
+        | grep -v '^[[:space:]]*$' \
+        | head -5 \
+        || true
+}
+
+# Attempt 1: full/truncated diff
+RESPONSE=$(call_api "$DIFF_CONTENT" || true)
+MESSAGES=$(extract_messages "$RESPONSE")
+
+# Attempt 2: stat summary only
+if [ -z "$MESSAGES" ]; then
+    RESPONSE=$(call_api "[Changed files summary]
+$FULL_STAT" || true)
+    MESSAGES=$(extract_messages "$RESPONSE")
+fi
+
+# Attempt 3: file names only (minimal payload)
+if [ -z "$MESSAGES" ]; then
+    FILES=$(echo "$STAGED_FILES" | head -20 | tr '\n' ', ' | sed 's/,$//')
+    RESPONSE=$(call_api "Staged files: $FILES" || true)
+    MESSAGES=$(extract_messages "$RESPONSE")
+fi
+
+# Last resort: static fallback
+if [ -z "$MESSAGES" ]; then
+    FILE_COUNT=$(echo "$STAGED_FILES" | wc -l | tr -d ' ')
+    echo "chore: update ${FILE_COUNT} staged file(s)"
+    exit 0
+fi
+
+echo "$MESSAGES"
