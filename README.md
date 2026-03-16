@@ -1,20 +1,25 @@
-# HyprFlux
-
 <div align="center">
 
-![HyprFlux](review/HyprFlux.svg)
+<img src="review/logo-2.png" alt="HyprFlux" width="480" />
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?logo=arch-linux&logoColor=fff)](https://archlinux.org/)
-[![Hyprland](https://img.shields.io/badge/Hyprland-00D9FF?logo=wayland&logoColor=fff)](https://hyprland.org/)
-[![Shell Script](https://img.shields.io/badge/Shell_Script-121011?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
-[![GitHub stars](https://img.shields.io/github/stars/ahmad9059/HyprFlux?style=social)](https://github.com/ahmad9059/HyprFlux/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/ahmad9059/HyprFlux?style=social)](https://github.com/ahmad9059/HyprFlux/network/members)
+<br/>
+<br/>
 
-**A comprehensive collection of dotfiles and configurations for creating a beautiful, efficient Hyprland desktop environment on Arch Linux**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?style=flat-square&logo=arch-linux&logoColor=fff)](https://archlinux.org/)
+[![Hyprland](https://img.shields.io/badge/Hyprland-00D9FF?style=flat-square&logo=wayland&logoColor=fff)](https://hyprland.org/)
+[![Shell Script](https://img.shields.io/badge/Shell_Script-121011?style=flat-square&logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![GitHub stars](https://img.shields.io/github/stars/ahmad9059/HyprFlux?style=flat-square&logo=github)](https://github.com/ahmad9059/HyprFlux/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/ahmad9059/HyprFlux?style=flat-square&logo=github)](https://github.com/ahmad9059/HyprFlux/network/members)
 
-[Quick Install](#quick-installation) • [Screenshots](#screenshots) • [Features](#features) • <a href="https://hyprflux.dev/general/installation" target="_blank" rel="noopener noreferrer">Documentation</a>
-• [Contributing](#contributing)
+<br/>
+
+*A fully automated, opinionated Hyprland desktop environment for Arch Linux —*
+*beautiful out of the box, zero manual configuration required.*
+
+<br/>
+
+[Quick Install](#quick-installation) &nbsp;•&nbsp; [Screenshots](#screenshots) &nbsp;•&nbsp; [Features](#features) &nbsp;•&nbsp; [Documentation](https://hyprflux.dev/general/installation) &nbsp;•&nbsp; [Contributing](#contributing)
 
 </div>
 
