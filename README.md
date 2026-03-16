@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![HyprFlux](review/logo-2.png)
+![HyprFlux](review/HyprFlux.svg)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?logo=arch-linux&logoColor=fff)](https://archlinux.org/)
