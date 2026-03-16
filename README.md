@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="review/logo-2.png" alt="HyprFlux" width="480" />
+<img src="review/HyprFlux.svg" alt="HyprFlux" width="500" />
 
 <br/>
 <br/>
