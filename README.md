@@ -14,8 +14,8 @@
 
 <br/>
 
-*A fully automated, opinionated Hyprland desktop environment for Arch Linux —*
-*beautiful out of the box, zero manual configuration required.*
+_A fully automated, opinionated Hyprland desktop environment for Arch Linux —_
+_beautiful out of the box, zero manual configuration required._
 
 <br/>
 
@@ -24,10 +24,6 @@
 </div>
 
 ---
-
-## Website
-
-**For detailed documentation and preferences, visit:** [https://hyprflux.dev](https://hyprflux.dev)
 
 ## Overview
 
