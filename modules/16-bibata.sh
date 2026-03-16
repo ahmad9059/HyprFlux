@@ -27,9 +27,25 @@ fi
 if curl -fsSL "$_bib_cursor_url" -o /tmp/hyprcursor.tar.gz; then
   log_ok "Cursor archive downloaded successfully."
 
-  mkdir -p "$_bib_target_dir"
+  # Extract to a temp dir first — the archive contains a top-level folder
+  # named "hypr_Bibata-Modern-Classic" (with the hypr_ prefix). We strip
+  # that wrapper and install the contents directly into Bibata-Modern-Classic/.
+  _bib_tmp="$(mktemp -d)"
 
-  if tar -xzf /tmp/hyprcursor.tar.gz -C "$_bib_target_dir"; then
+  if tar -xzf /tmp/hyprcursor.tar.gz -C "$_bib_tmp"; then
+    # Find the extracted top-level dir (whatever it's named)
+    _bib_extracted="$(find "$_bib_tmp" -mindepth 1 -maxdepth 1 -type d | head -n1)"
+
+    if [[ -z "$_bib_extracted" ]]; then
+      log_error "Could not find extracted cursor folder inside archive."
+      rm -rf "$_bib_tmp"
+      return 1
+    fi
+
+    mkdir -p "$_bib_target_dir"
+    # Move contents (hyprcursors/ and manifest.hl) into the target dir
+    cp -a "$_bib_extracted/." "$_bib_target_dir/"
+    rm -rf "$_bib_tmp"
     log_ok "Cursor extracted into $_bib_target_dir."
 
     # Update Hyprland ENVariables.conf
@@ -49,6 +65,7 @@ if curl -fsSL "$_bib_cursor_url" -o /tmp/hyprcursor.tar.gz; then
     fi
   else
     log_error "Failed to extract cursor archive."
+    rm -rf "$_bib_tmp"
   fi
 else
   log_error "Failed to download cursor from $_bib_cursor_url."
@@ -57,4 +74,4 @@ fi
 # Cleanup
 rm -f /tmp/hyprcursor.tar.gz
 
-unset _bib_cursor_url _bib_cursor_dir _bib_env_file _bib_target_dir _bib_cursor_size
+unset _bib_cursor_url _bib_cursor_dir _bib_env_file _bib_target_dir _bib_cursor_size _bib_tmp _bib_extracted
