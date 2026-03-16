@@ -78,46 +78,7 @@ sh <(curl -fsSL https://hyprflux.dev/install)
 ```
 
 > **Important**: This script will modify your system configuration. Make sure to backup any existing dotfiles before proceeding.
-
-### Installation Process
-
-1. **Run the installation command** - The script will automatically download and execute
-2. **Enter sudo password** when prompted
-3. **Follow the interactive setup** - Select your preferred options:
-
-![Installation Options](review/select-img.png)
-
-#### Recommended Installation Options
-
-**Essential Components** (Recommended):
-
-- `sddm` - Display manager for login screen
-- `sddm_theme` - Beautiful custom SDDM theme
-- `gtk_themes` - GTK theme integration
-- `bluetooth` - Bluetooth support
-- `thunar` - File manager
-- `xdph` - Desktop portal for Hyprland
-- `zsh` - Enhanced shell with Oh My Zsh
-- `dots` - Core dotfiles and configurations
-
-**Optional Components**:
-
-- `QuickShell` - QuickShell for Desktop-Like Overview
-- `Pokemon` - Add Pokemon color scripts to your terminal
-- `Rog` - Download and Install Pre-configured for ROG Laptops
-
-#### Interactive Configuration
-
-During installation, you'll be prompted to configure:
-
-| Setting                 | Options              | Description                           |
-| ----------------------- | -------------------- | ------------------------------------- |
-| **Keyboard Layout**     | Various layouts      | Select your preferred keyboard layout |
-| **Text Editor**         | nano, nvim, vim      | Choose your default terminal editor   |
-| **Hyprlock Resolution** | Multiple resolutions | Set lock screen resolution            |
-| **Clock Format**        | 12h / 24h            | Choose time display format            |
-| **SDDM Wallpaper**      | Multiple options     | Select login screen background        |
-| **Extra Wallpapers**    | Yes / No             | Download additional wallpapers (~1GB) |
+> **Note**: HyprFlux will handle the rest.
 
 #### Authentication Notes
 
