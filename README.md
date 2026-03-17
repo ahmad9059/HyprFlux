@@ -14,8 +14,8 @@
 
 <br/>
 
-*HyprFlux is a complete Arch Linux desktop platform built around Hyprland -*
-*live ISO, installer, boot experience, login flow, theming, tooling, and maintained dotfiles in one project.*
+_HyprFlux is a complete Arch Linux desktop platform built around Hyprland -_
+_live ISO, installer, boot experience, login flow, theming, tooling, and maintained dotfiles in one project._
 
 <br/>
 
@@ -32,7 +32,6 @@ HyprFlux started as a dotfiles distribution and has grown into a complete Arch L
 Today, HyprFlux covers three layers of the stack:
 
 - the **live ISO layer**: a custom `archiso`-based image with HyprFlux branding, boot assets, and TUI installation flow
-- the **desktop platform layer**: installer flow, package setup, SDDM, GRUB, Plymouth, cursors, themes, wallpapers, utilities, and system defaults
 - the **dotfiles distribution layer**: Hyprland, Waybar, Rofi, Kitty, Zsh, Tmux, Neovim, scripts, keybinds, and workflow customization
 
 The goal is simple: start from a fresh Arch installation and end up with a polished, consistent, production-ready Hyprland system without piecing everything together manually.
