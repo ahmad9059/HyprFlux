@@ -14,12 +14,12 @@
 
 <br/>
 
-_A fully automated, opinionated Hyprland desktop environment for Arch Linux —_
-_beautiful out of the box, zero manual configuration required._
+*HyprFlux is a complete Arch Linux desktop platform built around Hyprland -*
+*installer, boot experience, login flow, theming, tooling, and maintained dotfiles in one project.*
 
 <br/>
 
-[Quick Install](#quick-installation) &nbsp;•&nbsp; [Screenshots](#screenshots) &nbsp;•&nbsp; [Features](#features) &nbsp;•&nbsp; [Documentation](https://hyprflux.dev/general/installation) &nbsp;•&nbsp; [Contributing](#contributing)
+[Quick Install](#quick-installation) &nbsp;•&nbsp; [Screenshots](#screenshots) &nbsp;•&nbsp; [Features](#features) &nbsp;•&nbsp; [Project Scope](#project-scope) &nbsp;•&nbsp; [Documentation](https://hyprflux.dev/general/installation) &nbsp;•&nbsp; [Contributing](#contributing)
 
 </div>
 
@@ -27,7 +27,29 @@ _beautiful out of the box, zero manual configuration required._
 
 ## Overview
 
-HyprFlux is a meticulously crafted collection of configuration files designed to transform your Arch Linux installation into a stunning, productive desktop environment. Built around the modern Hyprland compositor, it provides a seamless blend of aesthetics and functionality.
+HyprFlux started as a dotfiles distribution and has grown into a complete Arch Linux desktop operating system project. It does not just drop configs into `~/.config` - it builds a branded Hyprland system experience with automated setup, curated packages, GTK theming, boot theming, login theming, wallpapers, developer tooling, and maintained desktop defaults.
+
+Today, HyprFlux covers two layers of the stack:
+
+- the **desktop platform layer**: installer flow, package setup, SDDM, GRUB, Plymouth, cursors, themes, wallpapers, utilities, and system defaults
+- the **dotfiles distribution layer**: Hyprland, Waybar, Rofi, Kitty, Zsh, Tmux, Neovim, scripts, keybinds, and workflow customization
+
+The goal is simple: start from a fresh Arch installation and end up with a polished, consistent, production-ready Hyprland system without piecing everything together manually.
+
+## Project Scope
+
+HyprFlux is not just a theme pack and not just a dotfiles dump.
+
+It is designed as a complete operating system experience on top of Arch Linux, including:
+
+- a reproducible install flow
+- a branded boot pipeline from GRUB to Plymouth to SDDM
+- a maintained Hyprland desktop configuration
+- curated applications and developer tools
+- opinionated defaults with room for customization
+
+If you only want the configs, HyprFlux still works as a maintained dotfiles distribution.
+If you want the full platform, HyprFlux also delivers the surrounding operating-system-level setup that makes the desktop feel cohesive from power-on to login to daily use.
 
 ## Screenshots
 
@@ -45,182 +67,144 @@ HyprFlux is a meticulously crafted collection of configuration files designed to
 
 </div>
 
-### What Makes HyprFlux Special?
+## Features
 
-- **Beautiful Design**: Carefully curated themes and color schemes
-- **Performance Optimized**: Lightweight and fast configurations
-- **Fully Automated**: One-command installation with intelligent setup
-- **Developer Focused**: Optimized for productivity and development workflows
-- **Customizable**: Easy to modify and extend according to your preferences
+### Platform Features
+
+- **Automated install flow**: modular setup with sane defaults and minimal manual work
+- **Custom boot experience**: branded GRUB, Plymouth, and SDDM integration
+- **System theming**: GTK, icons, cursors, wallpapers, and desktop-wide visual consistency
+- **Hardware-aware setup**: monitor configuration, cursor setup, theme wiring, and post-install scripts
+
+### Desktop Features
+
+- **[Hyprland](https://hyprland.org/)** with maintained configs and workflow-oriented defaults
+- **[Waybar](https://github.com/Alexays/Waybar)** with curated layouts and custom modules
+- **[Rofi](https://github.com/davatorium/rofi)** for launching, switching, searching, and custom menus
+- **[SDDM](https://github.com/sddm/sddm)** with a HyprFlux-branded login theme
+
+### Developer Features
+
+- **[Neovim](https://neovim.io/)** with a separate maintained config
+- **[Tmux](https://github.com/tmux/tmux)** and **[Zsh](https://www.zsh.org/)** preconfigured for daily work
+- **AI tooling support** via AUR packages such as Claude Code, OpenAI Codex, Gemini CLI, and OpenCode
+- **Web apps and utilities** pre-integrated for modern workflows
+
+### Design Direction
+
+- **HyprFlux identity**: custom logos, boot branding, and consistent naming across the project
+- **Deep, modern aesthetic**: purple-led accent system, dark UI, and cohesive defaults
+- **Practical customization**: easy to swap wallpapers, layouts, profiles, themes, and scripts
 
 ## Requirements
 
 ### System Requirements
 
-- **Operating System**: Arch Linux (minimal installation recommended)
-- **Architecture**: x86_64
-- **Memory**: Minimum 4GB RAM (8GB+ recommended)
-- **Storage**: At least 10GB free space
-- **Network**: Active internet connection for package downloads
+- **Base**: Arch Linux
+- **Architecture**: `x86_64`
+- **Memory**: 4 GB minimum, 8 GB+ recommended
+- **Storage**: 10 GB minimum free space
+- **Network**: active internet connection for package installation
 
-### Prerequisites
+### Recommended Starting Point
 
-- Fresh Arch Linux installation with minimal profile
-- Basic system utilities (curl, git, sudo)
-- User account with sudo privileges
+- fresh Arch Linux installation
+- working internet connection
+- user account with `sudo` privileges
+- basic tools available: `curl`, `git`, `sudo`
 
 ## Quick Installation
 
-### One-Line Magic Command
+### One-Line Install
 
 ```bash
 sh <(curl -fsSL https://hyprflux.dev/install)
 ```
 
-> **Important**: This script will modify your system configuration. Make sure to backup any existing dotfiles before proceeding.
-> **Note**: HyprFlux will handle the rest.
+### What the installer does
 
-#### Authentication Notes
+- installs required packages and desktop components
+- applies HyprFlux dotfiles and user configuration
+- configures themes, cursors, wallpapers, and startup behavior
+- sets up branded boot and login pieces where enabled
+- prepares a usable Hyprland desktop without manual post-install patching
 
-The installer will request sudo password **2-3 times** during the process:
-
-- Once for initial system setup
-- Once for Zsh configuration
-
-- Additional prompts for optional packages
-
-## Features
-
-### Desktop Environment
-
-- **[Hyprland](https://hyprland.org/)**: Modern Wayland compositor with smooth animations
-- **[Waybar](https://github.com/Alexays/Waybar)**: Highly customizable status bar
-- **[Rofi](https://github.com/davatorium/rofi)**: Application launcher and window switcher
-- **[SDDM](https://github.com/sddm/sddm)**: Beautiful login manager with custom theme
-
-### Theming & Aesthetics
-
-- **[Material Design](https://material.io/design/)**: Deep Ocean color scheme
-- **[Papirus Icons](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)**: Comprehensive icon theme with cyan accents
-- **[Future Black Cursors](https://www.gnome-look.org/p/1713404/)**: Custom cursor theme
-- **[GTK](https://www.gtk.org/)** Integration: Seamless theme integration across applications
-
-### Development Tools
-
-- **[Neovim](https://neovim.io/)**: Fully configured with plugins and LSP support
-- **[Tmux](https://github.com/tmux/tmux)**: Terminal multiplexer with custom layouts
-- **[Zsh](https://www.zsh.org/)**: Enhanced shell with Oh My Zsh and custom theme
-- **[Git](https://git-scm.com/)** Integration: Pre-configured Git settings
-
-### Applications & Utilities
-
-- **[Thunar](https://docs.xfce.org/xfce/thunar/start)**: File manager with custom configurations
-- **[Kitty](https://sw.kovidgoyal.net/kitty/)**, **[Foot](https://codeberg.org/dnkl/foot)**, **[Alacritty](https://alacritty.org/)**: Terminal options
-- **[VLC](https://www.videolan.org/vlc/)**, **[OBS Studio](https://obsproject.com/)**: Media and content creation tools
-- **[Obsidian](https://obsidian.md/)**, **[VS Code](https://code.visualstudio.com/)**: Productivity applications
-
-### Web Applications
-
-Automated setup of Progressive Web Apps (PWAs) for:
-
-- [Netflix](https://www.netflix.com/), [YouTube](https://www.youtube.com/), [Spotify](https://open.spotify.com/)
-- [GitHub](https://github.com/), [Vercel](https://vercel.com/), [Figma](https://www.figma.com/)
-- [ChatGPT](https://chat.openai.com/), [Claude](https://claude.ai/), [Grok](https://x.ai/)
-- [WhatsApp](https://www.whatsapp.com/), [Discord](https://discord.com/), [Slack](https://slack.com/)
-- And many more...
+> **Important**
+> HyprFlux changes system and user configuration. Use it on a fresh Arch setup or make backups before applying it to an existing environment.
 
 ## Post-Installation
 
-### First Boot
-
 After installation completes:
 
-1. **Reboot your system** when prompted
-2. **Login through SDDM** with your user credentials
-3. **Enjoy your new desktop environment!**
+1. reboot the machine if the installer requests it
+2. log in through SDDM
+3. let the first-boot steps finish
+4. start customizing from the shipped configs and scripts
 
-### Customization
+Useful locations:
 
-- **Wallpapers**: Located in `~/Pictures/wallpapers/`
-- **Configurations**: Found in `~/.config/`
-- **Themes**: Available in `~/.themes/`
-- **Backup**: Original configs backed up to `~/dotfiles_backup/`
+- **Configs**: `~/.config/`
+- **Themes**: `~/.themes/`
+- **Icons and cursors**: `~/.icons/`
+- **Wallpapers**: `~/Pictures/wallpapers/`
+- **Backup**: `~/dotfiles_backup/`
+
+## Repository Layout
+
+```text
+HyprFlux/
+├── config/          # Project configuration files
+├── dotsSetup.sh     # Main modular dotfiles/platform setup entrypoint
+├── install.sh       # Primary install entrypoint
+├── lib/             # Shared install helpers
+├── modules/         # Modular install and setup steps
+├── review/          # Screenshots and branding assets for the repo
+├── scripts/         # Installer helper scripts and automation patches
+├── utilities/       # Themes, archives, logos, cursors, boot assets
+└── .config/         # Maintained HyprFlux desktop config layer
+```
+
+## Core Components
+
+- `install.sh` - top-level install entrypoint
+- `dotsSetup.sh` - orchestrates the modular setup flow
+- `modules/` - feature-specific setup units such as GTK, SDDM, Plymouth, cursors, AI tools, and monitors
+- `.config/hypr/` - Hyprland configs, scripts, monitor profiles, and user overrides
+- `.config/waybar/` - layouts, modules, and styling
+- `.config/rofi/` - launcher and menu themes
+- `.themes/HyprFlux-Compact/` - HyprFlux GTK theme
+- `utilities/` - bundled assets used during installation
 
 ## Documentation
 
-### Project Structure
-
-```
-HyprFlux/
-├── .config/                 # Application configurations
-│   ├── hypr/               # Hyprland configuration
-│   ├── waybar/             # Status bar configuration
-│   ├── rofi/               # Application launcher
-│   └── ...
-├── .themes/                # GTK themes
-├── wallpapers/             # Wallpaper collection
-├── utilities/              # Additional tools and themes
-├── install.sh              # Main installation script
-├── dotsSetup.sh           # Dotfiles setup script
-└── README.md              # This file
-```
-
-### Key Configuration Files
-
-- `~/.config/hypr/hyprland.conf` - Hyprland window manager settings
-- `~/.config/waybar/config` - Status bar configuration
-- `~/.config/rofi/config.rasi` - Application launcher styling
-- `~/.zshrc` - Zsh shell configuration
-- `~/.tmux.conf` - Terminal multiplexer settings
-
-### Getting Help
-
-- Check the [Issues](https://github.com/ahmad9059/HyprFlux/issues) page
-- Join our community discussions
-- Contact: [ahmad9059@example.com](mailto:ahmad9059@example.com)
+- Website: [https://hyprflux.dev](https://hyprflux.dev)
+- Installation docs: [https://hyprflux.dev/general/installation](https://hyprflux.dev/general/installation)
+- Issues: [https://github.com/ahmad9059/HyprFlux/issues](https://github.com/ahmad9059/HyprFlux/issues)
 
 ## Contributing
 
-We welcome contributions! Here's how you can help:
+Contributions are welcome.
 
-### Reporting Bugs
+You can help by:
 
-1. Check existing [issues](https://github.com/ahmad9059/HyprFlux/issues)
-2. Create a new issue with detailed information
-3. Include system information and error logs
+- reporting bugs with logs, screenshots, and reproduction steps
+- proposing platform improvements or desktop workflow ideas
+- improving installer reliability across more hardware setups
+- refining themes, layouts, branding, or documentation
+- sending pull requests for focused, well-tested changes
 
-### Suggesting Features
-
-1. Open a feature request issue
-2. Describe the feature and its benefits
-3. Provide implementation ideas if possible
-
-### Code Contributions
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and test thoroughly
-4. Submit a pull request with detailed description
-
-### Documentation
-
-- Improve README and documentation
-- Add configuration examples
-- Create tutorials and guides
+If you are making a larger change, open an issue first so the direction stays aligned with the project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
 
 ## Acknowledgments
 
-Special thanks to:
-
-- **<a href="https://github.com/JaKooLit">JaKooLit</a>** - For providing the initial setup and foundation that this project is based on
-- **Hyprland Community** - For the amazing compositor
-- **Arch Linux Team** - For the robust foundation
-- **Open Source Contributors** - For the tools and themes used
-- **Community Members** - For feedback and contributions
+- **[JaKooLit](https://github.com/JaKooLit)** - for the original foundation that HyprFlux grew from
+- **Hyprland community** - for the compositor and surrounding ecosystem
+- **Arch Linux** - for the base system that makes this possible
+- **Open source maintainers** - for the tools, themes, packages, and workflows HyprFlux builds on
 
 ## Project Stats
 
@@ -233,8 +217,8 @@ Special thanks to:
 
 <div align="center">
 
-**Made by [ahmad9059](https://github.com/ahmad9059)**
+**Built and maintained by [ahmad9059](https://github.com/ahmad9059)**
 
-**Star this repository if you found it helpful!**
+**If HyprFlux helped you, consider starring the repository.**
 
 </div>
