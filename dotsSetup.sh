@@ -70,6 +70,9 @@ ICON_DIR="${ICON_DIR:-$HOME/.local/share/icons/apps}"
 BROWSER="${BROWSER:-chromium}"
 WEBAPPS_CONF="${WEBAPPS_CONF:-$SCRIPT_DIR/config/webapps.conf}"
 
+# AI tools
+AI_TOOLS_AUR_PACKAGES="${AI_TOOLS_AUR_PACKAGES:-claude-code opencode-bin openai-codex-bin gemini-cli}"
+
 # Wallpapers
 WALLPAPER_REPO="${WALLPAPER_REPO:-https://github.com/ahmad9059/wallpapers-bank}"
 WALLPAPER_DIR="${WALLPAPER_DIR:-$HOME/Pictures/wallpapers}"
