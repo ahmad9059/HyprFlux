@@ -14,8 +14,8 @@
 
 <br/>
 
-_HyprFlux is a complete Arch Linux desktop platform built around Hyprland -_
-_live ISO, installer, boot experience, login flow, theming, tooling, and maintained dotfiles in one project._
+_HyprFlux is an Arch Linux desktop operating system built around Hyprland -_
+_live ISO, installer, boot experience, login flow, theming, tooling, and a maintained desktop environment in one project._
 
 <br/>
 
@@ -27,31 +27,28 @@ _live ISO, installer, boot experience, login flow, theming, tooling, and maintai
 
 ## Overview
 
-HyprFlux started as a dotfiles distribution and has grown into a complete Arch Linux desktop operating system project. It does not just drop configs into `~/.config` - it now spans a branded live ISO, a text-based installer, automated system provisioning, curated packages, GTK theming, boot theming, login theming, wallpapers, developer tooling, and maintained desktop defaults.
+HyprFlux is a complete Arch Linux desktop operating system project. It spans a branded live ISO, a text-based installer, automated system provisioning, curated packages, GTK theming, boot theming, login theming, wallpapers, developer tooling, and maintained desktop defaults.
 
-Today, HyprFlux covers three layers of the stack:
+Today, HyprFlux covers the full desktop stack:
 
 - the **live ISO layer**: a custom `archiso`-based image with HyprFlux branding, boot assets, and TUI installation flow
-- the **dotfiles distribution layer**: Hyprland, Waybar, Rofi, Kitty, Zsh, Tmux, Neovim, scripts, keybinds, and workflow customization
+- the **desktop environment layer**: Hyprland, Waybar, Rofi, Kitty, Zsh, Tmux, Neovim, scripts, keybinds, and workflow customization
 
 The goal is simple: start from a fresh Arch installation and end up with a polished, consistent, production-ready Hyprland system without piecing everything together manually.
 
 ## Project Scope
 
-HyprFlux is not just a theme pack and not just a dotfiles dump.
-
-It is designed as a complete operating system experience on top of Arch Linux, including:
+HyprFlux is designed as a complete operating system experience on top of Arch Linux, including:
 
 - a branded live ISO built on `archiso`
 - a custom TUI installer with automatic and manual partitioning flows
 - a reproducible install flow
 - a branded boot pipeline from GRUB to Plymouth to SDDM
-- a maintained Hyprland desktop configuration
+- a maintained Hyprland desktop environment
 - curated applications and developer tools
 - opinionated defaults with room for customization
 
-If you only want the configs, HyprFlux still works as a maintained dotfiles distribution.
-If you want the full platform, HyprFlux also delivers the surrounding operating-system-level setup that makes the desktop feel cohesive from power-on to login to daily use.
+The result is a cohesive operating-system-level experience that carries the same identity from power-on to login to daily use.
 
 ## HyprFlux ISO
 
@@ -68,7 +65,7 @@ Current ISO capabilities include:
 - online installation flow with target-system provisioning
 - QEMU test tooling and CI-based ISO builds
 
-In this repository, the ISO work currently lives under `references/Hyprflux-ISO/` as a companion project reference while the main HyprFlux repository continues to own the desktop stack, assets, modules, and dotfiles layer.
+In this repository, the ISO work currently lives under `references/Hyprflux-ISO/` as a companion project reference while the main HyprFlux repository continues to own the desktop stack, assets, modules, and platform layer.
 
 ## Screenshots
 
@@ -152,7 +149,7 @@ HyprFlux currently supports two platform entry points:
 ### What the installer does
 
 - installs required packages and desktop components
-- applies HyprFlux dotfiles and user configuration
+- applies HyprFlux desktop configuration and user environment
 - configures themes, cursors, wallpapers, and startup behavior
 - sets up branded boot and login pieces where enabled
 - prepares a usable Hyprland desktop without manual post-install patching
@@ -182,7 +179,7 @@ Useful locations:
 ```text
 HyprFlux/
 ├── config/          # Project configuration files
-├── dotsSetup.sh     # Main modular dotfiles/platform setup entrypoint
+├── dotsSetup.sh     # Main modular platform setup entrypoint
 ├── install.sh       # Primary install entrypoint
 ├── lib/             # Shared install helpers
 ├── modules/         # Modular install and setup steps
@@ -190,7 +187,7 @@ HyprFlux/
 ├── references/      # Companion and upstream reference repositories, including ISO work
 ├── scripts/         # Installer helper scripts and automation patches
 ├── utilities/       # Themes, archives, logos, cursors, boot assets
-└── .config/         # Maintained HyprFlux desktop config layer
+└── .config/         # Maintained HyprFlux desktop environment files
 ```
 
 ## Core Components
