@@ -73,13 +73,14 @@ In this repository, the ISO work currently lives under `references/Hyprflux-ISO/
 
 ### Desktop Overview
 
-![1](review/0.webp)
-![10](review/1.webp)
+![3](review/3.webp)
+![4](review/4.webp)
 
-| ![2](review/2.webp) | ![3](review/3.webp) |
-| ------------------- | ------------------- |
-| ![4](review/4.webp) | ![5](review/5.webp) |
-| ![6](review/6.webp) | ![7](review/7.webp) |
+| ![0-1](review/0-1.webp) | ![1](review/1.webp) |
+| ----------------------- | ------------------- |
+| ![2](review/2.webp)     | ![5](review/3.webp) |
+| ![6](review/4.webp)     | ![6](review/7.webp) |
+| ![8](review/8.webp)     | ![6](review/9.webp) |
 
 </div>
 
