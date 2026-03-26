@@ -1,9 +1,9 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
-# Sync current swww wallpaper to rofi preview and wallpaper_effects cache
+# Sync current awww wallpaper to rofi preview and wallpaper_effects cache
 
-# Path to swww cache
-cache_dir="$HOME/.cache/swww/"
+# Path to awww cache
+cache_dir="$HOME/.cache/awww/"
 
 # Get current focused monitor
 current_monitor=$(hyprctl monitors | awk '/^Monitor/{name=$2} /focused: yes/{print name}')
@@ -12,7 +12,7 @@ current_monitor=$(hyprctl monitors | awk '/^Monitor/{name=$2} /focused: yes/{pri
 cache_file="${cache_dir}${current_monitor}"
 
 if [ -f "$cache_file" ]; then
-    # Read the wallpaper path from swww's cache
+    # Read the wallpaper path from awww's cache
     wallpaper_path=$(grep -v 'Lanczos3' "$cache_file" | head -n 1)
 
     # Symlink wallpaper so rofi can use it as a preview

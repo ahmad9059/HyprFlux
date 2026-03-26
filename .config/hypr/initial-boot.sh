@@ -17,7 +17,7 @@ gtk_theme="Material-DeepOcean-BL"
 icon_theme="Papirus-Dark"
 cursor_theme="Moga-Cursor"
 
-swww="swww img"
+awww="awww img"
 effect="--transition-bezier .43,1.19,1,.4 --transition-fps 30 --transition-type grow --transition-pos 0.925,0.977 --transition-duration 2"
 
 # Check if a marker file exists.
@@ -25,8 +25,8 @@ if [ ! -f "$HOME/.config/hypr/.initial_startup_done" ]; then
   sleep 1
   # Initialize wallpaper
   if [ -f "$wallpaper" ]; then
-    swww query || swww-daemon && $swww $wallpaper $effect
-    "$scriptsDir/WallpaperSwww.sh" >/dev/null 2>&1 &
+    awww query || awww-daemon && $awww $wallpaper $effect
+    "$scriptsDir/WallpaperAwww.sh" >/dev/null 2>&1 &
   fi
 
   # initiate GTK dark mode and apply icon and cursor theme
