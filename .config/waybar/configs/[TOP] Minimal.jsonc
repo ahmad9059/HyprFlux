@@ -89,7 +89,7 @@
     "exec": "echo ; echo 󰆊 switch wallpaper",
     "on-click": "$HOME/.config/hypr/UserScripts/WallpaperRandom.sh",
     "on-click-right": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
-    "on-click-middle": "sleep 0.1 && swwwallselect.sh",
+    "on-click-middle": "sleep 0.1 && awwwallselect.sh",
     "interval": 86400, // once every day
     "tooltip": true
   },
