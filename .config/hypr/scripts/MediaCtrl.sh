@@ -30,6 +30,7 @@ stop_playback() {
 
 # Display notification with song information
 show_music_notification() {
+    sleep 0.01
     status=$(playerctl status)
     if [[ "$status" == "Playing" ]]; then
         song_title=$(playerctl metadata title)
