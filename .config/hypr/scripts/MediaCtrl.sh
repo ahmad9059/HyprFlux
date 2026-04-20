@@ -30,6 +30,13 @@ stop_playback() {
 
 # Display notification with song information
 show_music_notification() {
+    local prev_title
+    prev_title=$(playerctl metadata title 2>/dev/null)
+    local attempts=0
+    while [[ $(playerctl metadata title 2>/dev/null) == "$prev_title" && $attempts -lt 20 && $(playerctl status 2>/dev/null) == "$prev_status" ]]]; do
+        sleep 0.05
+        (( attempts++ ))
+    done
     status=$(playerctl status)
     if [[ "$status" == "Playing" ]]; then
         song_title=$(playerctl metadata title)
