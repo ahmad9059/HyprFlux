@@ -71,7 +71,7 @@ BROWSER="${BROWSER:-chromium}"
 WEBAPPS_CONF="${WEBAPPS_CONF:-$SCRIPT_DIR/config/webapps.conf}"
 
 # AI tools
-AI_TOOLS_AUR_PACKAGES="${AI_TOOLS_AUR_PACKAGES:-claude-code opencode-bin openai-codex-bin gemini-cli}"
+AI_TOOLS_AUR_PACKAGES="${AI_TOOLS_AUR_PACKAGES:-claude-code opencode-bin openai-codex-bin }"
 
 # Wallpapers
 WALLPAPER_REPO="${WALLPAPER_REPO:-https://github.com/ahmad9059/wallpapers-bank}"

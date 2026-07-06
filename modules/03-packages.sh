@@ -5,7 +5,6 @@
 should_skip "packages" && return 0
 
 # ====== Required pacman packages ======
-# BUG FIX: 'nvim' is not a valid pacman package name; it's 'neovim'
 REQUIRED_PACKAGES=(
   foot lsd bat neovim firefox tmux yazi zoxide
   qt6-5compat chromium npm plymouth rclone lazygit github-cli
