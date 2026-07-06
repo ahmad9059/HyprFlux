@@ -9,7 +9,7 @@ PACMAN_PACKAGES=(
   foot alacritty lsd bat tmux neovim tldr
   obs-studio vlc yazi luacheck luarocks hyprpicker
   obsidian github-cli noto-fonts-emoji
-  ttf-noto-nerd noto-fonts proton-vpn-gtk-app
+  ttf-noto-nerd noto-fonts
 )
 
 install_optional_pacman "${PACMAN_PACKAGES[@]}"
@@ -17,7 +17,7 @@ install_optional_pacman "${PACMAN_PACKAGES[@]}"
 # ====== AUR optional packages ======
 YAY_PACKAGES=(
   visual-studio-code-bin 64gram-desktop-bin vesktop
-  foliate stacer-bin localsend-bin
+  foliate localsend-bin tuxedo-bin
 )
 
 install_optional_yay "${YAY_PACKAGES[@]}"
