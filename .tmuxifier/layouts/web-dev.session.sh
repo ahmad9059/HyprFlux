@@ -23,10 +23,14 @@ if initialize_session "${SESSION_NAME:-VieroMind}"; then
   new_window "Yazi"
   run_cmd "cd \"$session_root\" && yazi"
 
+  new_window "Tuxedo"
+  run_cmd "cd \"$session_root\" && tuxedo ~/Documents/tuxedo/todo.txt"
+
   # new_window "Music"
   # run_cmd "cd \"$session_root\" && rmpc"
 
-  new_window "Server"
+  tmuxifier-tmux new-window -t "$session:9" -n "Server"
+  select_window 9
   run_cmd "cd \"$session_root\" && (pnpm install && pnpm prisma generate && pnpm run dev)"
 
   # tmuxifier-tmux new-window -t "$session:10" -n "Terminal"
