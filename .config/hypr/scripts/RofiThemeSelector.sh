@@ -7,7 +7,6 @@ ROFI_THEMES_DIR_CONFIG="$HOME/.config/rofi/themes"
 ROFI_THEMES_DIR_LOCAL="$HOME/.local/share/rofi/themes"
 ROFI_CONFIG_FILE="$HOME/.config/rofi/config.rasi"
 ROFI_THEME_FOR_THIS_SCRIPT="$HOME/.config/rofi/config-rofi-theme.rasi" # A separate rofi theme for the picker itself
-IDIR="$HOME/.config/swaync/images"                                     # For notifications
 
 # --- Helper Functions ---
 
@@ -27,7 +26,7 @@ apply_rofi_theme_to_config() {
   elif [[ -f "$ROFI_THEMES_DIR_LOCAL/$theme_name_to_apply" ]]; then
     theme_path="$ROFI_THEMES_DIR_LOCAL/$theme_name_to_apply"
   else
-    notify_user "$IDIR/error.png" "Error" "Theme file not found: $theme_name_to_apply"
+    notify_user "dialog-error" "Error" "Theme file not found: $theme_name_to_apply"
     return 1
   fi
 
@@ -66,12 +65,12 @@ apply_rofi_theme_to_config() {
 
 # Check for required directories and files
 if [ ! -d "$ROFI_THEMES_DIR_CONFIG" ] && [ ! -d "$ROFI_THEMES_DIR_LOCAL" ]; then
-  notify_user "$IDIR/error.png" "E-R-R-O-R" "No Rofi themes directory found."
+  notify_user "dialog-error" "E-R-R-O-R" "No Rofi themes directory found."
   exit 1
 fi
 
 if [ ! -f "$ROFI_CONFIG_FILE" ]; then
-  notify_user "$IDIR/error.png" "E-R-R-O-R" "Rofi config file not found: $ROFI_CONFIG_FILE"
+  notify_user "dialog-error" "E-R-R-O-R" "Rofi config file not found: $ROFI_CONFIG_FILE"
   exit 1
 fi
 
@@ -85,7 +84,7 @@ mapfile -t available_theme_names < <((
 ) | sort -V -u)
 
 if [ ${#available_theme_names[@]} -eq 0 ]; then
-  notify_user "$IDIR/error.png" "No Rofi Themes" "No .rasi files found in theme directories."
+  notify_user "dialog-error" "No Rofi Themes" "No .rasi files found in theme directories."
   exit 1
 fi
 
@@ -109,7 +108,7 @@ while true; do
   # Apply the theme for preview
   if ! apply_rofi_theme_to_config "$theme_to_preview_now"; then
     echo "$original_rofi_config_content_backup" >"$ROFI_CONFIG_FILE"
-    notify_user "$IDIR/error.png" "Preview Error" "Failed to apply $theme_to_preview_now. Reverted."
+    notify_user "dialog-error" "Preview Error" "Failed to apply $theme_to_preview_now. Reverted."
     exit 1
   fi
 
@@ -138,14 +137,14 @@ while true; do
       current_selection_index="$chosen_index_from_rofi"
     fi
   elif [ $rofi_exit_code -eq 1 ]; then # Escape
-    notify_user "$IDIR/note.png" "Rofi Theme" "Selection cancelled. Reverting to original theme."
+    notify_user "text-x-generic" "Rofi Theme" "Selection cancelled. Reverting to original theme."
     echo "$original_rofi_config_content_backup" >"$ROFI_CONFIG_FILE"
     break
   elif [ $rofi_exit_code -eq 10 ]; then # Custom bind 1 (Ctrl+S)
-    notify_user "$IDIR/ja.png" "Rofi Theme Applied" "$(basename "$theme_to_preview_now" .rasi)"
+    notify_user "dialog-information" "Rofi Theme Applied" "$(basename "$theme_to_preview_now" .rasi)"
     break
   else # Error or unexpected exit code
-    notify_user "$IDIR/error.png" "Rofi Error" "Unexpected Rofi exit ($rofi_exit_code). Reverting."
+    notify_user "dialog-error" "Rofi Error" "Unexpected Rofi exit ($rofi_exit_code). Reverting."
     echo "$original_rofi_config_content_backup" >"$ROFI_CONFIG_FILE"
     break
   fi

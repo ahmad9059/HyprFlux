@@ -9,7 +9,7 @@ set -euo pipefail
 
 COURSES_ROOT="/media/Media/Courses"
 NOTES_CMD="$HOME/.config/hypr/UserScripts/notes-ai"
-NOTIF_ICON="$HOME/.config/swaync/images/ja.png"
+NOTIF_ICON="dialog-information"
 LOG_FILE="/tmp/notes-ai-last.log"
 STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/notes-ai/selection"
 

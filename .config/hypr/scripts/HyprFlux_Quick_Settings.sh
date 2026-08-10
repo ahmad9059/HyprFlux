@@ -21,7 +21,6 @@ configs="$HOME/.config/hypr/configs"
 UserConfigs="$HOME/.config/hypr/UserConfigs"
 rofi_theme="$HOME/.config/rofi/config-edit.rasi"
 # msg=' ⁉️ Choose what to do ⁉️'
-iDIR="$HOME/.config/swaync/images"
 scriptsDir="$HOME/.config/hypr/scripts"
 UserScripts="$HOME/.config/hypr/UserScripts"
 
@@ -72,35 +71,35 @@ main() {
   "Choose Kitty Terminal Theme") $scriptsDir/Kitty_themes.sh ;;
   "Configure Monitors (nwg-displays)")
     if ! command -v nwg-displays &>/dev/null; then
-      notify-send -i "$iDIR/error.png" "E-R-R-O-R" "Install nwg-displays first"
+      notify-send -i "dialog-error" "E-R-R-O-R" "Install nwg-displays first"
       exit 1
     fi
     nwg-displays
     ;;
   "Configure Workspace Rules (nwg-displays)")
     if ! command -v nwg-displays &>/dev/null; then
-      notify-send -i "$iDIR/error.png" "E-R-R-O-R" "Install nwg-displays first"
+      notify-send -i "dialog-error" "E-R-R-O-R" "Install nwg-displays first"
       exit 1
     fi
     nwg-displays
     ;;
   "GTK Settings (nwg-look)")
     if ! command -v nwg-look &>/dev/null; then
-      notify-send -i "$iDIR/error.png" "E-R-R-O-R" "Install nwg-look first"
+      notify-send -i "dialog-error" "E-R-R-O-R" "Install nwg-look first"
       exit 1
     fi
     nwg-look
     ;;
   "QT Apps Settings (qt6ct)")
     if ! command -v qt6ct &>/dev/null; then
-      notify-send -i "$iDIR/error.png" "E-R-R-O-R" "Install qt6ct first"
+      notify-send -i "dialog-error" "E-R-R-O-R" "Install qt6ct first"
       exit 1
     fi
     qt6ct
     ;;
   "QT Apps Settings (qt5ct)")
     if ! command -v qt5ct &>/dev/null; then
-      notify-send -i "$iDIR/error.png" "E-R-R-O-R" "Install qt5ct first"
+      notify-send -i "dialog-error" "E-R-R-O-R" "Install qt5ct first"
       exit 1
     fi
     qt5ct

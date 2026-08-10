@@ -11,8 +11,6 @@ focused_monitor=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
 rofi_theme="$HOME/.config/rofi/config-wallpaper-effect.rasi"
 
 # Directory for swaync
-iDIR="$HOME/.config/swaync/images"
-iDIRi="$HOME/.config/swaync/icons"
 
 # awww transition config
 FPS=60
@@ -51,7 +49,7 @@ no-effects() {
 	sleep 2
 	"$SCRIPTSDIR/Refresh.sh"
 
-    notify-send -u low -i "$iDIR/ja.png" "No wallpaper" "effects applied"
+    notify-send -u low -i "dialog-information" "No wallpaper" "effects applied"
     # copying wallpaper for rofi menu
     cp "$wallpaper_current" "$wallpaper_output"
 }
@@ -72,7 +70,7 @@ main() {
             no-effects
         elif [[ "${effects[$choice]+exists}" ]]; then
             # Apply selected effect
-            notify-send -u normal -i "$iDIR/ja.png"  "Applying:" "$choice effects"
+            notify-send -u normal -i "dialog-information"  "Applying:" "$choice effects"
             eval "${effects[$choice]}"
             
             # intial kill process
@@ -87,7 +85,7 @@ main() {
   
             # Refresh rofi, waybar
             "${SCRIPTSDIR}/Refresh.sh"
-            notify-send -u low -i "$iDIR/ja.png" "$choice" "effects applied"
+            notify-send -u low -i "dialog-information" "$choice" "effects applied"
         else
             echo "Effect '$choice' not recognized."
         fi
@@ -123,7 +121,7 @@ if [[ -n "$choice" ]]; then
 
     # Check if terminal exists
     if ! command -v "$terminal" &>/dev/null; then
-    notify-send -i "$iDIR/ja.png" "Missing $terminal" "Install $terminal to enable setting of wallpaper background"
+    notify-send -i "dialog-information" "Missing $terminal" "Install $terminal to enable setting of wallpaper background"
     exit 1
     fi
 

@@ -11,7 +11,7 @@ hypr_config_path="$HOME/.config/hypr"
 swaync_style="$HOME/.config/swaync/style.css"
 ags_style="$HOME/.config/ags/user/style.css"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
-notif="$HOME/.config/swaync/images/bell.png"
+notif="preferences-system-notifications"
 hyprflux_rofi="$HOME/.config/rofi/wallust/hyprflux-colors.rasi"
 
 kitty_conf="$HOME/.config/kitty/kitty.conf"

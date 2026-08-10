@@ -157,6 +157,22 @@ self-contained generated `@define-color` block** directly into both files (marke
 idempotent). All values still come from `hyprflux-colors.conf`. Verified: single block,
 all vars defined, swaync reloads clean, journal has zero CSS errors.
 
+### Notification icons → Papirus themed (2026-08-10)
+
+Per user request: replaced all custom notification icon images (`swaync/images/*.png`,
+`swaync/icons/*.png`) used by scripts with **Papirus icon names** (resolved via the installed
+Papirus-Dark theme through GTK).
+
+Mapping: ja.png→dialog-information, error.png→dialog-error, note.png→text-x-generic,
+bell.png→preferences-system-notifications, music.png→audio-x-generic, volume-*.png→
+audio-volume-{high,medium,low,muted}, microphone*.png→audio-input-microphone(-muted),
+brightness-*.png→display-brightness, timer.png→alarm-clock, picture.png→image-x-generic.
+
+27 scripts + `hypridle.conf` updated; dead `iDIR`/`notif`/`IDIR`/`iDoR` definitions removed.
+Verified: zero `swaync/images|icons` references in the active config (only `hypr_old` archive +
+chromium cache); all scripts pass `bash -n` (RofiEmoji excluded — self-extracting data);
+test notifications sent with themed icons.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

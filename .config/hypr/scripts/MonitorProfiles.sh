@@ -12,7 +12,6 @@ if pidof rofi > /dev/null; then
 fi
 
 # Variables
-iDIR="$HOME/.config/swaync/images"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
 monitor_dir="$HOME/.config/hypr/Monitor_Profiles"
 target_conf="$HOME/.config/hypr/monitors.conf"
@@ -47,11 +46,11 @@ if [[ -n "$chosen_file" ]]; then
         fi
     elif [[ -f "$monitor_dir/$chosen_file.conf" ]]; then
         # legacy .conf-only profile: warn that it cannot apply to the Lua session
-        notify-send -u normal -i "$iDIR/error.png" "$chosen_file" "Legacy .conf profile — create a .lua profile (nwg-displays) for it to apply"
+        notify-send -u normal -i "dialog-error" "$chosen_file" "Legacy .conf profile — create a .lua profile (nwg-displays) for it to apply"
         cp "$monitor_dir/$chosen_file.conf" "$target_conf"
     fi
 
-    notify-send -u low -i "$iDIR/ja.png" "$chosen_file" "Monitor Profile Loaded"
+    notify-send -u low -i "dialog-information" "$chosen_file" "Monitor Profile Loaded"
 fi
 
 sleep 1

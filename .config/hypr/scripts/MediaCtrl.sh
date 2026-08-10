@@ -2,7 +2,7 @@
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Playerctl
 
-music_icon="$HOME/.config/swaync/icons/music.png"
+music_icon="audio-x-generic"
 
 # Play the next track
 play_next() {

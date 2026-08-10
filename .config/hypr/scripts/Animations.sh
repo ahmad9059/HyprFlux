@@ -9,7 +9,6 @@ if pidof rofi >/dev/null; then
 fi
 
 # Variables
-iDIR="$HOME/.config/swaync/images"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
 animations_dir="$HOME/.config/hypr/animations"
 UserConfigs="$HOME/.config/hypr/UserConfigs"
@@ -27,7 +26,7 @@ if [[ -n "$chosen_file" ]]; then
   cp "$full_path" "$UserConfigs/user-animations.lua"
   # reload the Lua config so the new animations module applies
   hyprctl reload
-  notify-send -u low -i "$iDIR/ja.png" "$chosen_file" "Hyprland Animation Loaded"
+  notify-send -u low -i "dialog-information" "$chosen_file" "Hyprland Animation Loaded"
 fi
 
 sleep 1

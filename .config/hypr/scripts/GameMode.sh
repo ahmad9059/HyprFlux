@@ -5,7 +5,7 @@
 # hyprland.lua (this is what the original script's trailing `hyprctl reload`
 # line was meant to do but never reached).
 
-notif="$HOME/.config/swaync/images/ja.png"
+notif="dialog-information"
 SCRIPTSDIR="$HOME/.config/hypr/scripts"
 
 HYPRGAMEMODE=$(hyprctl getoption animations:enabled | awk 'NR==1{print $2}')

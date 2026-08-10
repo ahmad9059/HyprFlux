@@ -4,7 +4,7 @@
 
 layout_file="$HOME/.cache/kb_layout"
 settings_file="$HOME/.config/hypr/UserConfigs/user-settings.lua"
-notif_icon="$HOME/.config/swaync/images/ja.png"
+notif_icon="dialog-information"
 
 # extract kb_layout from the Lua settings module (Hyprland >= 0.55)
 get_kb_layout() {

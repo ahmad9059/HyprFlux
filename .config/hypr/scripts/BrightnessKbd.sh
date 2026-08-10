@@ -2,7 +2,6 @@
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Script for keyboard backlights (if supported) using brightnessctl
 
-iDIR="$HOME/.config/swaync/icons"
 
 # Get keyboard brightness
 get_kbd_backlight() {
@@ -13,15 +12,15 @@ get_kbd_backlight() {
 get_icon() {
 	current=$(get_kbd_backlight | sed 's/%//')
 	if   [ "$current" -le "20" ]; then
-		icon="$iDIR/brightness-20.png"
+		icon="display-brightness"
 	elif [ "$current" -le "40" ]; then
-		icon="$iDIR/brightness-40.png"
+		icon="display-brightness"
 	elif [ "$current" -le "60" ]; then
-		icon="$iDIR/brightness-60.png"
+		icon="display-brightness"
 	elif [ "$current" -le "80" ]; then
-		icon="$iDIR/brightness-80.png"
+		icon="display-brightness"
 	else
-		icon="$iDIR/brightness-100.png"
+		icon="display-brightness"
 	fi
 }
 # Notify

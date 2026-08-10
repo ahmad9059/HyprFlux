@@ -5,13 +5,12 @@
 
 # Local Paths
 local_dir="$HOME/.config/hypr"
-iDIR="$HOME/.config/swaync/images/"
 local_version=$(ls $local_dir/v* 2>/dev/null | sort -V | tail -n 1 | sed 's/.*v\(.*\)/\1/')
 HyprFlux_Dots_DIR="$HOME/HyprFlux"
 
 # exit if cannot find local version
 if [ -z "$local_version" ]; then
-  notify-send -i "$iDIR/error.png" "ERROR" "Unable to find HyprFlux dots version. exiting...."
+  notify-send -i "dialog-error" "ERROR" "Unable to find HyprFlux dots version. exiting...."
   exit 1
 fi
 
@@ -29,7 +28,7 @@ fi
 
 # Compare local and github versions
 if [ "$(echo -e "$github_version\n$local_version" | sort -V | head -n 1)" = "$github_version" ]; then
-  notify-send -i "$iDIR/note.png" "HyprFlux:" "No update available"
+  notify-send -i "text-x-generic" "HyprFlux:" "No update available"
   exit 0
 else
   # update available
@@ -42,7 +41,7 @@ else
     "action1")
       if [ -d $HyprFlux_Dots_DIR ]; then
         if ! command -v kitty &> /dev/null; then
-          notify-send -i "$iDIR/error.png" "E-R-R-O-R" "Kitty terminal not found. Please install Kitty terminal."
+          notify-send -i "dialog-error" "E-R-R-O-R" "Kitty terminal not found. Please install Kitty terminal."
           exit 1
         fi
         kitty -e bash -c "
@@ -50,18 +49,18 @@ else
           git stash &&
           git pull &&
           bash dotsSetup.sh &&
-          notify-send -u critical -i '$iDIR/ja.png' 'Update Completed:' 'Kindly log out and relogin to take effect'
+          notify-send -u critical -i 'dialog-information' 'Update Completed:' 'Kindly log out and relogin to take effect'
         "
       else
         if ! command -v kitty &> /dev/null; then
-          notify-send -i "$iDIR/error.png" "E-R-R-O-R" "Kitty terminal not found. Please install Kitty terminal."
+          notify-send -i "dialog-error" "E-R-R-O-R" "Kitty terminal not found. Please install Kitty terminal."
           exit 1
         fi
         kitty -e bash -c "
           git clone --depth=1 https://github.com/ahmad9059/HyprFlux.git $HyprFlux_Dots_DIR &&
           cd $HyprFlux_Dots_DIR &&
           bash dotsSetup.sh &&
-          notify-send -u critical -i '$iDIR/ja.png' 'Update Completed:' 'Kindly log out and relogin to take effect'
+          notify-send -u critical -i 'dialog-information' 'Update Completed:' 'Kindly log out and relogin to take effect'
         "
       fi
       ;;

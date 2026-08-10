@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 # Notification icon
-NOTIF_ICON="$HOME/.config/swaync/images/ja.png"
+NOTIF_ICON="dialog-information"
 
 # Error handler
 on_error() {

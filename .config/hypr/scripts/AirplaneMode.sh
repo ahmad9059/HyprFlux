@@ -2,7 +2,7 @@
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Airplane Mode. Turning on or off all wifi using rfkill.
 
-notif="$HOME/.config/swaync/images/ja.png"
+notif="dialog-information"
 
 # Check if any wireless device is blocked
 wifi_blocked=$(rfkill list wifi | grep -o "Soft blocked: yes")

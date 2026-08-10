@@ -3,7 +3,7 @@ set -e
 
 # Paths
 REPO_DIR="$HOME/HyprFlux"
-NOTIF_ICON="$HOME/.config/swaync/images/ja.png"
+NOTIF_ICON="dialog-information"
 INITIAL_BOOT_FILE="$REPO_DIR/.config/hypr/.initial_startup_done"
 
 # Send notification

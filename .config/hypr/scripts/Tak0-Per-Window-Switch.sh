@@ -23,7 +23,7 @@
 
 MAP_FILE="$HOME/.cache/kb_layout_per_window"
 CFG_FILE="$HOME/.config/hypr/UserConfigs/user-settings.lua"
-ICON="$HOME/.config/swaync/images/ja.png"
+ICON="dialog-information"
 SCRIPT_NAME="$(basename "$0")"
 
 # Ensure map file exists

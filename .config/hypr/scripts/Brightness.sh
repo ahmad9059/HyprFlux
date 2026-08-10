@@ -2,7 +2,6 @@
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Script for Monitor backlights (if supported) using brightnessctl
 
-iDIR="$HOME/.config/swaync/icons"
 notification_timeout=1000
 step=10  # INCREASE/DECREASE BY THIS VALUE
 
@@ -18,7 +17,7 @@ get_icon_path() {
     if (( level > 100 )); then
         level=100
     fi
-    echo "$iDIR/brightness-${level}.png"
+    echo "display-brightness"
 }
 
 # Send notification
