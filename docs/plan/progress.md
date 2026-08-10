@@ -110,6 +110,18 @@ shebangs, exec bits, every referenced path):
 | Python scripts | ✓ `Weather.py` compiles |
 | Exec bits | ✓ all set |
 
+## Decision (2026-08-10) — remaining .conf files
+
+Confirmed with the user: the 5 `.conf` files left in the active `hypr` folder are **required and
+must NOT be deleted** — they belong to hyprlang-only tools (officially never converted to Lua):
+
+- `hyprlock.conf`, `hyprlock-1080p.conf` → hyprlock (lock screen)
+- `hypridle.conf` → hypridle (idle daemon)
+- `application-style.conf` → hyprland-qt-support QML style
+- `hyprflux-colors/hyprflux-colors.conf` → palette sourced by `hyprlock-1080p.conf`
+
+All obsolete compositor `.conf` files are archived in `.config/hypr_old/` (both repo and live).
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
