@@ -96,38 +96,6 @@ menu() {
   done
 }
 
-# # Offer SDDM HyprFlux Wallpaper Option (only for non-video wallpapers)
-# set_sddm_wallpaper() {
-#   sleep 1
-#   sddm_simple="/usr/share/sddm/themes/HyprFlux-sddm-theme"
-#
-#   if [ -d "$sddm_simple" ]; then
-#
-#     # Check if yad is running to avoid multiple notifications
-#     if pidof yad >/dev/null; then
-#       killall yad
-#     fi
-#
-#     if yad --info --text="Set current wallpaper as SDDM background?\n\nNOTE: This only applies to HyprFlux SDDM Theme" \
-#       --text-align=left \
-#       --title="SDDM Background" \
-#       --timeout=5 \
-#       --timeout-indicator=right \
-#       --button="yes:0" \
-#       --button="no:1"; then
-#
-#       # Check if terminal exists
-#       if ! command -v "$terminal" &>/dev/null; then
-#         notify-send -i "dialog-error" "Missing $terminal" "Install $terminal to enable setting of wallpaper background"
-#         exit 1
-#       fi
-#
-# 	  exec $SCRIPTSDIR/sddm_wallpaper.sh --normal
-#
-#     fi
-#   fi
-# }
-
 modify_startup_config() {
   local selected_file="$1"
   local startup_config="$HOME/.config/hypr/UserConfigs/startup-apps.lua"
@@ -170,8 +138,6 @@ apply_image_wallpaper() {
   # sleep 2
   # "$SCRIPTSDIR/Refresh.sh"
   # sleep 1
-
-  set_sddm_wallpaper
 }
 
 apply_video_wallpaper() {

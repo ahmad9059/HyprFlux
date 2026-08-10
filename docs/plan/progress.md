@@ -276,6 +276,14 @@ Per user request, removed (repo + live, all references cleaned so nothing breaks
 Verified: zero references in repo + live; `config ok`; scripts syntax OK; waybar running.
 NOTE: Dark/Light wallpaper dirs (`Pictures/wallpapers/Dynamic-Wallpapers/*`) left untouched.
 
+### Removed sddm_wallpaper.sh.bak + Jellyfin.sh (2026-08-10)
+
+- `scripts/sddm_wallpaper.sh.bak` — dead backup; also removed the SDDM "offer" tail blocks in
+  `WallpaperEffects.sh` (called the missing `sddm_wallpaper.sh --effects`) and the
+  `set_sddm_wallpaper` call + commented function in `WallpaperSelect.sh`
+- `UserScripts/Jellyfin.sh` — `SUPER+SHIFT+J` bind removed from user-keybinds.lua
+- Verified: zero refs in repo + live; scripts/Lua syntax OK; `config ok`; repo↔live consistent
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
