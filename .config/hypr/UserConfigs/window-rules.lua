@@ -659,7 +659,7 @@ hl.window_rule({
 -- reports "... - Google Chrome for Testing" in its title.
 hl.window_rule({
     name = "windowrule-97",
-    workspace = "1 silent",
+    workspace = "6 silent",
     match = { class = "^(chromium-browser)$", title = ".*Chrome for Testing.*" },
 })
 
