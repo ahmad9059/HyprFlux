@@ -225,6 +225,25 @@ binary contains zero `hl.dsp` strings.
 `sudo pacman -S waybar-git` → restart waybar. No config workaround exists for 0.15.0 clicks.
 (The on-click/scroll Lua-form config stays — correct for the fixed versions.)
 
+✅ **CONFIRMED FIXED (2026-08-10):** after installing `waybar-git`, workspace clicks work.
+
+### ags / quickshell fully removed (2026-08-10)
+
+Per user request, quickshell (and ags remnants) removed entirely:
+
+- **Configs**: `.config/quickshell/` deleted (repo + live); no ags config existed
+- **Hyprland Lua**: `startup-apps.lua` (`hl.exec_cmd("qs")`), `user-keybinds.lua` (SUPER+A
+  overview bind incl. commented ags variant), `window-rules.lua` (quickshell:overview layerrule)
+- **Scripts**: Refresh.sh/RefreshNoWaybar.sh (ags/qs restart blocks + pid lists), KeyHints.sh
+  (overview line), DarkLight.sh (whole ags color block + ags in pid lists)
+- **Colors**: `$qs_*` section removed from hyprflux-colors.conf; quickshell sections removed
+  from sync-colors.sh (qml_color.json + Appearance/widgets patches); regenerated
+- **Install pipeline**: `modules/15-quickshell.sh` deleted; quickshell/ags refs removed from
+  `scripts/initial.sh`, `scripts/bypass_dialogs.sh`, `scripts/replace_reads.sh`
+- **Live**: `qs` process stopped, `~/.config/quickshell` deleted, config reloaded
+- **Package** (user): `sudo pacman -Rns quickshell`
+- Verified: zero quickshell/ags/qs references in repo + live; `config ok`; repo↔live consistent
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

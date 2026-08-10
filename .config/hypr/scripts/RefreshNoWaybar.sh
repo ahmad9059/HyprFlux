@@ -24,12 +24,6 @@ for _prs in "${_ps[@]}"; do
     fi
 done
 
-# quit ags & relaunch ags
-#ags -q && ags &
-
-# quit quickshell & relaunch quickshell
-#pkill qs && qs &
-
 # Wallust refresh
 ${SCRIPTSDIR}/WallpaperSwww.sh &
 

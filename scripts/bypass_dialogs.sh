@@ -104,7 +104,7 @@ sed -i '/^# Initialize the options array for whiptail checklist$/,/^done$/c\
 echo "${INFO} [HyprFlux] Using pre-configured installation options..." | tee -a "$LOG"\
 \
 # Pre-selected options for HyprFlux\
-selected_options="sddm sddm_theme gtk_themes bluetooth thunar quickshell xdph zsh dots"\
+selected_options="sddm sddm_theme gtk_themes bluetooth thunar xdph zsh dots"\
 \
 # Add nvidia options if detected\
 if [ "$nvidia_detected" == "true" ]; then\
@@ -164,7 +164,6 @@ echo "  [*] sddm_theme  - SDDM theme"
 echo "  [*] gtk_themes  - GTK themes"
 echo "  [*] bluetooth   - Bluetooth configuration"
 echo "  [*] thunar      - Thunar file manager"
-echo "  [*] quickshell  - Desktop-like overview"
 echo "  [*] xdph        - XDG Desktop Portal"
 echo "  [*] zsh         - Zsh with Oh-My-Zsh"
 echo "  [*] dots        - HyprFlux dotfiles"

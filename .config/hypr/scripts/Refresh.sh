@@ -15,7 +15,7 @@ file_exists() {
 }
 
 # Kill already running processes
-_ps=(waybar rofi swaync ags)
+_ps=(waybar rofi swaync)
 for _prs in "${_ps[@]}"; do
     if pidof "${_prs}" >/dev/null; then
         pkill "${_prs}"
@@ -25,14 +25,8 @@ done
 # ensure waybar fully reloads
 killall -SIGUSR2 waybar 
 
-# quit ags & relaunch ags
-#ags -q && ags &
-
-# quit quickshell & relaunch quickshell
-#pkill qs && qs &
-
 # some process to kill
-for pid in $(pidof waybar rofi swaync ags swaybg); do
+for pid in $(pidof waybar rofi swaync swaybg); do
     kill -SIGUSR1 "$pid"
 done
 

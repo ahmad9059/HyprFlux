@@ -23,7 +23,6 @@ GDK_BACKEND=$BACKEND yad \
   " + N" "SwayNC notification panel" \
   " + SHIFT + E" "Hyprland settings menu" \
   " + D" "App Launcher (rofi)" \
-  " + A" "Desktop overview (quickshell)" \
   " + Return" "Terminal" \
   " + F" "File Manager" \
   " + K" "Launch Kdenlive" \

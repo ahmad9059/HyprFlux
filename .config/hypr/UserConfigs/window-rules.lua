@@ -683,13 +683,6 @@ hl.layer_rule({
     match = { namespace = "notifications" },
 })
 
-hl.layer_rule({
-    name = "layerrule-3",
-    blur = true,
-    ignore_alpha = 0.5,
-    match = { namespace = "quickshell:overview" },
-})
-
 -- hl.layer_rule({ match = { namespace = "notif*" }, ignore_alpha = 0.5 })
 -- hl.layer_rule({ match = { namespace = "rofi" }, ignore_alpha = 0 }) -- ignorezero
 -- hl.layer_rule({ match = { namespace = "rofi" }, blur = true })

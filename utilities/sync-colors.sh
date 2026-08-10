@@ -10,8 +10,6 @@
 #   waybar/hyprflux-colors.css          (waybar, swaync, wlogout)
 #   kitty/kitty-colors.conf             (kitty, included from kitty.conf)
 #   foot/colors.ini                     (foot, included from foot.ini)
-#   quickshell/qml_color.json           (quickshell MaterialThemeLoader)
-#   quickshell Appearance.qml m3colors  (fallbacks patched in place)
 #
 # Usage: utilities/sync-colors.sh
 # ============================================================
@@ -197,80 +195,6 @@ FOOT="$REPO_DIR/.config/foot/colors.ini"
   done
 } > "$FOOT"
 echo "generated: foot/colors.ini"
-
-# ================= 6. quickshell/qml_color.json =================
-QML="$REPO_DIR/.config/quickshell/qml_color.json"
-{
-  echo "{"
-  echo "    \"windowBackground\": \"#$(hex "${COLORS[qs_window_bg]}")\","
-  echo "    \"primaryText\": \"#$(hex "${COLORS[qs_primary_text]}")\","
-  echo "    \"layerBackground1\": \"#$(hex "${COLORS[qs_layer1]}")\","
-  echo "    \"layerBackground2\": \"#$(hex "${COLORS[qs_layer2]}")\","
-  echo "    \"layerBackground3\": \"#$(hex "${COLORS[qs_layer3]}")\","
-  echo "    \"surfaceText\": \"#$(hex "${COLORS[qs_surface_text]}")\","
-  echo "    \"secondaryText\": \"#$(hex "${COLORS[qs_secondary_text]}")\","
-  echo "    \"borderPrimary\": \"#$(hex "${COLORS[qs_border_primary]}")\","
-  echo "    \"shadowColor\": \"#$(hex "${COLORS[qs_shadow]}")\","
-  echo "    \"accentPrimary\": \"#$(hex "${COLORS[qs_accent_primary]}")\","
-  echo "    \"accentSecondary\": \"#$(hex "${COLORS[qs_accent_secondary]}")\","
-  echo "    \"selectionBackground\": \"#$(hex "${COLORS[qs_selection_bg]}")\","
-  echo "    \"accentPrimaryText\": \"#$(hex "${COLORS[qs_accent_text]}")\","
-  echo "    \"selectionText\": \"#$(hex "${COLORS[qs_selection_text]}")\","
-  echo "    \"borderSecondary\": \"#$(hex "${COLORS[qs_border_secondary]}")\""
-  echo "}"
-} > "$QML"
-echo "generated: quickshell/qml_color.json"
-
-# ================= 7. quickshell Appearance.qml + widget fallbacks =================
-python3 - "$REPO_DIR" <<'PYEOF'
-import re, sys, glob, os
-repo = sys.argv[1]
-SRC = os.path.join(repo, ".config/hypr/hyprflux-colors/hyprflux-colors.conf")
-colors = {}
-for ln in open(SRC):
-    ln = ln.strip()
-    if ln.startswith("$") and " = " in ln:
-        k, v = ln.split(" = ", 1)
-        v = v.split("#")[0].strip()
-        if v.startswith("rgb("):
-            colors[k[1:]] = "#" + v[4:-1].upper()
-
-# Appearance.qml m3 fallbacks
-p = os.path.join(repo, ".config/quickshell/modules/common/Appearance.qml")
-s = open(p).read()
-m = {
- "m3windowBackground": "qs_window_bg", "m3primaryText": "qs_primary_text",
- "m3layerBackground1": "qs_layer1", "m3layerBackground2": "qs_layer2",
- "m3layerBackground3": "qs_layer3", "m3surfaceText": "qs_surface_text",
- "m3secondaryText": "qs_secondary_text", "m3borderPrimary": "qs_border_primary",
- "m3shadowColor": "qs_shadow", "m3accentPrimary": "qs_accent_primary",
- "m3accentSecondary": "qs_accent_secondary", "m3selectionBackground": "qs_selection_bg",
- "m3accentPrimaryText": "qs_accent_text", "m3selectionText": "qs_selection_text",
- "m3borderSecondary": "qs_border_secondary",
- "colTooltip": "qs_tooltip", "colOnTooltip": "qs_on_tooltip",
-}
-for qmlk, ck in m.items():
-    if ck in colors:
-        s = re.sub(rf'property color {qmlk}: "#[0-9A-Fa-f]+"', f'property color {qmlk}: "{colors[ck]}"', s)
-open(p, "w").write(s)
-print("patched: Appearance.qml fallbacks")
-
-# widget ?? fallbacks
-W = {
- "RippleButton.qml": [("#E5DFED", "qs_btn_hover"), ("#65558F", "qs_btn_toggled"),
-                      ("#77699C", "qs_btn_toggled_hover"), ("#D6CEE2", "qs_ripple")],
- "StyledToolTip.qml": [("#3C4043", "qs_tooltip_bg"), ("#FFFFFF", "qs_tooltip_fg")],
- "RoundCorner.qml": [("#000000", "qs_round_corner")],
-}
-for fn, pairs in W.items():
-    wp = os.path.join(repo, ".config/quickshell/modules/common/widgets", fn)
-    s = open(wp).read()
-    for old, ck in pairs:
-        if ck in colors:
-            s = s.replace(old, colors[ck])
-    open(wp, "w").write(s)
-    print("patched:", fn)
-PYEOF
 
 # ================= 8. swaync + wlogout inline color blocks =================
 # GTK4's @define-color does not reliably propagate from @import'd files, so

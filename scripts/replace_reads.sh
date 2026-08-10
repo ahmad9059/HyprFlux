@@ -190,12 +190,6 @@ echo "${OK} [HyprFlux] Auto-selected $resolution resolution." 2>\&1 | tee -a "$L
 # Auto-answer Ubuntu/Debian warning
 sed -i '/Do you want to continue anyway/,/esac/s/read _continue/_continue="y"/' "$COPY_SH"
 
-# Auto-answer AGS config overwrite prompt
-sed -i 's/read -p "\${CAT} Do you want to overwrite your existing \${YELLOW}ags\${RESET} config? \[y\/N\] " answer_ags/answer_ags="y"/' "$COPY_SH"
-
-# Auto-answer quickshell config overwrite prompt  
-sed -i 's/read -p "\${CAT} Do you want to overwrite your existing \${YELLOW}quickshell\${RESET} config? \[y\/N\] " answer_qs/answer_qs="y"/' "$COPY_SH"
-
 # Auto-answer SDDM wallpaper prompt
 sed -i '/SDDM HyprFlux-sddm-theme detected\|SDDM simple_sddm_2 theme detected/,/esac/s/read SDDM_WALL/SDDM_WALL="y"/' "$COPY_SH"
 
@@ -218,7 +212,6 @@ echo "  - Keyboard layout: Auto-detected (fallback: us)"
 echo "  - Resolution: < 1440p"
 echo "  - Clock format: 12H (AM/PM)"
 echo "  - Default editor: nvim (if available)"
-echo "  - AGS/Quickshell config: Overwrite"
 echo "  - SDDM wallpaper: Apply current wallpaper"
 echo "  - Additional wallpapers: Skip (1GB download)"
 echo ""
