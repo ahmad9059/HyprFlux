@@ -93,6 +93,23 @@ picking an animation preset. Root causes found and fixed:
 binary (17/17 PASS)** — previously only `luac -p` was run on presets. Live `user-animations.lua`
 restored from the fixed preset (currently HYDE - default, the user's selection).
 
+## Full system/user scripts audit (2026-08-10)
+
+Comprehensive audit of all 46 system scripts + 19 user scripts + all Lua configs (syntax,
+shebangs, exec bits, every referenced path):
+
+| Finding | Status |
+|---|---|
+| `MediaCtrl.sh` — pre-existing syntax error `]]]` (breaks ALL media keys) + uninitialized `prev_status` | FIXED (`]]`, `prev_status` init) — media keys now actually work |
+| `WallpaperAwww.sh` — tracked **non-executable** in git (100644) → wallpaper flows fail on install | FIXED `chmod +x` (repo + live) |
+| `Tak0-Per-Window-Switch.sh` — missing shebang | FIXED (`#!/bin/bash` + exec bit) |
+| `RofiEmoji.sh` — `bash -n` fails on emoji data lines | FALSE POSITIVE — self-extracting data after `exit`, runtime-verified working |
+| `MonitorProfiles.sh` — legacy `.conf`-only profile would copy but never apply in Lua mode | FIXED — transparent warning notification; `.lua` preferred |
+| Path audit (every `$HOME/.config/hypr/...` ref in 65 scripts + all Lua) | ✓ only intentional refs remain (`monitors.conf` legacy fallback + runtime `.weather_cache`) |
+| External configs (rofi themes, swaync images/icons, waybar, quickshell, hyprlock fonts) | ✓ all present |
+| Python scripts | ✓ `Weather.py` compiles |
+| Exec bits | ✓ all set |
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

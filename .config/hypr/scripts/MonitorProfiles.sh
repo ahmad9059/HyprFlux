@@ -46,6 +46,8 @@ if [[ -n "$chosen_file" ]]; then
             cp "$monitor_dir/$chosen_file.conf" "$target_conf"
         fi
     elif [[ -f "$monitor_dir/$chosen_file.conf" ]]; then
+        # legacy .conf-only profile: warn that it cannot apply to the Lua session
+        notify-send -u normal -i "$iDIR/error.png" "$chosen_file" "Legacy .conf profile — create a .lua profile (nwg-displays) for it to apply"
         cp "$monitor_dir/$chosen_file.conf" "$target_conf"
     fi
 
