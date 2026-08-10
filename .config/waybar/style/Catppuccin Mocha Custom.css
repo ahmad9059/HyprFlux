@@ -11,7 +11,7 @@
   /* padding: 0.03125rem; */
 }
 
-@import "../waybar/style/catppuccin-themes/mocha.css";
+@import "../waybar/hyprflux-colors.css";
 
 window#waybar {
   transition-property: background-color;
@@ -37,7 +37,7 @@ window#waybar.hidden {
   font-weight: bold;
   margin: 0px 10px;
   margin-top: 4px;
-  background: #0e0e16;
+  background: @bar-main-bg;
   border: 0px solid @overlay0;
   padding-top: 0px;
   padding-bottom: 0px;

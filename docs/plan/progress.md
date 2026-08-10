@@ -122,6 +122,28 @@ must NOT be deleted** — they belong to hyprlang-only tools (officially never c
 
 All obsolete compositor `.conf` files are archived in `.config/hypr_old/` (both repo and live).
 
+## Single color source — second pass (2026-08-10)
+
+Redone per user request with the lesson from the first attempt: **values are preserved
+verbatim per app** (only their LOCATION changed), so no app changes appearance.
+
+`hyprflux-colors/hyprflux-colors.conf` now holds **146 color variables** in named sections:
+CORE UI, LOCK (hyprlock), TERMINAL ANSI (kitty/foot), NAVBAR (catppuccin mocha + preset
+extras), NOTIF (swaync), LOGOUT (wlogout), ROFI (rasi + master-config), QUICKSHELL
+(qml_color.json + Appearance/widget fallbacks).
+
+`utilities/sync-colors.sh` regenerates: hyprflux-colors.lua, rofi/wallust/hyprflux-colors.rasi,
+waybar/hyprflux-colors.css, kitty/kitty-colors.conf, foot/colors.ini, quickshell/qml_color.json,
+and patches Appearance.qml + widget fallbacks.
+
+All consumers reference vars: kitty.conf → include, foot.ini → include, swaync/wlogout → @import,
+waybar presets → @import (catppuccin names defined in palette css with identical values),
+master-config.rasi → @vars, hyprlock → $vars, DarkLight.sh → targets palette files.
+
+**Verified:** 0 hardcoded colors in any config (remaining hits are generated fallbacks with
+palette values); looks preserved; rofi/kitty/foot/lua/json/verify-config all pass; repo↔live
+consistent.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

@@ -73,13 +73,12 @@ set_waybar_style "$next_mode"
 notify_user "$next_mode"
 
 
-# swaync color change
+# swaync color change — noti-bg lives in the shared palette css (waybar/hyprflux-colors.css)
+colors_css="$HOME/.config/waybar/hyprflux-colors.css"
 if [ "$next_mode" = "Dark" ]; then
-    sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(0, 0, 0, 0.8);/' "${swaync_style}"
-	#sed -i '/@define-color noti-bg-alt/s/#.*;/#111111;/' "${swaync_style}"
+    sed -i '/@define-color noti-bg/s/#0e0e16;/rgba(0, 0, 0, 0.8);/' "${colors_css}"
 else
-    sed -i '/@define-color noti-bg/s/rgba([0-9]*,\s*[0-9]*,\s*[0-9]*,\s*[0-9.]*);/rgba(255, 255, 255, 0.9);/' "${swaync_style}"
-	#sed -i '/@define-color noti-bg-alt/s/#.*;/#F0F0F0;/' "${swaync_style}"
+    sed -i '/@define-color noti-bg/s/#0e0e16;/rgba(255, 255, 255, 0.9);/' "${colors_css}"
 fi
 
 # ags color change
@@ -95,15 +94,16 @@ if command -v ags >/dev/null 2>&1; then
     fi
 fi
 
-# kitty background color change
+# kitty background color change — palette lives in kitty-colors.conf
+kitty_colors="$HOME/.config/kitty/kitty-colors.conf"
 if [ "$next_mode" = "Dark" ]; then
-    sed -i '/^foreground /s/^foreground .*/foreground #dddddd/' "${kitty_conf}"
-	sed -i '/^background /s/^background .*/background #000000/' "${kitty_conf}"
-	sed -i '/^cursor /s/^cursor .*/cursor #dddddd/' "${kitty_conf}"
+    sed -i '/^foreground /s/^foreground .*/foreground #fffbf6/' "${kitty_colors}"
+	sed -i '/^background /s/^background .*/background #0a0e14/' "${kitty_colors}"
+	sed -i '/^cursor /s/^cursor .*/cursor #e5e9f0/' "${kitty_colors}"
 else
-	sed -i '/^foreground /s/^foreground .*/foreground #000000/' "${kitty_conf}"
-	sed -i '/^background /s/^background .*/background #dddddd/' "${kitty_conf}"
-	sed -i '/^cursor /s/^cursor .*/cursor #000000/' "${kitty_conf}"
+	sed -i '/^foreground /s/^foreground .*/foreground #0a0e14/' "${kitty_colors}"
+	sed -i '/^background /s/^background .*/background #fffbf6/' "${kitty_colors}"
+	sed -i '/^cursor /s/^cursor .*/cursor #e5e9f0/' "${kitty_colors}"
 fi
 
 for pid_kitty in $(pidof kitty); do

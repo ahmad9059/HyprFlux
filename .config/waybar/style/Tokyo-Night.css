@@ -1,10 +1,10 @@
-@define-color bar-bg rgba(0, 0, 0, 0);
-@define-color main-bg #0e0e16;
-@define-color main-fg #cdd6f4;
-@define-color wb-act-bg #a6adc8;
-@define-color wb-act-fg #313244;
-@define-color wb-hvr-bg #f5c2e7;
-@define-color wb-hvr-fg #313244;
+@define-color bar-bg @background-clear;
+@define-color main-bg @bar-main-bg;
+@define-color main-fg @text;
+@define-color wb-act-bg @subtext0;
+@define-color wb-act-fg @surface0;
+@define-color wb-hvr-bg @pink;
+@define-color wb-hvr-fg @surface0;
 
 * {
   border: none;

@@ -1,15 +1,17 @@
+@import url("../waybar/hyprflux-colors.css");
+
 window {
   font-family: Fira Code Medium;
   font-size: 16pt;
-  color: #cdd6f4; /* text */
-  background-color: rgba(30, 30, 46, 0.6);
+  color: @text-color; /* text */
+  background-color: @logout-bg;
 }
 
 button {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20%;
-  background-color: rgba(200, 220, 255, 0);
+  background-color: @logout-btn-bg;
   border-radius: 80px; /* Increased border radius for a more rounded look */
   margin: 10px;
   animation: gradient_f 10s ease-in infinite;
@@ -25,8 +27,8 @@ button:focus {
 }
 
 button:hover {
-  background-color: rgb(145, 215, 227);
-  color: #1e1e2e;
+  background-color: @logout-hover-bg;
+  color: @logout-hover-text;
   background-size: 70%;
   margin: 5px;
   border-radius: 80px;

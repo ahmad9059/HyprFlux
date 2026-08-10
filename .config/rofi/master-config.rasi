@@ -24,12 +24,12 @@ configuration {
 * {
 
     background-alt:              @selected-active-background; // Buttons background
-    selected:                    #9399b2; // Button selected
+    selected:                    @rofi-selected; // Button selected
     active:                      @selected-normal-background; // Window activated
     urgent:                      @selected; // When hovering the activated window (maybe more?)
 
-    text-selected:               #181825;
-    text-color:                  #c6e6f3;
+    text-selected:               @rofi-text-selected;
+    text-color:                  @rofi-text;
     border-color:                @selected;
 }
 
@@ -48,7 +48,7 @@ window {
 
     // Style Values
     width:                      44%;
-    background-color:           #0E0E16;
+    background-color:           @rofi-bg;
 }
 
 /* ----- Main Box ----- */
@@ -57,7 +57,7 @@ mainbox {
     enabled:                     true;
     orientation:                 vertical;
     children:                    [ "inputbar", "listbox" ];
-    background-color:            #0E0E16;
+    background-color:            @rofi-bg;
 }
 
 
@@ -80,8 +80,8 @@ entry {
     width:                       100%;
     padding:                     0px;
     border-radius:               1px;
-    background-color:            #0E0E16;
-    text-color:                  #cdd6f4;
+    background-color:            @rofi-bg;
+    text-color:                  @rofi-text-2;
     cursor:                      text;
     placeholder:                 "  Search "; // << Search symbol
     placeholder-color:           inherit;

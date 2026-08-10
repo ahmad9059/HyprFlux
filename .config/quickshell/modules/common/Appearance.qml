@@ -24,24 +24,24 @@ Singleton {
         property bool darkmode: true
         property bool transparent: true
 
-        property color m3windowBackground: "#161217"
-        property color m3primaryText: "#EAE0E7"
+        property color m3windowBackground: "#0F0F15"
+        property color m3primaryText: "#BAC2DE"
         property color m3layerBackground1: "#1F1A1F"
         property color m3layerBackground2: "#231E23"
         property color m3layerBackground3: "#2D282E"
         property color m3surfaceText: "#EAE0E7"
         property color m3secondaryText: "#CFC3CD"
-        property color m3borderPrimary: "#cba6f7"
+        property color m3borderPrimary: "#CBA6F7"
         property color m3shadowColor: "#000000"
-        property color m3accentPrimary: "#E5B6F2"
+        property color m3accentPrimary: "#6750A4"
         property color m3accentSecondary: "#D5C0D7"
         property color m3selectionBackground: "#534457"
-        property color m3accentPrimaryText: "#452152"
+        property color m3accentPrimaryText: "#FFFFFF"
         property color m3selectionText: "#F2DCF3"
         property color m3borderSecondary: "#4C444D"
 
-        property color colTooltip: "#1e1e2e"
-        property color colOnTooltip: "#F8F9FA"
+        property color colTooltip: "#1E1E2E)         # APPEARANCE.QML TOOLTI"
+        property color colOnTooltip: "#F8F9FA)      # APPEARANCE.QML ON-TOOLTI"
     }
 
     colors: QtObject {
