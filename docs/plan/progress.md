@@ -173,6 +173,23 @@ Verified: zero `swaync/images|icons` references in the active config (only `hypr
 chromium cache); all scripts pass `bash -n` (RofiEmoji excluded — self-extracting data);
 test notifications sent with themed icons.
 
+### Brightness fix (2026-08-10)
+
+User reported: Fn+F7/F8 brightness — when it hits 100%, pressing up drops the brightness a lot.
+The script's math was verified correct (clamps at max, no wrap). The drop is hardware/kernel
+level — two suspects:
+
+1. **AMD eDP quirk**: setting exactly 100% (65535) on some panels makes the screen go very dark.
+   → **FIXED in Brightness.sh**: brightness is now capped at **95%** (MAX=95, MIN=5), plus a
+   robust percent fallback if the `brightnessctl -m` parse ever fails. Verified: 90→95, stays
+   95 on repeat, dec→85.
+2. **Kernel double-handling**: `/sys/module/video/parameters/brightness_switch_enabled = Y` and
+   `asus_nb_wmi` is loaded — the kernel may also adjust/wrap the backlight on the same keys.
+   If the drop persists after the 95% cap, run (user, with password):
+   `sudo sh -c 'echo 0 > /sys/module/video/parameters/brightness_switch_enabled'`
+   and make permanent by adding `video.brightness_switch_enabled=0` to
+   `GRUB_CMDLINE_LINUX_DEFAULT` in `/etc/default/grub` + `sudo grub-mkconfig -o /boot/grub/grub.cfg`.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
