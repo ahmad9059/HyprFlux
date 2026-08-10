@@ -89,7 +89,7 @@ hl.window_rule({
 hl.window_rule({
     name = "windowrule-12",
     tag = "+terminal",
-    match = { class = "^(Alacritty|kitty|kitty-dropterm)$" },
+    match = { class = "^(Alacritty|kitty|kitty-dropterm|foot)$" },
 })
 
 -- ============================== email tags ==============================
@@ -109,13 +109,13 @@ hl.window_rule({
 hl.window_rule({
     name = "windowrule-15",
     tag = "+projects",
-    match = { class = "^(codium|codium-url-handler|VSCodium)$" },
+    match = { class = "^(codium|codium-url-handler|VSCodium|code)$" },
 })
 
 hl.window_rule({
     name = "windowrule-16",
     tag = "+projects",
-    match = { class = "^(VSCode|code-url-handler)$" },
+    match = { class = "^(VSCode|code|code-url-handler)$" },
 })
 
 hl.window_rule({
@@ -315,6 +315,7 @@ hl.window_rule({
 -- ============================ Custom rules ==============================
 hl.window_rule({
     name = "windowrule-47",
+    tag = "+browser",
     tile = true,
     match = { class = "^([Cc]hromium)$" },
 })
@@ -448,13 +449,13 @@ hl.window_rule({
 
 hl.window_rule({
     name = "windowrule-66",
-    workspace = "5",
+    workspace = "6",
     match = { tag = "gamestore*" },
 })
 
 hl.window_rule({
     name = "windowrule-67",
-    workspace = "8",
+    workspace = "6",
     no_blur = true,
     fullscreen = true,
     match = { tag = "games*" },
@@ -495,12 +496,6 @@ hl.window_rule({
     name = "windowrule-73",
     workspace = "9 silent",
     match = { class = "^(.virt-manager-wrapped)$" },
-})
-
-hl.window_rule({
-    name = "windowrule-74",
-    workspace = "9 silent",
-    match = { tag = "multimedia*" },
 })
 
 -- =============================== FLOAT ==================================
@@ -664,7 +659,7 @@ hl.window_rule({
 -- reports "... - Google Chrome for Testing" in its title.
 hl.window_rule({
     name = "windowrule-97",
-    workspace = "6 silent",
+    workspace = "1 silent",
     match = { class = "^(chromium-browser)$", title = ".*Chrome for Testing.*" },
 })
 

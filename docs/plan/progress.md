@@ -284,6 +284,23 @@ NOTE: Dark/Light wallpaper dirs (`Pictures/wallpapers/Dynamic-Wallpapers/*`) lef
 - `UserScripts/Jellyfin.sh` — `SUPER+SHIFT+J` bind removed from user-keybinds.lua
 - Verified: zero refs in repo + live; scripts/Lua syntax OK; `config ok`; repo↔live consistent
 
+### Window rules reorganization (2026-08-10)
+
+Applied per user-reviewed plan:
+
+- **ws 1 (Dev)**: VSCode now routes there — `code` class added to projects tags (rules 15/16;
+  previously VSCode never matched); Chrome for Testing (Playwright) moved 6→**1 silent** (dev tool)
+- **ws 2 (Browser)**: chromium now tagged `+browser` (rule 47, keeps `tile = true`) → routes to 2
+- **Terminal**: `foot` added to `+terminal` tag (rule 12); **kitty/terminals are workspace-free**
+  (only kitty+tmuxifier → 1)
+- **ws 6 (Games)**: gamestore (rule 66) + games (rule 67, fullscreen/no-blur) **merged into 6**
+- **Media freed**: rule 74 (multimedia → 9 silent) **removed** — mpv/vlc/audacious open anywhere
+- **ws 5** now free (was gamestore); **Spotify stays in `special:nyx`** (unchanged)
+- No utilities/viewer workspace routing added
+
+Final map: 1=dev/email, 2=browser, 3=files, 4=IM+screenshare, 6=games, 9=VMs, 10=obsidian,
+special:nyx=chat; media & terminals free.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
