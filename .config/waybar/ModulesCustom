@@ -96,11 +96,10 @@ If available",
 
 "custom/light_dark": {
 	"format": "󰔎 ",
-	"on-click": "$HOME/.config/hypr/scripts/DarkLight.sh",
 	"on-click-right": "$HOME/.config/hypr/scripts/WaybarStyles.sh",
 	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Switch Dark-Light Themes\nMiddle Click: Wallpaper Menu\nRight Click: Waybar Styles Menu",
+	"tooltip-format": "Middle Click: Wallpaper Menu\nRight Click: Waybar Styles Menu",
 },
 
 "custom/lock": {

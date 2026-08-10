@@ -260,6 +260,22 @@ New design — a proper state-based toggle:
   survive; no reload needed
 - Verified round-trip: 2/4/2/10/true/false/true/0.9 restored exactly; state file removed
 
+### Removed 7 scripts + all their functionality (2026-08-10)
+
+Per user request, removed (repo + live, all references cleaned so nothing breaks):
+
+| Script | Removed from |
+|---|---|
+| `Polkit-NixOS.sh` | startup-apps.lua comment |
+| `DarkLight.sh` | waybar `custom/light_dark` on-click + tooltip (module kept for WaybarStyles/WallpaperSelect), Quick Settings menu item |
+| `UptimeNixOS.sh` | hyprlock-1080p.conf uptime fallback (`uptime -p` only now) |
+| `RofiThemeSelector.sh` + `-modified.sh` | Quick Settings menu item, keybinds comments |
+| `Kitty_themes.sh` | Quick Settings menu item |
+| `ZshChangeTheme.sh` (UserScripts) | SUPER+SHIFT+Z bind |
+
+Verified: zero references in repo + live; `config ok`; scripts syntax OK; waybar running.
+NOTE: Dark/Light wallpaper dirs (`Pictures/wallpapers/Dynamic-Wallpapers/*`) left untouched.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

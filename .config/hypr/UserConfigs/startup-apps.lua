@@ -58,7 +58,5 @@ end)
 -- hl.exec_cmd("awww-daemon --format xrgb && awww img " .. Home .. "/Pictures/wallpapers/mecha-nostalgia.png") -- persistent wallpaper
 
 -- gnome polkit for nixos
--- hl.exec_cmd(scriptsDir .. "/Polkit-NixOS.sh")
-
 -- xdg-desktop-portal-hyprland (should be auto starting; force start if needed)
 -- hl.exec_cmd(scriptsDir .. "/PortalHyprland.sh")

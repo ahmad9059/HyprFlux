@@ -93,7 +93,6 @@ hl.bind("CTRL + ALT + W", hl.dsp.exec_cmd(UserScripts .. "/WallpaperRandom.sh"),
 hl.bind(mainMod .. " + CTRL + O", hl.dsp.window.set_prop({ prop = "opaque", value = "toggle" }), { description = "Toggle opacity on active window" })
 hl.bind(mainMod .. " + SHIFT + K", hl.dsp.exec_cmd(scriptsDir .. "/KeyBinds.sh"), { description = "Search keybinds via rofi" })
 hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(scriptsDir .. "/Animations.sh"), { description = "Hyprland animations menu" })
-hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.exec_cmd(UserScripts .. "/ZshChangeTheme.sh"), { description = "Change oh-my-zsh theme" })
 -- hl.bind("ALT_L", hl.dsp.exec_cmd(scriptsDir .. "/SwitchKeyboardLayout.sh"), { locked = true, non_consuming = true }) -- Change keyboard layout globally
 -- hl.bind("SHIFT_L", hl.dsp.exec_cmd(scriptsDir .. "/Tak0-Per-Window-Switch.sh"), { locked = true, non_consuming = true }) -- Change keyboard layout per window
 hl.bind(mainMod .. " + CTRL + C", hl.dsp.exec_cmd(UserScripts .. "/RofiCalc.sh"), { description = "Calculator (qalculate)" })
@@ -106,5 +105,3 @@ hl.bind(mainMod .. " + CTRL + C", hl.dsp.exec_cmd(UserScripts .. "/RofiCalc.sh")
 
 -- Removed binds
 -- hl.bind(mainMod .. " + S", hl.dsp.exec_cmd(scriptsDir .. "/RofiSearch.sh"), { description = "Google search using rofi" })
--- hl.bind(mainMod .. " + CTRL + R", hl.dsp.exec_cmd(scriptsDir .. "/RofiThemeSelector.sh"), { description = "HyprFlux Rofi Menu Theme Selector" })
--- hl.bind(mainMod .. " + CTRL + SHIFT + R", hl.dsp.exec_cmd("pkill rofi || true && " .. scriptsDir .. "/RofiThemeSelector-modified.sh"), { description = "Modified Rofi Theme Selector" })

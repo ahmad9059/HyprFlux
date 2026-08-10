@@ -68,7 +68,6 @@ main() {
   "view/edit Animations") file="$UserConfigs/user-animations.lua" ;;
   "view/edit Laptop Keybinds") file="$UserConfigs/laptops.lua" ;;
   "view/edit Default Keybinds") file="$configs/keybinds.lua" ;;
-  "Choose Kitty Terminal Theme") $scriptsDir/Kitty_themes.sh ;;
   "Configure Monitors (nwg-displays)")
     if ! command -v nwg-displays &>/dev/null; then
       notify-send -i "dialog-error" "E-R-R-O-R" "Install nwg-displays first"
@@ -106,10 +105,8 @@ main() {
     ;;
   "Choose Hyprland Animations") $scriptsDir/Animations.sh ;;
   "Choose Monitor Profiles") $scriptsDir/MonitorProfiles.sh ;;
-  "Choose Rofi Themes") $scriptsDir/RofiThemeSelector.sh ;;
   "Search for Keybinds") $scriptsDir/KeyBinds.sh ;;
   "Toggle Game Mode") $scriptsDir/GameMode.sh ;;
-  "Switch Dark-Light Theme") $scriptsDir/DarkLight.sh ;;
   *) return ;; # Do nothing for invalid choices
   esac
 
