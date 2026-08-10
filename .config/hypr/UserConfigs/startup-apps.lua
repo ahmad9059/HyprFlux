@@ -14,7 +14,7 @@ local UserScripts = Home .. "/.config/hypr/UserScripts"
 local wallDIR = Home .. "/Pictures/wallpapers"
 local lock = scriptsDir .. "/LockScreen.sh"
 local AwwwRandom = UserScripts .. "/WallpaperAutoChange.sh"
--- local livewallpaper = ""
+local livewallpaper = "" -- set by WallpaperSelect.sh for video wallpapers (mpvpaper)
 
 hl.on("hyprland.start", function()
     -- wallpaper stuff

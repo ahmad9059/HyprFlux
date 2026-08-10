@@ -5,7 +5,7 @@
 #    Example:
 #    ./dispatch.sh discord 2
 #
-# 2) Call from Hyprland config (in hyprland.conf file):
+# 2) Call from Hyprland config (in hyprland.lua file):
 #    exec-once = /path/to/dispatch.sh <application_command> <target_workspace_number>
 #
 # Logs are saved in dispatch.log file next to the script.

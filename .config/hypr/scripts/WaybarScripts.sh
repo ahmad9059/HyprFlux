@@ -1,9 +1,10 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
-# This file used on waybar modules sourcing defaults set in $HOME/.config/hypr/UserConfigs/01-UserDefaults.conf
+# This file is used by waybar modules sourcing defaults set in
+# $HOME/.config/hypr/UserConfigs/user-defaults.lua (Hyprland >= 0.55)
 
 # Define the path to the config file
-config_file=$HOME/.config/hypr/UserConfigs/01-UserDefaults.conf
+config_file=$HOME/.config/hypr/UserConfigs/user-defaults.lua
 
 # Check if the config file exists
 if [[ ! -f "$config_file" ]]; then
@@ -11,15 +12,13 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
-# Process the config file in memory, removing the $ and fixing spaces
-config_content=$(sed 's/\$//g' "$config_file" | sed 's/ = /=/')
-
-# Source the modified content directly from the variable
-eval "$config_content"
+# Extract string values from the Lua defaults module
+term=$(grep 'term = ' "$config_file" | head -1 | sed 's/.*term = "\([^"]*\)".*/\1/')
+files=$(grep 'files = ' "$config_file" | head -1 | sed 's/.*files = "\([^"]*\)".*/\1/')
 
 # Check if $term is set correctly
 if [[ -z "$term" ]]; then
-    echo "Error: \$term is not set in the configuration file!"
+    echo "Error: term is not set in the configuration file!"
     exit 1
 fi
 

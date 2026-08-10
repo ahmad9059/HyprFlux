@@ -132,24 +132,23 @@ menu() {
 
 modify_startup_config() {
   local selected_file="$1"
-  local startup_config="$HOME/.config/hypr/UserConfigs/Startup_Apps.conf"
+  local startup_config="$HOME/.config/hypr/UserConfigs/startup-apps.lua"
 
   # Check if it's a live wallpaper (video)
   if [[ "$selected_file" =~ \.(mp4|mkv|mov|webm)$ ]]; then
     # For video wallpapers:
-    sed -i '/^\s*exec-once\s*=\s*awww-daemon\s*--format\s*xrgb\s*$/s/^/\#/' "$startup_config"
-    sed -i '/^\s*#\s*exec-once\s*=\s*mpvpaper\s*.*$/s/^#\s*//;' "$startup_config"
+    sed -i 's|^    hl.exec_cmd("awww-daemon --format xrgb")|    -- hl.exec_cmd("awww-daemon --format xrgb")|' "$startup_config"
+    sed -i 's|^    -- hl.exec_cmd("mpvpaper|    hl.exec_cmd("mpvpaper|' "$startup_config"
 
     # Update the livewallpaper variable with the selected video path (using $HOME)
     selected_file="${selected_file/#$HOME/\$HOME}" # Replace /home/user with $HOME
-    sed -i "s|^\$livewallpaper=.*|\$livewallpaper=\"$selected_file\"|" "$startup_config"
+    sed -i "s|^local livewallpaper = .*|local livewallpaper = \"$selected_file\"|" "$startup_config"
 
     echo "Configured for live wallpaper (video)."
   else
     # For image wallpapers:
-    sed -i '/^\s*#\s*exec-once\s*=\s*awww-daemon\s*--format\s*xrgb\s*$/s/^\s*#\s*//;' "$startup_config"
-
-    sed -i '/^\s*exec-once\s*=\s*mpvpaper\s*.*$/s/^/\#/' "$startup_config"
+    sed -i 's|^    -- hl.exec_cmd("awww-daemon --format xrgb")|    hl.exec_cmd("awww-daemon --format xrgb")|' "$startup_config"
+    sed -i 's|^    hl.exec_cmd("mpvpaper|    -- hl.exec_cmd("mpvpaper|' "$startup_config"
 
     echo "Configured for static wallpaper (image)."
   fi
@@ -217,7 +216,7 @@ main() {
     exit 1
   fi
 
-  # Modify the Startup_Apps.conf file based on wallpaper type
+  # Modify the startup-apps.lua file based on wallpaper type
   modify_startup_config "$selected_file"
 
   # **CHECK FIRST** if it's a video or an image **before calling any function**

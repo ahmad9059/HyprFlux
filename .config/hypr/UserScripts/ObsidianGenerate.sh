@@ -2,7 +2,7 @@
 # notes-rofi.sh — Rofi-based launcher for notes-ai (no terminal)
 # Remembers last course/module selection. Pick lecture and generate.
 # First entry is always "↻ Change Course/Module" to reset selection.
-# Bind in hyprland.conf:
+# Bind in hyprland.lua:
 #   bind = $mainMod SHIFT, N, exec, $UserScripts/ObsidianGenerate.sh
 
 set -euo pipefail

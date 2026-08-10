@@ -54,14 +54,37 @@ modules/19-monitors.sh                        — dual-writes monitors.conf + mo
 3. `XF86AudioPlayPause` is **not a valid keysym** in the Lua API (was accepted by hyprlang) →
    bound via `code:164` (KEY_PLAYPAUSE).
 
-## Next action
+## Post-flip audit (2026-08-10) — .conf integration check
 
-**ACTIVATE THE FLIP on the live machine: restart the session** (logout/login or reboot).
-Until then the running session still uses the old in-memory config. After restart:
+User reported SUPER+SHIFT+K (KeyBinds) and SUPER+SHIFT+E (Quick Settings) issues after the
+flip. Root causes found and fixed, plus a full `.conf` integration audit:
 
-- `~/.config/hypr/hyprland.lua` becomes the boot config (Lua takes precedence over `.conf`).
-- Run the on-session test matrix (doc 13 §13.3) + rule spot-checks (doc 13 §13.4).
-- Delete the regenerated `~/.config/hypr/hyprland.conf` stub if present (the old running
-  session re-creates it because its config was removed; it is never loaded by the Lua session).
+| Item | Status |
+|---|---|
+| KeyBinds.sh python quoting (`' '.join` broke `python3 -c`) | FIXED — now `" ".join`; verified 152 formatted binds |
+| HyprFlux_Quick_Settings.sh "view/edit" → deleted `.conf` files | FIXED — now points to Lua modules (`nvim` opened empty files before) |
+| WaybarScripts.sh parsed `01-UserDefaults.conf` | FIXED — parses `user-defaults.lua` (term=kitty, files=thunar verified) |
+| WallpaperSelect.sh wrote `Startup_Apps.conf` | FIXED — now seds `startup-apps.lua` (awww/mpvpaper/livewallpaper), tested |
+| refresh-rate.sh `hyprctl keyword monitor` (live-only) | FIXED — `hyprctl eval 'hl.monitor({...})'` + fallback comment |
+| Startup `livewallpaper` var | made active in `startup-apps.lua` (WallpaperSelect target) |
+| Tak0-Autodispatch/ObsidianGenerate comments | updated hyprland.conf → hyprland.lua |
+| Active `.conf` audit (hyprlock/hypridle/application-style/colors) | ✓ all internal `source=`/path refs resolve; hypridle running with hyprlang config; hyprlock-1080p palette source OK; wallpaper_effects paths OK |
+| Lua ↔ .conf cross-references | ✓ only documentation comments; zero functional refs |
+| Config parity on live Lua session | ✓ all options `set: true`; 152 binds; `hyprctl eval` works |
+| Regenerated `hyprland.conf` stub | ✓ deleted; Lua session does not regenerate it |
+| repo vs live trees | ✓ identical except intentional `refresh-rate.sh` (live-only) |
+
+Remaining `.conf` files in the ACTIVE tree (by design, hyprlang tools):
+`hyprlock.conf`, `hyprlock-1080p.conf` (sources `hyprflux-colors/hyprflux-colors.conf`),
+`hypridle.conf`, `application-style.conf`. Everything else is archived in `.config/hypr_old/`.
+
+## Status
+
+- **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
+  options `set: true`, `hyprctl eval` works).
+- The two reported keybind issues (SUPER+SHIFT+K, SUPER+SHIFT+E) are fixed on live — please
+  re-test them.
 - Rollback (if ever needed): `cp ~/.config/hypr_old/hyprland.conf ~/.config/hypr/` and remove
   `hyprland.lua` (precedence is checked once at startup).
+- Remaining work: run the on-session test matrix (doc 13 §13.3) after the script fixes; commit
+  the migration when happy with it.
