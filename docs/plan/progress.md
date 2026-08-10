@@ -244,6 +244,22 @@ Per user request, quickshell (and ags remnants) removed entirely:
 - **Package** (user): `sudo pacman -Rns quickshell`
 - Verified: zero quickshell/ags/qs references in repo + live; `config ok`; repo↔live consistent
 
+### GameMode.sh rewritten (2026-08-10)
+
+User reported toggling game mode off didn't revert. Two bugs: (1) the toggle detection compared
+`hyprctl getoption animations:enabled` output (`bool: true`) against `1` — never matched, so the
+enable branch never ran; (2) the disable path relied on `hyprctl reload` instead of restoring the
+actual previous values (and a runtime window-rule that may persist across reloads).
+
+New design — a proper state-based toggle:
+
+- State file `$XDG_RUNTIME_DIR/gamemode.state` decides the branch (like TouchPad.sh)
+- **Enable** saves the exact current values (gaps/border/rounding/blur/shadow/animations/
+  opacities) then applies game values; opacity handled via `hl.config` (no window rule)
+- **Disable** restores every saved value from the state file — manual tweaks (ChangeBlur etc.)
+  survive; no reload needed
+- Verified round-trip: 2/4/2/10/true/false/true/0.9 restored exactly; state file removed
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
