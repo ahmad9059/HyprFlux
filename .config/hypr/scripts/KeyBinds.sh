@@ -1,6 +1,7 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # searchable enabled keybinds using rofi
+# (Hyprland >= 0.55: reads live binds from the compositor instead of parsing .conf)
 
 # kill yad to not interfere with this binds
 pkill yad || true
@@ -10,21 +11,32 @@ if pidof rofi >/dev/null; then
   pkill rofi
 fi
 
-# define the config files
-keybinds_conf="$HOME/.config/hypr/configs/Keybinds.conf"
-user_keybinds_conf="$HOME/.config/hypr/UserConfigs/UserKeybinds.conf"
-laptop_conf="$HOME/.config/hypr/UserConfigs/Laptops.conf"
 rofi_theme="$HOME/.config/rofi/config-keybinds.rasi"
 msg='☣️ NOTE ☣️: Clicking with Mouse or Pressing ENTER will have NO function'
 
-# combine the contents of the keybinds files and filter for keybinds
-keybinds=$(cat "$keybinds_conf" "$user_keybinds_conf" | grep -E '^bind')
-
-# check if laptop.conf exists and add its keybinds if present
-if [[ -f "$laptop_conf" ]]; then
-  laptop_binds=$(grep -E '^bind' "$laptop_conf")
-  keybinds+=$'\n'"$laptop_binds"
-fi
+# format live binds from hyprctl as "MODS + KEY\tDESCRIPTION [flags]"
+keybinds=$(hyprctl binds -j 2>/dev/null | python3 -c '
+import json, sys
+MODS = {1: "SHIFT", 2: "CAPS", 4: "CTRL", 8: "ALT", 16: "MOD2", 32: "MOD3", 64: "SUPER", 128: "MOD5", 256: "NUM"}
+try:
+    binds = json.load(sys.stdin)
+except Exception:
+    sys.exit(0)
+for b in binds:
+    modmask = b.get("modmask") or 0
+    mods = [name for bit, name in sorted(MODS.items()) if modmask & bit]
+    key = b.get("key") or ("code:" + str(b.get("keycode")))
+    combo = " + ".join(mods + [key])
+    desc = (b.get("description") or "").strip()
+    if not desc:
+        desc = (b.get("dispatcher") or "") + " " + (b.get("arg") or "").strip()
+    flags = []
+    if b.get("locked"):    flags.append("[lock]")
+    if b.get("repeat"):    flags.append("[repeat]")
+    if b.get("release"):   flags.append("[release]")
+    if b.get("mouse"):     flags.append("[mouse]")
+    print(f"{combo}\t{desc} {" ".join(flags)}".rstrip())
+')
 
 # check for any keybinds to display
 if [[ -z "$keybinds" ]]; then
@@ -32,8 +44,5 @@ if [[ -z "$keybinds" ]]; then
   exit 1
 fi
 
-# replace $mainmod with super in the displayed keybinds for rofi
-display_keybinds=$(echo "$keybinds" | sed 's/\$mainMod/SUPER/g')
-
-# use rofi to display the keybinds with the modified content
-echo "$display_keybinds" | rofi -dmenu -i -config "$rofi_theme" -mesg "$msg"
+# use rofi to display the keybinds
+echo "$keybinds" | rofi -dmenu -i -config "$rofi_theme" -mesg "$msg"

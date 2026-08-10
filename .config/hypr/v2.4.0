@@ -1,0 +1,7 @@
+### https://github.com/ahmad9059/HyprFlux ###
+## HyprFlux Dots version reference
+## This is to have a reference of which version would be
+
+## v2.4.0 — Lua config migration (Hyprland >= 0.55)
+## Entrypoint switched from hyprland.conf to hyprland.lua.
+## This version always will be higher than the released versions

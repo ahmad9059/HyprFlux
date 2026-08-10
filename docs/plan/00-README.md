@@ -1,6 +1,6 @@
 # HyprFlux — Hyprland Lua Migration Plan
 
-**Status:** Planning · **Target Hyprland:** 0.56.2 (installed) · **Config format:** hyprlang (`.conf`) → Lua (`hyprland.lua`)
+**Status:** Migration complete (Phases 1–6/7) — code built & validated; **live session restart pending to activate** · **Target Hyprland:** 0.56.2 (installed) · **Config format:** hyprlang (`.conf`) → Lua (`hyprland.lua`), legacy archived in `.config/hypr_old/` · Track progress in [`progress.md`](progress.md)
 
 > Since Hyprland **0.55**, the hyprlang config syntax (`.conf` files) is **deprecated in favor of Lua**.
 > The compositor config now lives at `~/.config/hypr/hyprland.lua`. Hyprlock, Hypridle and

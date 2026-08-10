@@ -21,19 +21,19 @@
 # This is for changing kb_layouts. Set kb_layouts in 
 
 MAP_FILE="$HOME/.cache/kb_layout_per_window"
-CFG_FILE="$HOME/.config/hypr/UserConfigs/UserSettings.conf"
+CFG_FILE="$HOME/.config/hypr/UserConfigs/user-settings.lua"
 ICON="$HOME/.config/swaync/images/ja.png"
 SCRIPT_NAME="$(basename "$0")"
 
 # Ensure map file exists
 touch "$MAP_FILE"
 
-# Read layouts from config
+# Read layouts from config (Lua settings module, Hyprland >= 0.55)
 if ! grep -q 'kb_layout' "$CFG_FILE"; then
   echo "Error: cannot find kb_layout in $CFG_FILE" >&2
   exit 1
 fi
-kb_layouts=($(grep 'kb_layout' "$CFG_FILE" | cut -d '=' -f2 | tr -d '[:space:]' | tr ',' ' '))
+kb_layouts=($(grep 'kb_layout' "$CFG_FILE" | head -1 | sed 's/.*kb_layout = "\([^"]*\)".*/\1/' | tr ',' ' '))
 count=${#kb_layouts[@]}
 
 # Get current active window ID

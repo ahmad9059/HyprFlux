@@ -38,6 +38,9 @@ misc.vfr                      → debug.vfr
 | `style = "loop"` kills battery | `*angle` loop forces constant rendering | remove loop / disable animation |
 | Workspace rules match nothing | selectors only match **existing** workspaces | use ID/`name:` for rules, selectors for events |
 | `--verify-config` segfault (0.55.0 only) | upstream bug | upgrade ≥0.55.1 (you're on 0.56.2) |
+| `dwindle { }`/`master { }` block errors "unknown config key 'layout.dwindle.*'" | layout options are **flat keys** (`dwindle.*`, `master.*`), NOT nested under `layout` | `hl.config({ dwindle = { preserve_split = true }, master = { mfact = 0.5 } })` |
+| `hl.animation` errors "speed 180 is more than the maximum of 100" | Lua API caps animation speed at 100 ds | clamp to ≤100 (borderangle 180 → 100) |
+| `hl.bind: Unknown keysym "XF86AudioPlayPause"` | `XF86AudioPlayPause` is not a valid xkbcommon keysym (hyprlang accepted it) | bind `code:164` (KEY_PLAYPAUSE) with a comment |
 | Startup log still says "hyprland.conf" | cosmetic (hyprwm/Hyprland#15407) | ignore |
 | `hyprctl binds` JSON empty/invalid | fixed in 0.56.1 | upgrade; use `hyprctl eval` |
 

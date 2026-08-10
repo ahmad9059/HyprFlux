@@ -2,8 +2,8 @@
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # For Searching via web browsers
 
-# Define the path to the config file
-config_file=$HOME/.config/hypr/UserConfigs/01-UserDefaults.conf
+# Define the path to the config file (Lua defaults module, Hyprland >= 0.55)
+config_file=$HOME/.config/hypr/UserConfigs/user-defaults.lua
 
 # Check if the config file exists
 if [[ ! -f "$config_file" ]]; then
@@ -11,15 +11,12 @@ if [[ ! -f "$config_file" ]]; then
     exit 1
 fi
 
-# Process the config file in memory, removing the $ and fixing spaces
-config_content=$(sed 's/\$//g' "$config_file" | sed 's/ = /=/')
+# Extract the search engine URL from the Lua module
+Search_Engine=$(grep 'search_engine' "$config_file" | head -1 | sed 's/.*search_engine = "\([^"]*\)".*/\1/')
 
-# Source the modified content directly from the variable
-eval "$config_content"
-
-# Check if $term is set correctly
+# Check if Search_Engine is set correctly
 if [[ -z "$Search_Engine" ]]; then
-    echo "Error: \$Search_Engine is not set in the configuration file!"
+    echo "Error: search_engine is not set in the configuration file!"
     exit 1
 fi
 

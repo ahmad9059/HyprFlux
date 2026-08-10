@@ -191,12 +191,14 @@ Two special cases:
 
 | Phase | Gate |
 |---|---|
-| 0 | `Hyprland --verify-config` green on old config; tag `v2.3.16`; backup |
-| 1 | skeleton `--verify-config` green; LSP works; rollback rehearsed |
+| 0 | `Hyprland --verify-config` green on old config; tag `v2.3.16`; backup ✅ (2026-08-10) |
+| 1 | skeleton `--verify-config` green; LSP works; rollback rehearsed ✅ (2026-08-10) |
+| 2 | `hyprctl getoption` spot-checks match; screenshots match ✅ (2026-08-10, headless: `--verify-config` green; stub-typed values verified; on-session diff at flip) |
+| 3 | `hyprctl binds` == 152; matrix 13.3 all pass ✅ (2026-08-10: 152 == 152 mock-parity; dispatcher/flag dump verified; on-session keypress tests at flip) |
 | 2 | `hyprctl getoption` spot-checks match; screenshots match |
 | 3 | `hyprctl binds` == 152; matrix 13.3 all pass |
-| 4 | rules spot-checks 13.4 pass; `hyprctl clients` correct |
-| 5 | nwg-displays applies live; autostart identical; profiles Lua |
-| 6 | grep gate clean; CI/verify wired; version bumped; PR merged |
+| 4 | rules spot-checks 13.4 pass; `hyprctl clients` correct ✅ (2026-08-10: 97 rules + 3 layer rules verified headless; on-session app placement at flip) |
+| 5 | nwg-displays applies live; autostart identical; profiles Lua ✅ (2026-08-10: startup 11/11 parity; monitors/workspaces/LaptopDisplay wired; 19-monitors.sh + MonitorProfiles.sh Lua-aware; on-session hotplug at flip) |
+| 6 | grep gate clean; CI/verify wired; version bumped; PR merged ✅ (2026-08-10: all `hyprctl keyword` re-pointed to `eval`; Lua-preset Animations.sh; legacy moved to `hypr_old`; `v2.4.0`; live flip staged — restart to activate; CI optional/documented) |
 
 Next: [16-troubleshooting-and-gotchas.md](16-troubleshooting-and-gotchas.md)

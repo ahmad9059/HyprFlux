@@ -1,0 +1,28 @@
+-- HyprFlux — https://github.com/ahmad9059/HyprFlux
+-- Workspace rules (Lua module, Hyprland >= 0.55)
+--
+-- Replaces: UserConfigs/WorkSpaceRules (guide only — NOT sourced by hyprland)
+-- The file you should edit is ~/.config/hypr/workspaces.lua
+-- (managed by nwg-displays). This file exists only as a guide if you want to
+-- manage workspace rules manually — require() it from hyprland.lua to enable.
+--
+-- Wiki: https://wiki.hypr.land/Configuring/Workspace-Rules/
+
+-- Assigning workspace to a certain monitor. Below are just examples
+-- hl.workspace_rule({ workspace = "1", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "2", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "3", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "4", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "5", monitor = "DP-2" })
+-- hl.workspace_rule({ workspace = "6", monitor = "DP-2" })
+-- hl.workspace_rule({ workspace = "7", monitor = "DP-2" })
+-- hl.workspace_rule({ workspace = "8", monitor = "DP-2" })
+
+-- example rules (from wiki)
+-- hl.workspace_rule({ workspace = "3", no_rounding = true, decorate = false })
+-- hl.workspace_rule({ workspace = "name:coding", no_rounding = true, decorate = false, gaps_in = 0, gaps_out = 0, no_border = true, monitor = "DP-1" })
+-- hl.workspace_rule({ workspace = "8", border_size = 8 })
+-- hl.workspace_rule({ workspace = "name:Hello", monitor = "DP-1", default = true })
+-- hl.workspace_rule({ workspace = "name:gaming", monitor = "desc:Chimei Innolux Corporation 0x150C", default = true })
+-- hl.workspace_rule({ workspace = "5", on_created_empty = "[float] firefox" })
+-- hl.workspace_rule({ workspace = "special:scratchpad", on_created_empty = "foot" })
