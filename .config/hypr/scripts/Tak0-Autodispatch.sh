@@ -56,7 +56,7 @@ echo "Starting dispatch of '$APP' to workspace $TARGET_WORKSPACE at $(date)" >> 
 
 # Avoid early workspace focus issues by switching workspace first.
 # Уникаємо проблем з раннім фокусом, спочатку переключаємо воркспейс.
-hyprctl dispatch workspace "$TARGET_WORKSPACE" >> "$LOGFILE" 2>&1
+hyprctl eval "hl.dispatch(hl.dsp.focus({ workspace = '$TARGET_WORKSPACE' }))" >> "$LOGFILE" 2>&1
 sleep 0.4
 
 # Launch the application in the background and disown it.
@@ -78,7 +78,7 @@ for i in {1..30}; do
         echo "Found window $win for app '$APP', moving to workspace $TARGET_WORKSPACE" >> "$LOGFILE"
         # Move the window to the target workspace.
         # Переміщаємо вікно на цільовий воркспейс.
-        hyprctl dispatch movetoworkspace "$TARGET_WORKSPACE,address:$win" >> "$LOGFILE" 2>&1
+        hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$TARGET_WORKSPACE', window = 'address:$win' }))" >> "$LOGFILE" 2>&1
         exit 0
     fi
     sleep 0.3

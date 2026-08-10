@@ -51,7 +51,20 @@ hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ action = "toggle" 
 hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd(scriptsDir .. "/Dropterminal.sh " .. defaults.term), { description = "Dropdown terminal" })
 hl.bind(mainMod .. " + CTRL + F", hl.dsp.window.fullscreen({ action = "toggle", mode = "maximized" }), { description = "Fake full screen (maximized)" })
 hl.bind(mainMod .. " + SPACE", hl.dsp.window.float({ action = "toggle" }), { description = "Float Mode" })
-hl.bind(mainMod .. " + ALT + SPACE", hl.dsp.exec_cmd("hyprctl dispatch workspaceopt allfloat"), { description = "All Float Mode" })
+-- All Float Mode (replaces the old `hyprctl dispatch workspaceopt allfloat`,
+-- which no longer works in Lua mode — implemented natively instead)
+hl.bind(mainMod .. " + ALT + SPACE", function()
+    local ws = hl.get_active_workspace()
+    local windows = hl.get_workspace_windows(ws.id)
+    local anyFloating = false
+    for _, w in ipairs(windows) do
+        if w.floating then anyFloating = true break end
+    end
+    local action = anyFloating and "disable" or "enable"
+    for _, w in ipairs(windows) do
+        hl.dispatch(hl.dsp.window.float({ action = action, window = w.address }))
+    end
+end, { description = "All Float Mode" })
 hl.bind(mainMod .. " + ALT + E", hl.dsp.exec_cmd(scriptsDir .. "/RofiEmoji.sh"), { description = "Emoji menu" })
 
 -- Desktop zooming or magnifier

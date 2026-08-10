@@ -190,6 +190,41 @@ level — two suspects:
    and make permanent by adding `video.brightness_switch_enabled=0` to
    `GRUB_CMDLINE_LINUX_DEFAULT` in `/etc/default/grub` + `sudo grub-mkconfig -o /boot/grub/grub.cfg`.
 
+### hyprctl dispatch legacy syntax broke (2026-08-10)
+
+User reported waybar workspace clicks stopped switching. Root cause: in Lua mode,
+**`hyprctl dispatch <old-hyprlang-string>` no longer works** — hyprctl parses the argument as
+Lua (`hl.dispatch(workspace 2)` → syntax error). Waybar's `"activate"` action and its
+`hyprctl dispatch workspace e+1` scroll actions used the old strings.
+
+Fixed everywhere (verified `hyprctl dispatch 'hl.dsp.focus({ workspace = 3 })'` etc. work):
+
+- **waybar `ModulesWorkspaces`** (all 6 variants): on-click → `hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })`, scroll → `hl.dsp.focus({ workspace = "e+1"/"e-1" })`
+- **waybar `ModulesCustom`**: quit button → `hyprctl dispatch hl.dsp.exit()`
+- **`Dropterminal.sh`** (16 calls): movewindowpixel/pin/movetoworkspacesilent/resizewindowpixel/focuswindow/exec-with-rules → `hyprctl eval "hl.dispatch(hl.dsp.window.move/pin/resize/focus(...))"` and `hl.exec_cmd(cmd, rules)`
+- **`Tak0-Autodispatch.sh`** (2 copies): workspace/movetoworkspace → Lua forms
+- **`hypridle.conf`**: dpms on/off → `hl.dsp.dpms({ action = "on"/"off" })`
+- **`user-keybinds.lua`** SUPER+ALT+SPACE "All Float": `workspaceopt allfloat` is unreachable
+  from Lua (not in `hl.dsp`) → implemented natively (iterate windows, toggle float by
+  `hl.get_workspace_windows` + `hl.dsp.window.float({ action })`)
+- keybinds.lua splitratio comment updated
+
+### Waybar workspace clicks still broken — root cause (2026-08-10)
+
+After the dispatch-syntax fixes, clicks STILL didn't switch. Investigated waybar's source
+(`src/modules/hyprland/workspace.cpp`): `Workspace::handleClicked()` **ignores the `on-click`
+config entirely** and always sends the legacy `IPC::dispatch("workspace", N)` /
+`togglespecialworkspace` strings over the IPC socket — which fail in Lua mode.
+
+Upstream fix: **Waybar PR #5013** ("adapt dispatch commands for Lua IPC protocol", merged
+2026-05-04) — adds protocol auto-detection and maps to `/dispatch hl.dsp.focus({ workspace = "N" })`
+etc. It is **NOT in 0.15.0** (released 2026-02-06, before the fix) — confirmed: the installed
+binary contains zero `hl.dsp` strings.
+
+**Fix for the user:** install `waybar-git` (already available from **chaotic-aur**):
+`sudo pacman -S waybar-git` → restart waybar. No config workaround exists for 0.15.0 clicks.
+(The on-click/scroll Lua-form config stays — correct for the fixed versions.)
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

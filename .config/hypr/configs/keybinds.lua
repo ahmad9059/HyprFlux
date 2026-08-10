@@ -34,7 +34,7 @@ hl.bind(mainMod .. " + SHIFT + I", hl.dsp.layout("rotatesplit")) -- only works o
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo({ action = "toggle" })) -- dwindle
 
 -- Works on either layout (Master or Dwindle)
--- hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("hyprctl dispatch splitratio 0.3"))
+-- hl.bind(mainMod .. " + M", hl.dsp.layout("splitratio 0.3"))
 
 -- group
 -- hl.bind(mainMod .. " + G", ...)                       -- togglegroup
