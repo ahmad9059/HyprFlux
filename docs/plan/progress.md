@@ -144,6 +144,19 @@ master-config.rasi → @vars, hyprlock → $vars, DarkLight.sh → targets palet
 palette values); looks preserved; rofi/kitty/foot/lua/json/verify-config all pass; repo↔live
 consistent.
 
+### SwayNC fix (2026-08-10)
+
+User reported swaync notification center transparent + white borders after the centralized
+colors refactor. Root cause: swaync parses CSS with **GTK4**, and `@define-color` from
+`@import`'d files does not reliably propagate — plus my refactor left self-referential
+defines (`@define-color noti-bg @noti-bg;`). All `@vars` were undefined → GTK fell back to
+defaults (transparent bg, white cards).
+
+Fix: swaync + wlogout no longer `@import` the palette css. `sync-colors.sh` now **injects a
+self-contained generated `@define-color` block** directly into both files (marker-delimited,
+idempotent). All values still come from `hyprflux-colors.conf`. Verified: single block,
+all vars defined, swaync reloads clean, journal has zero CSS errors.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
