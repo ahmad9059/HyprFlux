@@ -1,7 +1,7 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # Game Mode. Turning off all animations (Hyprland >= 0.55 uses hyprctl eval)
-# Disable path uses `hyprctl config full-reload` to restore every value from
+# Disable path uses `hyprctl reload` to restore every value from
 # hyprland.lua (this is what the original script's trailing `hyprctl reload`
 # line was meant to do but never reached).
 
@@ -17,7 +17,7 @@ if [ "$HYPRGAMEMODE" = 1 ]; then
   })'
 
   # Force full opacity on every window; pcall makes re-enabling idempotent
-  # (the rule is wiped by the full-reload on the disable path).
+  # (the rule is wiped by the reload on the disable path).
   hyprctl eval 'pcall(function() hl.window_rule({ name = "gamemode-opacity", match = { class = ".*" }, opacity = "1 override 1 override 1 override" }) end)'
   awww kill
   notify-send -e -u low -i "$notif" " Gamemode:" " enabled"
@@ -28,8 +28,8 @@ else
   ${SCRIPTSDIR}/WallpaperAwww.sh
   sleep 0.5
   ${SCRIPTSDIR}/Refresh.sh
-  # restore all config values + remove runtime window rules from the Lua config
-  hyprctl config full-reload
+  # restore all config values from the Lua config (reload also drops runtime window rules)
+  hyprctl reload
   notify-send -e -u normal -i "$notif" " Gamemode:" " disabled"
   exit
 fi

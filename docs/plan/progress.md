@@ -78,6 +78,21 @@ Remaining `.conf` files in the ACTIVE tree (by design, hyprlang tools):
 `hyprlock.conf`, `hyprlock-1080p.conf` (sources `hyprflux-colors/hyprflux-colors.conf`),
 `hypridle.conf`, `application-style.conf`. Everything else is archived in `.config/hypr_old/`.
 
+## Animation preset bug round (2026-08-10) — SUPER+SHIFT+A error
+
+User reported `user-animations.lua:22: hl.animation("borderangle"): unknown style` after
+picking an animation preset. Root causes found and fixed:
+
+| Bug | Fix |
+|---|---|
+| Converter emitted `style = "loop "` (trailing space) — the `[\w %]+` regex group swallowed the space before a `#comment` | converter now `style.strip()`s; all 17 presets regenerated from `hypr_old` sources |
+| `01-default - v2` had `bezier("nice")` control points `6.9/-4.20` — out of the Lua API's `[-2, 2]` bounds → config load error | curve was **unused** by any animation → commented out |
+| `hyprctl config full-reload` does **NOT exist on 0.56.2** ("unknown request") — Animations.sh and GameMode.sh used it | switched to `hyprctl reload` (verified working) |
+
+**New validation gate added: every animation preset is `--verify-config`'d against the real
+binary (17/17 PASS)** — previously only `luac -p` was run on presets. Live `user-animations.lua`
+restored from the fixed preset (currently HYDE - default, the user's selection).
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

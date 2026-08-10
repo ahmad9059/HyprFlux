@@ -21,7 +21,7 @@ hl.animation({ leaf = "windowsIn", enabled = true, speed = 5, bezier = "winIn", 
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 3, bezier = "smoothOut", style = "slide" })
 hl.animation({ leaf = "windowsMove", enabled = true, speed = 5, bezier = "wind", style = "slide" })
 hl.animation({ leaf = "border", enabled = true, speed = 1, bezier = "liner" })
-hl.animation({ leaf = "borderangle", enabled = true, speed = 100, bezier = "liner", style = "loop " })
+hl.animation({ leaf = "borderangle", enabled = true, speed = 100, bezier = "liner", style = "loop" })
 hl.animation({ leaf = "fade", enabled = true, speed = 3, bezier = "smoothOut" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "overshot" })
 hl.animation({ leaf = "workspacesIn", enabled = true, speed = 5, bezier = "winIn", style = "slide" })

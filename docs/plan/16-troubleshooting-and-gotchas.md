@@ -41,6 +41,9 @@ misc.vfr                      → debug.vfr
 | `dwindle { }`/`master { }` block errors "unknown config key 'layout.dwindle.*'" | layout options are **flat keys** (`dwindle.*`, `master.*`), NOT nested under `layout` | `hl.config({ dwindle = { preserve_split = true }, master = { mfact = 0.5 } })` |
 | `hl.animation` errors "speed 180 is more than the maximum of 100" | Lua API caps animation speed at 100 ds | clamp to ≤100 (borderangle 180 → 100) |
 | `hl.bind: Unknown keysym "XF86AudioPlayPause"` | `XF86AudioPlayPause` is not a valid xkbcommon keysym (hyprlang accepted it) | bind `code:164` (KEY_PLAYPAUSE) with a comment |
+| `hl.animation("borderangle"): unknown style` | a style string with a **trailing space** (`"loop "` vs `"loop"`) — e.g. produced by converters that swallow the space before a `#comment` | `style.strip()` in generators; grep `style = "[a-z]* "` |
+| `hl.curve("nice"): point value 6.90 is more than the maximum of 2.00` | bezier control points are clamped to `[-2, 2]` in the Lua API (hyprlang accepted out-of-range) | clamp or drop the curve (check if it's used first) |
+| `hyprctl config full-reload` → `unknown request` | the subcommand doesn't exist on 0.56.2 (added in a later release) | use `hyprctl reload` (verified working on 0.56.2) |
 | Startup log still says "hyprland.conf" | cosmetic (hyprwm/Hyprland#15407) | ignore |
 | `hyprctl binds` JSON empty/invalid | fixed in 0.56.1 | upgrade; use `hyprctl eval` |
 

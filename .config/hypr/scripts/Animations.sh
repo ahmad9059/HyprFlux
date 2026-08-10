@@ -1,7 +1,7 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
 # For applying Animations from different users
-# (Hyprland >= 0.55: presets are Lua modules; a config full-reload applies them)
+# (Hyprland >= 0.55: presets are Lua modules; a config reload applies them)
 
 # Check if rofi is already running
 if pidof rofi >/dev/null; then
@@ -25,8 +25,8 @@ chosen_file=$(echo "$animations_list" | rofi -i -dmenu -config $rofi_theme -mesg
 if [[ -n "$chosen_file" ]]; then
   full_path="$animations_dir/$chosen_file.lua"
   cp "$full_path" "$UserConfigs/user-animations.lua"
-  # reload the Lua config from scratch so the new animations module applies
-  hyprctl config full-reload
+  # reload the Lua config so the new animations module applies
+  hyprctl reload
   notify-send -u low -i "$iDIR/ja.png" "$chosen_file" "Hyprland Animation Loaded"
 fi
 
