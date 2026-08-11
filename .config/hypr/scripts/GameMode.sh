@@ -62,8 +62,6 @@ disable_gamemode() {
     awww-daemon --format xrgb && awww img "$HOME/.config/rofi/.current_wallpaper" &
     sleep 0.1
     ${SCRIPTSDIR}/WallpaperAwww.sh
-    sleep 0.5
-    ${SCRIPTSDIR}/Refresh.sh
     notify-send -e -u normal -i "$notif" " Gamemode:" " disabled"
 }
 

@@ -44,7 +44,7 @@ hl.config({
             passes = 2,
             ignore_opacity = true,
             new_optimizations = true,
-            special = true,
+            special = false, -- expensive; rarely noticed
             popups = true,
         },
     },

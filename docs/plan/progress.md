@@ -301,6 +301,30 @@ Applied per user-reviewed plan:
 Final map: 1=dev/email, 2=browser, 3=files, 4=IM+screenshare, 6=games, 9=VMs, 10=obsidian,
 special:nyx=chat; media & terminals free.
 
+## Improvement batch applied (2026-08-10) — 16 items
+
+**Cleanup:** deleted 28 unused swaync images/icons + dirs; removed duplicate
+`scripts/Tak0-Autodispatch.sh` (UserScripts copy authoritative); removed dead `swallow_regex`;
+modules renumbered 01–18 (15-quickshell gap closed, `bypass_dialogs` verified consistent).
+
+**Bugs:** Weather.py rewritten on **wttr.in** (stdlib only, no scraping/pyquery — was broken by
+weather.com markup change; waybar JSON + hyprlock cache preserved); GameMode disable no longer
+runs Refresh.sh (instant toggle); refresh-rate `hl.monitor` eval path **verified live**
+(60↔165 Hz round-trip OK).
+
+**Performance:** borderangle animation `loop`→`once`; `render.direct_scanout` 0→2 (auto);
+`decoration.blur.special` true→false (kept popups).
+
+**Automation:** `.github/workflows/config-check.yml` (arch container: luac all Lua +
+`Hyprland --verify-config` + `sync-colors.sh` up-to-date gate, runs on config PRs/pushes);
+Quick Settings gains "Check for HyprFlux Updates".
+
+**Architecture:** KeyHints.sh now generates LIVE from `hyprctl binds -j` (stale entries like
+"Change Zsh theme"/"Mount Google Drive" gone automatically); `hyprland.lua` phase-comments
+cleaned; UserScripts `00-Readme` documents the duplication policy (UserScripts wins).
+
+All validated (`config ok`, luac, bash -n, py_compile), synced to live, Hyprland reloaded.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

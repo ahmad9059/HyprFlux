@@ -1,0 +1,60 @@
+name: Config check
+
+on:
+  push:
+    paths:
+      - ".config/hypr/**"
+      - "utilities/sync-colors.sh"
+      - ".config/waybar/**"
+      - ".config/rofi/**"
+      - ".config/swaync/**"
+      - ".config/kitty/**"
+      - ".config/foot/**"
+  pull_request:
+    paths:
+      - ".config/hypr/**"
+      - "utilities/sync-colors.sh"
+      - ".config/waybar/**"
+      - ".config/rofi/**"
+      - ".config/swaync/**"
+      - ".config/kitty/**"
+      - ".config/foot/**"
+  workflow_dispatch:
+
+jobs:
+  config-check:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm --needed hyprland lua
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lua syntax check (all configs)
+        run: |
+          FAIL=0
+          while IFS= read -r -d '' f; do
+            luac -p "$f" || { echo "LUA SYNTAX FAIL: $f"; FAIL=1; }
+          done < <(find .config/hypr -name '*.lua' -print0)
+          [ $FAIL -eq 0 ] || exit 1
+          echo "All Lua configs parse OK"
+
+      - name: Hyprland config verification
+        run: |
+          Hyprland --config .config/hypr/hyprland.lua --verify-config
+          echo "Hyprland verify-config OK"
+
+      - name: sync-colors up-to-date check
+        run: |
+          bash utilities/sync-colors.sh >/dev/null
+          if ! git diff --exit-code --quiet; then
+            echo "::error::Generated color files are out of date — run utilities/sync-colors.sh and commit the changes."
+            git diff --stat
+            exit 1
+          fi
+          echo "Color files up to date"

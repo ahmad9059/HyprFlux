@@ -48,6 +48,7 @@ Choose Monitor Profiles
 Choose Rofi Themes
 Search for Keybinds
 Toggle Game Mode
+Check for HyprFlux Updates
 Switch Dark-Light Theme
 EOF
 }
@@ -107,6 +108,7 @@ main() {
   "Choose Monitor Profiles") $scriptsDir/MonitorProfiles.sh ;;
   "Search for Keybinds") $scriptsDir/KeyBinds.sh ;;
   "Toggle Game Mode") $scriptsDir/GameMode.sh ;;
+  "Check for HyprFlux Updates") $scriptsDir/HyprFluxUpdate.sh ;;
   *) return ;; # Do nothing for invalid choices
   esac
 

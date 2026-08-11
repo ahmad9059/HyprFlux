@@ -78,7 +78,6 @@ hl.config({
         vrr = 2, -- 0 off, 1 on, 2 fullscreen only, 3 fullscreen with video/game
         mouse_move_enables_dpms = true,
         enable_swallow = false, -- was "off" in hyprlang (bool in Lua)
-        swallow_regex = "^(kitty)$",
         focus_on_activate = false,
         initial_workspace_tracking = 0,
         middle_click_paste = false,
@@ -103,7 +102,7 @@ hl.config({
     },
 
     render = {
-        direct_scanout = 0,
+        direct_scanout = 2, -- auto: lower latency for fullscreen games
     },
 
     cursor = {
