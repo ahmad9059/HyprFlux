@@ -116,8 +116,6 @@ GDK_BACKEND=$BACKEND yad \
   "SUPER + ALT + E"        "Emoji menu" \
   "SUPER + ALT + mouse"    "Zoom in / out (magnifier)" \
   "SUPER + CTRL + O"       "Toggle opacity (active window)" \
-  "SUPER + CTRL + B"       "Waybar styles menu" \
-  "SUPER + ALT + B"        "Waybar layout menu" \
   "SUPER + CTRL + ALT + B" "Toggle waybar (hide/show)" \
   "" "" \
   "" "More at ~/.config/hypr/UserConfigs and UserScripts"

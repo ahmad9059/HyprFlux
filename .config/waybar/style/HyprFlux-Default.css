@@ -11,7 +11,7 @@
   /* padding: 0.03125rem; */
 }
 
-@import "../waybar/hyprflux-colors.css";
+@import "../hyprflux-colors.css";
 
 window#waybar {
   transition-property: background-color;

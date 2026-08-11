@@ -54,9 +54,8 @@
 	"format": " ",
 	"on-click": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
 	"on-click-right": "$HOME/.config/hypr/UserScripts/WallpaperRandom.sh",
-	"on-click-middle": "$HOME/.config/hypr/scripts/WaybarStyles.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Wallpaper Menu\nMiddle Click: Random wallpaper\nRight Click: Waybar Styles Menu",
+	"tooltip-format": "Left Click: Wallpaper Menu\nMiddle Click: Random wallpaper",
 },
 
 "custom/hint": {
@@ -71,8 +70,7 @@
 	"format": " 󰁈 ",
 	"on-click": "$HOME/.config/hypr/scripts/HyprFluxUpdate.sh",
 	"tooltip": true,
-	"tooltip-format": "Check HyprFlux update
-If available",
+	"tooltip-format": "Check HyprFlux update\nIf available",
 },
 
 // Hypridle inhibitor
@@ -96,10 +94,9 @@ If available",
 
 "custom/light_dark": {
 	"format": "󰔎 ",
-	"on-click-right": "$HOME/.config/hypr/scripts/WaybarStyles.sh",
 	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
 	"tooltip": true,
-	"tooltip-format": "Middle Click: Wallpaper Menu\nRight Click: Waybar Styles Menu",
+	"tooltip-format": "Middle Click: Wallpaper Menu",
 },
 
 "custom/lock": {
@@ -113,9 +110,8 @@ If available",
 	"format": "  ",
 	"on-click": "pkill rofi || rofi -show drun -modi run,drun,filebrowser,window",
 	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
-	"on-click-right": "$HOME/.config/hypr/scripts/WaybarLayout.sh",
 	"tooltip": true,
-	"tooltip-format": "Left Click: Rofi Menu\nMiddle Click: Wallpaper Menu\nRight Click: Waybar Layout Menu",
+	"tooltip-format": "Left Click: Rofi Menu\nMiddle Click: Wallpaper Menu",
 },
 // This is a custom cava visualizer
 "custom/cava_mviz": {

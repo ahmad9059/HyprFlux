@@ -80,8 +80,6 @@ end, { description = "Zoom out" })
 
 -- Waybar / Bar related
 hl.bind(mainMod .. " + CTRL + ALT + B", hl.dsp.exec_cmd("pkill -SIGUSR1 waybar"), { description = "Toggle hide/show waybar" })
-hl.bind(mainMod .. " + CTRL + B", hl.dsp.exec_cmd(scriptsDir .. "/WaybarStyles.sh"), { description = "Waybar Styles Menu" })
-hl.bind(mainMod .. " + ALT + B", hl.dsp.exec_cmd(scriptsDir .. "/WaybarLayout.sh"), { description = "Waybar Layout Menu" })
 
 -- FEATURES / EXTRAS (UserScripts)
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd(UserScripts .. "/RofiBeats.sh"), { description = "Online music via rofi" })

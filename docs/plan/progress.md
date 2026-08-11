@@ -333,6 +333,45 @@ laptops.lua): 101 key/description pairs grouped into Apps / Windows / Workspaces
 Media & Hardware / Features. Every listed bind was verified against the config files
 (`RETURN` casing matched, commented binds excluded, XF86/arrow/wheel groups validated).
 
+### Waybar theme system simplified (2026-08-11)
+
+Removed the symlink-based style/layout switching:
+
+- `config` and `style.css` are now **real files** (repo + live): `style.css` holds one
+  `@import url("style/<theme>.css")` line; `config` is a copy of the `HyprFlux-Default-Laptop` preset
+- Dead `waybar/wallust/` dir removed from repo
+- `WaybarStyles.sh` — rofi menu of `style/*.css`; switches by **editing the @import line**
+  (current theme detected from the line, marked 👉) + fast waybar-only restart
+- `WaybarLayout.sh` — rofi menu of `configs/*`; switches by **copying the preset over config**
+  (active layout detected by byte-comparison) + fast waybar-only restart
+- Style presets' internal `@import` paths fixed (`../waybar/…` → `../…`) — the old paths only
+  resolved through the symlink location
+- Verified: import resolution clean in trace, style/layout detection logic, waybar running
+
+### Waybar styles/layouts slimmed down (2026-08-11)
+
+Removed all alternative themes/layouts — only the active ones remain:
+
+- **Style**: only `HyprFlux-Default.css` (imported by style.css); removed
+  `Catppuccin-Mocha Full BackGround.css`, `Tokyo-Night.css`, and the vendored `catppuccin-themes/`
+- **Layout**: only `configs/HyprFlux-Default-Laptop`; removed the other 8 presets
+- `WaybarStyles.sh`/`WaybarLayout.sh` still work (single option now — drop new files into
+  `style/` or `configs/` anytime and they appear in the menus)
+- Palette vars `$bar_bg_alt`/`$bar_main_bg` kept (bar-main-bg still used by the active style)
+
+### Waybar switchers removed (2026-08-11)
+
+With only one style (`HyprFlux-Default.css`) and one layout (`HyprFlux-Default-Laptop`), the
+switcher scripts are gone:
+
+- Deleted `WaybarStyles.sh` + `WaybarLayout.sh` (repo + live) + their rofi configs
+  (`config-waybar-style.rasi`, `config-waybar-layout.rasi`)
+- Removed keybinds `SUPER+CTRL+B` / `SUPER+ALT+B`; KeyHints entries removed
+- `ModulesCustom`: removed the 3 click handlers that called them (cycle_wall middle-click,
+  light_dark right-click, menu right-click) + tooltips updated; fixed a literal-newline
+  tooltip string (now proper `\n`)
+- `initial-boot.sh`: removed dead `waybar_style` var + commented symlink line
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

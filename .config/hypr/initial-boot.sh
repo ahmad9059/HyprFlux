@@ -10,7 +10,6 @@
 # Variables
 scriptsDir=$HOME/.config/hypr/scripts
 wallpaper=$HOME/Pictures/wallpapers/wallpaper-5.jpg
-waybar_style="$HOME/.config/waybar/style/Catppuccin Mocha Custom.css"
 kvantum_theme="catppuccin-mocha-blue"
 color_scheme="prefer-dark"
 gtk_theme="Material-DeepOcean-BL"
@@ -53,8 +52,7 @@ if [ ! -f "$HOME/.config/hypr/.initial_startup_done" ]; then
 
   # waybar style
   #if [ -L "$HOME/.config/waybar/config" ]; then
-  ##    	ln -sf "$waybar_style" "$HOME/.config/waybar/style.css"
-  #   	"$scriptsDir/Refresh.sh" > /dev/null 2>&1 &
+    #   	"$scriptsDir/Refresh.sh" > /dev/null 2>&1 &
   #fi
 
   # Create a marker file to indicate that the script has been executed.
