@@ -46,6 +46,10 @@ jobs:
 
       - name: Hyprland config verification
         run: |
+          export HOME="${HOME:-/root}"
+          export XDG_RUNTIME_DIR="/tmp/hypr-runtime"
+          mkdir -p "$XDG_RUNTIME_DIR"
+          chmod 700 "$XDG_RUNTIME_DIR"
           Hyprland --config .config/hypr/hyprland.lua --verify-config
           echo "Hyprland verify-config OK"
 
