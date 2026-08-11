@@ -20,20 +20,25 @@
   "timeout-low": 3,
   "timeout-critical": 3,
   "fit-to-screen": false,
-  "control-center-width": 330,
-  "control-center-height": 900,
+  "control-center-width": 360,
   "keyboard-shortcuts": true,
   "image-visibility": "when-available",
   "transition-time": 200,
   "hide-on-clear": false,
   "hide-on-action": true,
   "script-fail-notify": true,
-  "widgets": ["dnd", "buttons-grid", "mpris", "title", "notifications"],
+  "widgets": [
+    "dnd",
+    "buttons-grid",
+    "mpris",
+    "title",
+    "notifications"
+  ],
   "widget-config": {
     "title": {
-      "text": " Notifications",
+      "text": "\uf0f3 Notifications",
       "clear-all-button": true,
-      "button-text": " Clear"
+      "button-text": "\uede4 Clear"
     },
     "dnd": {
       "text": "Do Not Disturb"
@@ -47,34 +52,35 @@
       "image-radius": 0
     },
     "volume": {
-      "label": "󰕾"
+      "label": "\udb81\udd7e"
     },
     "backlight": {
-      "label": "󰃟"
+      "label": "\udb80\udcdf"
     },
     "buttons-grid": {
       "actions": [
         {
-          "label": "󰐥",
+          "label": "\udb81\udc25",
           "command": "bash -c $HOME/.config/hypr/scripts/Wlogout.sh"
         },
         {
-          "label": "󰌾",
+          "label": "\udb80\udf3e",
           "command": "bash -c $HOME/.config/hypr/scripts/LockScreen.sh"
         },
         {
-          "label": "󰍃",
+          "label": "\udb80\udf43",
           "command": "hyprctl dispatch exit"
         },
         {
-          "label": "󰀝",
+          "label": "\udb80\udc1d",
           "command": "bash -c $HOME/.config/hypr/scripts/AirplaneMode.sh"
         },
         {
-          "label": "󰝟",
+          "label": "\udb81\udf5f",
           "command": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
         }
       ]
     }
-  }
+  },
+  "control-center-height": 1296
 }
