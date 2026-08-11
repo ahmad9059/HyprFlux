@@ -32,6 +32,7 @@ hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("vesktop"), { description = "Vesktop 
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("(64gram-desktop|telegram-desktop)"), { description = "Telegram" })
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("fdm"), { description = "Free Download Manager" })
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(UserScripts .. "/TmuxifierProjects.sh"), { description = "Tmuxifier projects" })
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(UserScripts .. "/GitRepoClone.sh"), { description = "Clone GitHub repo (rofi)" })
 
 -- FEATURES / EXTRAS
 hl.bind(mainMod .. " + SHIFT + H", hl.dsp.exec_cmd(scriptsDir .. "/KeyHints.sh"), { description = "Help / cheat sheet" })

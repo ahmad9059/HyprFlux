@@ -372,6 +372,13 @@ switcher scripts are gone:
   tooltip string (now proper `\n`)
 - `initial-boot.sh`: removed dead `waybar_style` var + commented symlink line
 
+### New UserScript: GitRepoClone.sh (2026-08-11)
+
+`UserScripts/GitRepoClone.sh` — press **SUPER+G**: lists all your GitHub repos (via `gh`,
+authenticated as ahmad9059) in rofi; pick one → cloned to `~/Documents/Projects`; repos already
+cloned are marked `✓` and reported as "Already cloned" instead of re-cloning. Errors (no gh
+auth/network) notify instead of failing silently.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
