@@ -399,6 +399,27 @@ workspace is on dwindle. Fix in `configs/keybinds.lua`:
 - SUPER+K / CTRL+D / I / CTRL+RETURN → master-guarded via the helper
 - Verified on live: no errors on dwindle; `config ok`
 
+### ChangeLayout.sh bug fixed (2026-08-11)
+
+SUPER+SHIFT+L (layout toggle) worked, but the script's runtime
+`unbind("SUPER + K")`/`rebind` clobbered the **Kdenlive** bind (SUPER+K, user-keybinds) —
+confirmed it vanished after the first toggle (pre-existing bug from the .conf era).
+
+Fix:
+- `ChangeLayout.sh` is now a **pure layout toggle** (no unbind/rebind of J/K/O)
+- Cycling binds live statically in `configs/keybinds.lua` (layout-aware):
+  J → `cycle_next` (any layout), K → master-guarded `cycleprev`, new **SUPER+O →
+  dwindle-guarded `togglesplit`**
+- Verified: Kdenlive + Obsidian coexist with the guards after toggling both ways; J cycles on
+  both layouts; no runtime errors
+
+### Scrolling layout added to the cycle (2026-08-11)
+
+SUPER+SHIFT+L now cycles **Dwindle → Master → Scrolling → Dwindle** (verified live round-trip).
+`ChangeLayout.sh` is a pure layout toggle; layout-specific binds stay static and guarded
+(J = cycle next any layout, K = master-guarded, O = dwindle-guarded togglesplit).
+KeyHints updated.
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

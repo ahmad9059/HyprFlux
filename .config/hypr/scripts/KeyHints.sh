@@ -100,7 +100,7 @@ GDK_BACKEND=$BACKEND yad \
   "═════ FEATURES ═════" "" \
   "SUPER + SHIFT + G"      "Game mode toggle" \
   "SUPER + SHIFT + O"      "Toggle blur settings" \
-  "SUPER + SHIFT + L"      "Toggle Master/Dwindle layout" \
+  "SUPER + SHIFT + L"      "Cycle layout (Dwindle/Master/Scrolling)" \
   "SUPER + SHIFT + R"      "Refresh waybar, swaync, rofi" \
   "SUPER + SHIFT + W"      "Wallpaper select / effects" \
   "CTRL + ALT + W"         "Random wallpaper" \

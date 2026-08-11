@@ -37,6 +37,7 @@ hl.bind(mainMod .. " + CTRL + D", layoutMsgIf("master", "removemaster"))
 hl.bind(mainMod .. " + I", layoutMsgIf("master", "addmaster"))
 hl.bind(mainMod .. " + K", layoutMsgIf("master", "cycleprev"))
 hl.bind(mainMod .. " + CTRL + RETURN", layoutMsgIf("master", "swapwithmaster"))
+hl.bind(mainMod .. " + O", layoutMsgIf("dwindle", "togglesplit")) -- dwindle: toggle split
 
 -- Dwindle Layout
 hl.bind(mainMod .. " + SHIFT + I", hl.dsp.layout("rotatesplit")) -- only works on dwindle layout
