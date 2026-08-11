@@ -325,6 +325,14 @@ cleaned; UserScripts `00-Readme` documents the duplication policy (UserScripts w
 
 All validated (`config ok`, luac, bash -n, py_compile), synced to live, Hyprland reloaded.
 
+### KeyHints.sh rebuilt — curated from the real config (2026-08-10)
+
+The `hyprctl binds -j`-generated version showed wrong/incomplete keys. Rebuilt as a **curated
+cheat sheet** directly from the actual binds (configs/keybinds.lua + user-keybinds.lua +
+laptops.lua): 101 key/description pairs grouped into Apps / Windows / Workspaces / Screenshots /
+Media & Hardware / Features. Every listed bind was verified against the config files
+(`RETURN` casing matched, commented binds excluded, XF86/arrow/wheel groups validated).
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all
