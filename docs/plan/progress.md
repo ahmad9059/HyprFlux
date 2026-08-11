@@ -387,6 +387,18 @@ auth/network) notify instead of failing silently.
   `#temperature.critical` (red bg) CSS rules from `HyprFlux-Default.css` (config thresholds
   kept — they're harmless without the CSS). Weather classes never had a red rule (only padding).
 
+### SUPER+J runtime error fixed (2026-08-11)
+
+`hl.dsp.layout("cyclenext")` threw "Unknown dwindle layoutmsg" — the master-layout messages
+(cyclenext/cycleprev/addmaster/removemaster/swapwithmaster) are rejected when the active
+workspace is on dwindle. Fix in `configs/keybinds.lua`:
+
+- New `layoutMsgIf(layout, msg)` helper — dispatches a layout message only when the active
+  workspace uses that layout (no more error notifications)
+- SUPER+J → `hl.dsp.window.cycle_next()` (any layout); removed the broken layout-cyclenext bind
+- SUPER+K / CTRL+D / I / CTRL+RETURN → master-guarded via the helper
+- Verified on live: no errors on dwindle; `config ok`
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

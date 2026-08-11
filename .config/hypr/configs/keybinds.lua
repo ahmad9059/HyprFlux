@@ -22,12 +22,21 @@ hl.bind("CTRL + ALT + P", hl.dsp.exec_cmd(scriptsDir .. "/Wlogout.sh"), { descri
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"), { description = "swayNC notification panel" })
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(scriptsDir .. "/HyprFlux_Quick_Settings.sh"), { description = "HyprFlux Quick Settings Menu" })
 
+-- Layout-aware helper: only dispatch a layout message when the active
+-- workspace uses that layout (avoids "Unknown ... layoutmsg" runtime errors)
+local function layoutMsgIf(layout, msg)
+    return function()
+        if hl.get_active_workspace().tiled_layout == layout then
+            hl.dispatch(hl.dsp.layout(msg))
+        end
+    end
+end
+
 -- Master Layout
-hl.bind(mainMod .. " + CTRL + D", hl.dsp.layout("removemaster"))
-hl.bind(mainMod .. " + I", hl.dsp.layout("addmaster"))
-hl.bind(mainMod .. " + J", hl.dsp.layout("cyclenext"))
-hl.bind(mainMod .. " + K", hl.dsp.layout("cycleprev"))
-hl.bind(mainMod .. " + CTRL + RETURN", hl.dsp.layout("swapwithmaster"))
+hl.bind(mainMod .. " + CTRL + D", layoutMsgIf("master", "removemaster"))
+hl.bind(mainMod .. " + I", layoutMsgIf("master", "addmaster"))
+hl.bind(mainMod .. " + K", layoutMsgIf("master", "cycleprev"))
+hl.bind(mainMod .. " + CTRL + RETURN", layoutMsgIf("master", "swapwithmaster"))
 
 -- Dwindle Layout
 hl.bind(mainMod .. " + SHIFT + I", hl.dsp.layout("rotatesplit")) -- only works on dwindle layout
@@ -41,7 +50,7 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo({ action = "toggle" })) -- dwind
 -- hl.bind(mainMod .. " + CTRL + tab", ...)              -- changegroupactive
 
 -- Cycle windows; if floating, bring to top
-hl.bind(mainMod .. " + J", hl.dsp.window.cycle_next({ next = true })) -- kept alongside layoutmsg cyclenext (original config had both)
+hl.bind(mainMod .. " + J", hl.dsp.window.cycle_next({ next = true })) -- cycle next window (any layout)
 -- hl.bind("ALT + tab", ...) -- bringactivetotop
 
 -- Special Keys / Hot Keys
