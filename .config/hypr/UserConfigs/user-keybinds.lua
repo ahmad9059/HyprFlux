@@ -102,4 +102,3 @@ hl.bind(mainMod .. " + CTRL + C", hl.dsp.exec_cmd(UserScripts .. "/RofiCalc.sh")
 -- end)
 
 -- Removed binds
--- hl.bind(mainMod .. " + S", hl.dsp.exec_cmd(scriptsDir .. "/RofiSearch.sh"), { description = "Google search using rofi" })
