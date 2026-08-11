@@ -379,6 +379,14 @@ authenticated as ahmad9059) in rofi; pick one → cloned to `~/Documents/Project
 cloned are marked `✓` and reported as "Already cloned" instead of re-cloning. Errors (no gh
 auth/network) notify instead of failing silently.
 
+### Clone notifications + waybar threshold-red removed (2026-08-11)
+
+- `GitRepoClone.sh` now notifies: **Cloning started** → **Cloned** (success) → **Clone failed
+  with the git error reason** (critical notification).
+- Waybar no longer turns red at thresholds: removed the `#battery.critical` (red + blink) and
+  `#temperature.critical` (red bg) CSS rules from `HyprFlux-Default.css` (config thresholds
+  kept — they're harmless without the CSS). Weather classes never had a red rule (only padding).
+
 ## Status
 
 - **Live session: RUNNING THE LUA CONFIG** (verified: `dispatcher: __lua`, 152 binds, all

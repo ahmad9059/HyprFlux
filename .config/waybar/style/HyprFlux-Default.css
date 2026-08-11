@@ -124,17 +124,6 @@ window#waybar.hidden {
   }
 }
 
-#battery.critical:not(.charging) {
-  background-color: @red;
-  color: @theme_text_color;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  box-shadow: inset 0 -3px transparent;
-}
-
 #clock {
   color: @text;
 }
@@ -156,9 +145,6 @@ window#waybar.hidden {
   color: @teal;
 }
 
-#temperature.critical {
-  background-color: @red;
-}
 
 #tray > .passive {
   -gtk-icon-effect: dim;

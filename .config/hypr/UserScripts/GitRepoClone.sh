@@ -50,8 +50,12 @@ if [[ -d "$target" ]]; then
     exit 0
 fi
 
-if git clone "https://github.com/$full.git" "$target"; then
+notify-send -i "$notif_icon" "Cloning started" "$full → $target"
+
+if err=$(git clone "https://github.com/$full.git" "$target" 2>&1); then
     notify-send -i "$notif_icon" "Cloned" "$full → $target"
 else
-    notify-send -i "$notif_err" "Clone failed" "$full"
+    reason=$(echo "$err" | grep -iE 'error|fatal|not found|denied' | head -1)
+    reason=${reason:-"unknown error"}
+    notify-send -u critical -i "$notif_err" "Clone failed" "$full: $reason"
 fi
