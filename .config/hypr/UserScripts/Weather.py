@@ -81,7 +81,7 @@ def main():
         f"  {visibility} km"
     )
 
-    out = {"text": f"{icon}  {temp}°", "alt": status, "tooltip": tooltip, "class": icon_key}
+    out = {"text": f"{icon} {temp}°", "alt": status, "tooltip": tooltip, "class": icon_key}
     print(json.dumps(out))
 
     simple = (
