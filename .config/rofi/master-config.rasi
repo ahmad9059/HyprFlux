@@ -18,7 +18,7 @@ configuration {
 }
 
 /* ---- Load HyprFlux colors ---- */
-@theme "~/.config/rofi/wallust/hyprflux-colors.rasi"
+@theme "~/.config/rofi/hyprflux-colors.rasi"
 
 /* ---- Global Properties ---- */
 * {
