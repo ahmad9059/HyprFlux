@@ -159,6 +159,19 @@ Deep edge-case audit + fixes across the whole install pipeline:
 - config-check: Hyprland-Dots/.config parity gate; RofiEmoji excluded from bash -n (known false positive)
 - build-iso: shell syntax gate on airootfs scripts
 
+## Zsh/shell install fixes (KVM/QEMU test fallout, 2026-08-25)
+
+Test on KVM/QEMU with the merged script landed users in **bash** with **fzf missing**. Root causes + fixes:
+
+- **BUG (fatal): `scripts/initial.sh` had `local _yay_attempts=0` at top-level scope** — `local` outside a function returns 1 and with `set -e` the script **died instantly**, so yay was never installed by initial.sh → cascading failures (no AUR helper later).
+- **BUG: `scripts/zsh.sh` had `local _chsh_attempts=0` at top-level** — same bash error (non-fatal there, but the retry counter never initialized properly).
+- **Cascade:** with yay missing, `install_package fzf` (Global_functions.sh ISAUR) silently failed → fzf never installed → `.zshrc:81 source <(fzf --zsh)` errored on every shell start.
+- **`chsh` hardening:** zsh now added to `/etc/shells` before chsh (chsh rejects unknown shells); temp sudo permission uses a **sudoers.d drop-in** (`/etc/sudoers.d/99-hyprflux-temp`, mode 440) instead of appending to `/etc/sudoers`; **`usermod -s` fallback** if chsh fails after 5 attempts; cleanup is non-fatal (`sudo -n rm -f` then plain rm).
+- **fzf/zsh packages now yay-independent:** `_install_any()` helper — installs via AUR helper, falls back to `sudo pacman -S` (zsh, lsd, mercurial, zsh-completions, fzf are all in the extra repo).
+- **fzf installed BEFORE .zshrc copy** (the .zshrc sources fzf at startup).
+- **`.zshrc` guarded:** `source <(fzf --zsh)` now wrapped in `if command -v fzf` (repo `.zshrc` + Arch-Hyprland `assets/.zshrc`).
+- `Arch-Hyprland/install.sh`: `bash initial.sh` call site now guarded with `|| echo warn` so a future failure can't cascade.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

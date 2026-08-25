@@ -234,7 +234,7 @@ cp "$HYPRFLUX_DIR/scripts/zsh.sh" "$INSTALL_SCRIPTS_DIR/zsh.sh"
 chmod +x "$INSTALL_SCRIPTS_DIR/zsh.sh"
 # NOTE: replace_reads.sh is no longer needed - Hyprland-Dots is merged and
 # its scripts are already pre-patched for non-interactive installation.
-bash "$HYPRFLUX_DIR/scripts/initial.sh"
+bash "$HYPRFLUX_DIR/scripts/initial.sh" || echo "${WARN} [HyprFlux] initial.sh had issues — continuing" | tee -a "$LOG"
 sleep 1
 
 # Execute AUR helper script after other installations if applicable

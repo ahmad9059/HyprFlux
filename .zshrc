@@ -78,7 +78,9 @@ alias ntest='bash /home/ahmad/.config/hypr/UserScripts/networkTest.sh'
 alias server='ssh -i ~/.ssh/ssh-key-2025-09-06.key ubuntu@140.245.24.242'
 
 # Set-up FZF key bindings (CTRL R for fuzzy history finder)
-source <(fzf --zsh)
+if command -v fzf >/dev/null 2>&1; then
+    source <(fzf --zsh)
+fi
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000

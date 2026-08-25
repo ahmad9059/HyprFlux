@@ -33,7 +33,9 @@ alias lla='ls -la'
 alias lt='ls --tree'
 
 # Set-up FZF key bindings (CTRL R for fuzzy history finder)
-source <(fzf --zsh)
+if command -v fzf >/dev/null 2>&1; then
+    source <(fzf --zsh)
+fi
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000

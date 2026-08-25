@@ -55,7 +55,9 @@ if ! command -v yay &>/dev/null; then
   sudo pacman -S --needed --noconfirm go base-devel git
 
   # Retry capped: 5 attempts, then fall back to yay-bin from Chaotic-AUR.
-  local _yay_attempts=0
+  # NOTE: no 'local' here — this is top-level scope (not a function), and
+  # 'local' outside a function returns 1, which with set -e kills the script.
+  _yay_attempts=0
   while ! command -v yay &>/dev/null && [ "$_yay_attempts" -lt 5 ]; do
     _yay_attempts=$((_yay_attempts + 1))
     echo "${INFO} Attempting to build and install yay ($_yay_attempts/5)...${RESET}"
