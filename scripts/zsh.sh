@@ -3,7 +3,7 @@
 # HyprFlux - Zsh and Oh My Zsh Installation Script
 # https://github.com/ahmad9059/HyprFlux
 # ============================================================
-# Based on JaKooLit's zsh script with sudo chsh workaround
+# Based on HyprFlux zsh script with sudo chsh workaround
 # for non-interactive installation
 
 zsh_pkg=(

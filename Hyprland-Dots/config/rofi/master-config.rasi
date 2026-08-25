@@ -1,0 +1,234 @@
+/* Master Config */
+
+/* ---- Configuration ---- */
+
+configuration {
+	modi:                       "drun,run,filebrowser";
+    show-icons:                 true;
+    display-drun:               "Apps";
+    display-run:                "Run";
+    display-filebrowser:        "Files";
+    display-window:             "Windows";
+  	drun-display-format:        "{name}";
+	  hover-select:               true;
+	  me-select-entry:            "MouseSecondary";
+    me-accept-entry:            "MousePrimary";
+	  window-format:              "{w} · {c} · {t}";
+	  dpi:						1;
+}
+
+/* ---- Load HyprFlux colors ---- */
+@theme "~/.config/rofi/hyprflux-colors.rasi"
+
+/* ---- Global Properties ---- */
+* {
+
+    background-alt:              @selected-active-background; // Buttons background
+    selected:                    @rofi-selected; // Button selected
+    active:                      @selected-normal-background; // Window activated
+    urgent:                      @selected; // When hovering the activated window (maybe more?)
+
+    text-selected:               @rofi-text-selected;
+    text-color:                  @rofi-text;
+    border-color:                @selected;
+}
+
+/* ---- Window ---- */
+window {
+    // Default
+    enabled:                    true;
+    fullscreen:                 false;
+    transparency:               "real";
+    cursor:                     "default";
+    spacing:                    0px;
+    border:                     0px;
+    border-radius:              14px;
+    location:                   center;
+    anchor:                     center;
+
+    // Style Values
+    width:                      44%;
+    background-color:           @rofi-bg;
+}
+
+/* ----- Main Box ----- */
+mainbox {
+    padding:			5px;
+    enabled:                     true;
+    orientation:                 vertical;
+    children:                    [ "inputbar", "listbox" ];
+    background-color:            @rofi-bg;
+}
+
+
+/* ---- Inputbar ---- */
+inputbar {
+    enabled:                     true;
+    padding:                     0px 0px 0px 0px;
+    margin:                      10px;
+    background-color:            transparent;
+    orientation:                 horizontal;
+    children:                    ["entry", "dummy", "mode-switcher" ];
+    
+}
+
+/* ---- Entry input ---- */
+entry {
+    font: "JetBrainsMono Nerd Font 10";
+    enabled:                     true;
+    expand:                      false;
+    width:                       100%;
+    padding:                     0px;
+    border-radius:               1px;
+    background-color:            @rofi-bg;
+    text-color:                  @rofi-text-2;
+    cursor:                      text;
+    placeholder:                 "  Search "; // << Search symbol
+    placeholder-color:           inherit;
+}
+
+/* ---- Listbox ---- */
+listbox {
+    spacing:                     10px;
+    padding:                     0px;
+    background-color:            transparent;
+    orientation:                 vertical;
+    children:                    ["listview" ];
+}
+
+/* ---- Listview ---- */
+listview {
+    enabled:                     true;
+    columns:                     1;
+    lines:                       8;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   true;
+    layout:                      vertical;
+    reverse:                     false;
+    fixed-height:                false;
+    fixed-columns:               true;    
+    spacing:                     8px;
+    background-color:            transparent;
+
+//  Adapt rofi theme
+    border:                      0px;
+}
+
+/* ---- Dummy ---- */
+dummy {
+    expand:                      true;
+    background-color:            transparent;
+}
+
+/* ---- Mode Switcher ---- */
+mode-switcher{
+    enabled:                     true;
+    spacing:                     10px;
+    background-color:            transparent;
+}
+button {
+    width:                       4%;
+    padding:                     0px;
+    border-radius:               7px;
+    background-color:            @text-selected;
+    text-color:                  @text-color;
+    cursor:                      pointer;
+}
+button selected {
+    background-color:            @selected;
+    text-color:                  @text-selected;
+}
+
+/* ---- Scrollbar ---- */
+scrollbar {
+    width:        4px;
+    border:       0;
+    handle-color: @border-color;
+    handle-width: 8px;
+    padding:      0;
+    border-radius:      12px;
+}
+
+/* ---- Elements ---- */
+element {
+    enabled:                     true;
+    spacing:                     10px;
+    padding:                     5px;
+    border-radius:               5px;
+    background-color:            transparent;
+    cursor:                      pointer;
+}
+
+element normal.normal {
+    background-color:            inherit;
+    text-color:                  inherit;
+}
+element normal.urgent {
+    background-color:            @urgent;
+    text-color:                  @foreground;
+}
+element normal.active {
+    background-color:            @active;
+    text-color:                  @foreground;
+}
+
+element selected.normal {
+    background-color:            @selected;
+    text-color:                  @text-selected;
+}
+element selected.urgent {
+    background-color:            @urgent;
+    text-color:                  @text-selected;
+}
+element selected.active {
+    background-color:            @urgent;
+    text-color:                  @text-selected;
+}
+// Adapt rofi theme
+element alternate.normal {
+    background-color:            transparent;
+    text-color:                  inherit;
+}
+element alternate.urgent {
+    background-color:            transparent;
+    text-color:                  inherit;
+}
+element alternate.active {
+    background-color:            transparent;
+    text-color:                  inherit;
+}
+element-icon {
+    background-color:            transparent;
+    text-color:                  inherit;
+    size:                        20px;
+    cursor:                      inherit;
+}
+element-text {
+    background-color:            transparent;
+    text-color:                  inherit;
+    cursor:                      inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+
+}
+
+/* ---- Message ---- */
+message {
+    background-color:            transparent;
+    border:                      0px;
+}
+textbox {
+    padding:                     4px;
+    border-radius:               12px;
+    background-color:            @background-alt;
+    text-color:                  @background;
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+}
+error-message {
+    padding:                     12px;
+    border-radius:               20px;
+    background-color:            @background-alt;
+    text-color:                  @background;
+}

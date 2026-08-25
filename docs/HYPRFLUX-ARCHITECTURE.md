@@ -27,21 +27,21 @@ The stated goal (from README): *"start from a fresh Arch installation and end up
 |------|------|-----|
 | **HyprFlux** (this repo) | Main: desktop configs, install entrypoints, 18 setup modules, assets, docs | `github.com/ahmad9059/HyprFlux` |
 | **HyprFlux-ISO** | archiso profile, TUI installer, boot configs, CI ISO builds | `github.com/ahmad9059/HyprFlux-ISO` |
-| **Arch-Hyprland** | Fork of JaKooLit's installer: whiptail-based `install.sh` + 24 `install-scripts/` | `github.com/ahmad9059/Arch-Hyprland` |
-| **Hyprland-Dots** | JaKooLit's dotfiles (cloned + `copy.sh` run at install time by Arch-Hyprland) | `github.com/JaKooLit/Hyprland-Dots` |
+| **Arch-Hyprland** *(merged 2026-08-25)* | Base installer (upstream-derived) — now a subdir of HyprFlux: pre-patched `install.sh` + 24 `install-scripts/` | `Arch-Hyprland/` in this repo |
+| **Hyprland-Dots** *(merged 2026-08-25)* | Base dotfiles (upstream-derived) — now a subdir of HyprFlux, pre-patched, no clone at install time | `Hyprland-Dots/` in this repo |
 | **nvim** | Separate maintained Neovim config (cloned by module 04-neovim) | `github.com/ahmad9059/nvim` |
 | **wallpapers-bank** | Wallpaper collection (cloned by module 13-wallpapers) | `github.com/ahmad9059/wallpapers-bank` |
 
 **Dependency direction:**
 
 ```
-HyprFlux-ISO ──clones──▶ HyprFlux ──clones──▶ Arch-Hyprland ──clones──▶ Hyprland-Dots (JaKooLit)
+HyprFlux-ISO ──clones──▶ HyprFlux (contains Arch-Hyprland/ + Hyprland-Dots/ merged)
                               │
                               ├──▶ nvim (ahmad9059)
                               └──▶ wallpapers-bank (ahmad9059)
 ```
 
-The ISO does not bake HyprFlux into the image — it **pre-clones the repos into the target system** during install, then runs the exact same `install.sh` used by the manual path on first boot. Everything is online-install.
+The ISO does not bake HyprFlux into the image — it **clones only HyprFlux** into the target system during install, then runs the exact same `install.sh` used by the manual path on first boot. Arch-Hyprland and Hyprland-Dots are merged subdirs; nothing else is cloned at install time.
 
 ## 1.3 System Requirements
 
@@ -67,8 +67,6 @@ HyprFlux/
 │   └── packages.sh            # pacman/yay install with retry + verification
 ├── modules/                   # 18 numbered setup units (01–18), sourced in order
 ├── scripts/                   # Installer helper scripts (patch/automation tools)
-│   ├── bypass_dialogs.sh      # Patches Arch-Hyprland whiptail dialogs
-│   ├── replace_reads.sh       # Patches Hyprland-Dots copy.sh prompts
 │   ├── initial.sh             # Chaotic-AUR + yay bootstrap
 │   ├── zsh.sh                 # Zsh + Oh-My-Zsh non-interactive install
 │   └── ai-commit-msg          # AI commit message helper
@@ -129,17 +127,14 @@ This makes the one-liner `sh <(curl -fsSL https://hyprflux.dev/install)` fully s
 ### The main flow (4 steps)
 
 ```
-Step 1  Clone Arch-Hyprland
-        ensure_repo "https://github.com/ahmad9059/Arch-Hyprland.git" "$HOME/Arch-Hyprland" --depth=1
-
-Step 2  Run Arch-Hyprland install.sh (automated)
-        - bash scripts/bypass_dialogs.sh          # patches whiptail prompts out
-        - sed -i '/^[[:space:]]*read HYP$/c\HYP="n"' "$ARCH_HYPRLAND_DIR/install.sh"   # auto-skip prompt
-        - (cd "$ARCH_HYPRLAND_DIR" && bash install.sh)   # MUST cd: uses relative install-scripts/
-        NOTE: Arch-Hyprland's own install.sh also copies HyprFlux's scripts/zsh.sh over its
-        zsh.sh, runs scripts/replace_reads.sh (patches Hyprland-Dots copy.sh prompts),
-        and runs scripts/initial.sh (Chaotic-AUR + yay). So the "external" installer
-        is itself HyprFlux-patched at runtime.
+Step 1  Run merged Arch-Hyprland install.sh (pre-patched, fully automated)
+        ARCH_HYPRLAND_DIR="$HYPRFLUX_DIR/Arch-Hyprland"    # merged subdir, no clone
+        - All 9 whiptail bypass patches are BAKED IN (welcome/proceed/AUR helper/
+          NVIDIA/input-group/login-manager/options-checklist/SDDM-loop/read HYP)
+        - (cd "$ARCH_HYPRLAND_DIR" && bash install.sh)     # MUST cd: relative install-scripts/
+        - install.sh copies HyprFlux's scripts/zsh.sh over its own, runs
+          scripts/initial.sh (Chaotic-AUR + yay) via relative $HYPRFLUX_DIR
+        - scripts/bypass_dialogs.sh + replace_reads.sh were DELETED (patches baked in)
 
 Step 3  Run HyprFlux dotsSetup.sh
         ensure_repo "$HYPRFLUX_REPO" "$HYPRFLUX_DIR" --depth=1   (self, already present)
@@ -816,8 +811,8 @@ Arch-Hyprland/
     - `00-base.sh` (base-devel, archlinux-keyring, findutils)
     - `pacman.sh` (pacman.conf spices: Color/CheckSpace/VerbosePkgLists/ParallelDownloads/ILoveCandy + `pacman -Sy`)
     - **HyprFlux custom scripts injected:**
-      - `cp "$HYPRFLUX_DIR/scripts/zsh.sh" ~/Arch-Hyprland/install-scripts/zsh.sh` (replaces JaKooLit's zsh script)
-      - `bash "$HYPRFLUX_DIR/scripts/replace_reads.sh"` (patches Hyprland-Dots copy.sh helpers: copy_menu.sh, lib_prompts.sh, lib_apps.sh → auto-answers)
+      - `cp "$HYPRFLUX_DIR/scripts/zsh.sh" ~/Arch-Hyprland/install-scripts/zsh.sh` (replaces the base zsh script)
+      - (merged layout: Hyprland-Dots is already pre-patched — no replace_reads needed)
       - `bash "$HYPRFLUX_DIR/scripts/initial.sh"` (Chaotic-AUR keys + repo + yay)
     - `yay.sh` / `paru.sh` (AUR helper)
     - `01-hypr-pkgs.sh` (Hyprland ecosystem packages — full list below)
@@ -838,7 +833,7 @@ Arch-Hyprland/
 | `fonts.sh` | adobe-source-code-pro, noto-fonts-emoji, otf-font-awesome, ttf-droid, fira-code, fantasque-nerd, jetbrains-mono(+nerd), victor-mono, noto-fonts |
 | `bluetooth.sh` | bluez, bluez-utils, blueman + enable bluetooth.service |
 | `sddm.sh` | qt6-declarative/svg/virtualkeyboard/multimedia-ffmpeg, qt5-quickcontrols2, sddm; disables lightdm/gdm/lxdm; enables sddm; creates wayland-sessions dir |
-| `sddm_theme.sh` | clones JaKooLit/simple-sddm-2 → /usr/share/sddm/themes, sets /etc/sddm.conf |
+| `sddm_theme.sh` | *(removed — HyprFlux ships its own SDDM theme via module 07)* |
 | `nvidia.sh` | nvidia-dkms/settings/utils, libva, libva-nvidia-driver, per-kernel headers; removes hyprland-git/nvidia variants; mkinitcpio modules + rebuild |
 | `nvidia_nouveau.sh` | nouveau blacklist |
 | `InputGroup.sh` | adds user to input group |
@@ -849,7 +844,7 @@ Arch-Hyprland/
 | `thunar_default.sh` | thunar as default file manager (mimeapps) |
 | `xdph.sh` | xdg-desktop-portal-hyprland + gtk + umockdev |
 | `gtk_themes.sh` | gtk themes |
-| `dotfiles-main.sh` | clones JaKooLit/Hyprland-Dots, runs `copy.sh` (patched by replace_reads.sh) |
+| `dotfiles-main.sh` | runs merged `Hyprland-Dots/copy.sh` (pre-patched, no clone) |
 | `02-Final-Check.sh` | post-install verification |
 | `rog.sh`, `disk-monitor.sh`, `temp-monitor.sh`, `battery-monitor.sh` | ROG laptop extras + monitor scripts |
 | `ags.launcher.com.github.Aylur.ags` | ags desktop file |
@@ -1119,7 +1114,7 @@ The documented target integration (implemented but the live installer currently 
 ### Phase A — Arch-Hyprland scripts (A1–A16)
 
 `run_as_user()` runs each via `su - $USER -s /bin/bash -c` with HOME/PATH exported; failures are warned-not-fatal.
-A1 00-base → A2 pacman → A3 yay (with Global_functions.sh ISAUR patch + `/usr/local/bin/yay-iso` wrapper + PATH symlink fallback) → A4 01-hypr-pkgs → A5 pipewire → A6 fonts → A7 hyprland → A8 bluetooth → A9 sddm → A10 nvidia (conditional on detection) → A11 zsh → A12 thunar → A13 xdph → A14 sddm_theme → A15 dotfiles-main (JaKooLit/Hyprland-Dots + copy.sh) → A16 02-Final-Check.
+A1 00-base → A2 pacman → A3 yay (with Global_functions.sh ISAUR patch + `/usr/local/bin/yay-iso` wrapper + PATH symlink fallback) → A4 01-hypr-pkgs → A5 pipewire → A6 fonts → A7 hyprland → A8 bluetooth → A9 sddm → A10 nvidia (conditional on detection) → A11 zsh → A12 thunar → A13 xdph → A14 *(removed)* → A15 dotfiles-main (merged Hyprland-Dots + copy.sh) → A16 02-Final-Check.
 
 ### Phase B — HyprFlux modules
 
@@ -1187,9 +1182,9 @@ Separate maintained Neovim distribution. Cloned by module 04 into `~/.config/nvi
 
 Wallpaper collection cloned by module 13 to `~/Pictures/wallpapers`. Consumed by: WallpaperSelect.sh (rofi grid), WallpaperRandom.sh, WallpaperAutoChange.sh (awww daemon), initial-boot.sh default wallpaper (`wallpaper-5.jpg`).
 
-## 8.3 Hyprland-Dots (JaKooLit)
+## 8.3 Hyprland-Dots (merged)
 
-Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` executed. **HyprFlux patches copy.sh's prompt helpers** (scripts/replace_reads.sh) so it runs non-interactively: refactored copy_menu.sh (install/upgrade/express), lib_prompts.sh (keyboard/resolution/clock), lib_apps.sh (editor choice) get auto-answers. This is what actually places JaKooLit's base Hyprland configs before HyprFlux's `.config` copy (module 02) overwrites them with the HyprFlux version.
+Merged into the HyprFlux repo (2026-08-25) at `Hyprland-Dots/`. Its `copy.sh` is run by the merged `dotfiles-main.sh` and is **pre-patched for non-interactive install**: copy_menu.sh auto-selects Install, lib_prompts.sh auto-accepts keyboard/12H-clock/express, lib_apps.sh auto-selects the editor, copy.sh auto-selects resolution and skips wallpapers. ags/quickshell/wallust configs removed (apps removed from HyprFlux); wallpapers trimmed to 2 (~3.7MB). This is what actually places the base Hyprland configs before HyprFlux's `.config` copy (module 02) overwrites them with the HyprFlux version.
 
 ---
 
@@ -1225,7 +1220,7 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
 6. install.sh: pacman -Syu → clone/run Arch-Hyprland (patched, automated:
    base-devel, pacman spices, yay, Chaotic-AUR via initial.sh, Hyprland pkgs,
    pipewire, fonts, hyprland, sddm, zsh, thunar, xdph, Hyprland-Dots copy.sh
-   patched by replace_reads.sh, HyprFlux zsh.sh) → dotsSetup.sh (18 modules:
+   pre-patched, HyprFlux zsh.sh) → dotsSetup.sh (18 modules:
    backup, dotfiles, packages, nvim, themes, waybar, sddm, gtk, grub, plymouth,
    tmux, zsh patch, wallpapers, webapps, bibata, ai-tools, optional, monitors)
 7. Second reboot → SDDM (HyprFlux theme, sugar-candy fallback) → graphical.target
@@ -1240,7 +1235,7 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
 2. Bootstrap: git → clone HyprFlux to ~/HyprFlux → exec real install.sh
 3. Logging ~/hyprflux_log/, sudo keep-alive, banner, pacman -Syu
 4. Clone Arch-Hyprland (~/Arch-Hyprland)
-5. bypass_dialogs.sh patches whiptail prompts; read HYP auto-answer; run
+5. Run merged Arch-Hyprland install.sh (pre-patched, no whiptail prompts); run
    (cd Arch-Hyprland && bash install.sh)  → same automated base install as above
 6. dotsSetup.sh  → 18 modules (as above; optional packages prompt interactively)
 7. Reboot prompt → SDDM → HyprFlux desktop (first-boot initial-boot.sh applies
@@ -1277,7 +1272,7 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
 
 1. **Convergence:** ISO + manual paths both terminate in the same `install.sh` — one pipeline to maintain.
 2. **Online-only install:** nothing pre-baked beyond the live env; everything clones from GitHub at install time (keeps ISO small, always-fresh).
-3. **Patch-don't-fork:** manual install automates Arch-Hyprland via sed patching (bypass_dialogs.sh) rather than maintaining a fork; replace_reads.sh patches JaKooLit's copy.sh the same way.
+3. **Merge-don't-clone (2026-08-25):** Arch-Hyprland and Hyprland-Dots are merged into this repo with all automation patches baked in — no runtime patching, no extra clones, one repo to manage. Both keep their GPL-3.0 LICENSE.md.
 4. **Chroot shims** solve the systemctl/gsettings/chsh/nwg-look-in-chroot problem without forking upstream scripts.
 5. **Lua-first config:** Hyprland ≥ 0.55 mandates Lua; legacy `.conf` archived in `hypr_old/` for rollback; nwg-displays owns monitors.lua/workspaces.lua.
 6. **Single color source:** one `.conf` → 6 generated files + 2 injected blocks; CI enforces freshness; nothing hand-edited downstream.

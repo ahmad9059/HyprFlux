@@ -1,0 +1,19 @@
+/* Main Config - For Keybinds generation */
+
+@import "~/.config/rofi/master-config.rasi"  
+
+/* ---- Entry ---- */
+entry {
+  width: 80%;
+  placeholder: "   Search Keybinds";
+}
+
+/* ---- Listview ---- */
+listview {
+  columns: 2;
+  lines: 12;
+}
+
+window {
+    width: 90%;
+}

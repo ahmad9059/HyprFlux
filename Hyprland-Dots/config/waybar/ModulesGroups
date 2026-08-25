@@ -1,0 +1,137 @@
+/* Basically created to reduce the lines in Waybar Modules bank */
+/* NOTE: This is only for Groups */
+
+{
+// GROUPS
+"group/app_drawer": {
+	"orientation": "inherit",
+	"drawer": {
+		"transition-duration": 500,
+		"children-class": "custom/menu",
+		"transition-left-to-right": true
+        },
+	"modules": [
+		"custom/menu",
+		"custom/light_dark",
+		"custom/file_manager",
+		"custom/tty",
+		"custom/browser",
+		"custom/settings",
+	]
+},
+"group/motherboard": {
+	"orientation": "horizontal",
+	"modules": [
+		"cpu",
+		"power-profiles-daemon",
+		"memory",
+		"temperature",
+		"disk",
+	]
+},
+
+"group/mobo_drawer": {
+	"orientation": "inherit",
+	"drawer": {
+		"transition-duration": 500,
+		"children-class": "cpu",
+		"transition-left-to-right": true
+        },
+	"modules": [
+		"temperature",		
+		"cpu",
+		"power-profiles-daemon",	
+		"memory",
+		"disk",
+	]
+},
+"group/laptop": {
+	"orientation": "inherit",
+	"modules": [
+		"backlight",
+		"battery",
+	]
+},
+"group/audio": {
+	"orientation": "inherit",
+	"drawer": {
+		"transition-duration": 500,
+		"children-class": "pulseaudio",
+		"transition-left-to-right": true
+        },
+	"modules": [
+		"pulseaudio",
+		"pulseaudio#microphone",
+	]
+},
+
+"group/connections": {
+	"orientation": "inherit",
+	"drawer": {
+		"transition-duration": 500,
+		"children-class": "bluetooth",
+		"transition-left-to-right": true
+        },
+	"modules": [
+		"network",
+		"bluetooth",
+	]
+},
+
+"group/status": {
+	"orientation": "inherit",
+	"drawer": {
+		"transition-duration": 500,
+		"children-class": "custom/power",
+		"transition-left-to-right": false
+        },
+	"modules": [
+		"custom/power",
+		"custom/lock",
+		"keyboard-state",
+		"custom/keyboard",
+	]
+},
+"group/notify": {
+	"orientation": "inherit",
+	"drawer": {
+		"transition-duration": 500,
+		"children-class": "custom/swaync",
+		"transition-left-to-right": false
+        },
+	"modules": [
+		"custom/swaync",
+		"custom/dot_update",
+	]
+},
+
+"group/power": {
+    "orientation": "inherit",
+    "drawer": {
+        "transition-duration": 500,
+        "children-class": "drawer-child",
+        "transition-left-to-right": false
+      },
+    "modules": [
+        "custom/power",
+        "custom/quit",
+        "custom/lock",
+        "custom/reboot"
+      ]
+},
+// groups for vertical
+"group/power#vert": {
+     "orientation": "inherit",
+     "drawer": {
+        "transition-duration": 300,
+        "children-class": "not-memory",
+        "transition-left-to-right": false
+       },
+     "modules": [
+        "custom/power",
+        "custom/lock",
+        "custom/logout",
+        "custom/reboot"
+      ]
+},
+}

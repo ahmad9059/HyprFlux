@@ -1,0 +1,42 @@
+/* Main Config (compact) */
+
+@import "~/.config/rofi/config.rasi" 
+
+/* ---- Configuration ---- */ 
+configuration {
+  modi: "drun";
+}
+
+/* ---- Window ---- */
+window {
+  width: 50%;
+  border-radius: 15px;
+}
+
+
+
+/* ---- Imagebox ---- */
+imagebox {
+  orientation: vertical;
+  children: [ "entry", "listview"];
+}
+
+/* ---- Entry input ---- */
+entry {
+  width: 23%;
+  placeholder: "  View/Edit Hyprland Configs";
+}
+
+/* ---- Listview ---- */
+listview {
+  columns: 2;
+  lines: 5;
+  spacing: 4px;
+  scrollbar: false;
+  border-radius: 12px;
+}
+
+/* ---- Element ---- */
+element {
+  border-radius: 10px;
+}

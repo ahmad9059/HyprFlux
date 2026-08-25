@@ -1,0 +1,270 @@
+/* Basically created to reduce the lines in Waybar Modules bank */
+/* NOTE: This is only for Custom Modules */
+/* Custom Modules like weather browser, tty, file manager at the beginning */
+
+{
+"custom/weather": {
+	"format": "{}",
+	"format-alt": "{alt}: {}",
+	"format-alt-click": "click",
+	"interval": 3600,
+	"return-type": "json",
+	"exec": "$HOME/.config/hypr/UserScripts/Weather.py",
+	//"exec": "$HOME/.config/hypr/UserScripts/Weather.sh",
+	//"exec-if": "ping wttr.in -c1",
+	"tooltip": true,
+},
+
+"custom/hyprpicker": {
+	"format": " ",
+	"on-click": "hyprpicker | wl-copy",
+	"tooltip": true,
+	"tooltip-format": "Hyprpicker",
+},
+
+"custom/file_manager": {
+	"format": " ",
+	"on-click": "$HOME/.config/hypr/scripts/WaybarScripts.sh --files",
+	"tooltip": true,
+	"tooltip-format": "File Manager",
+},
+
+"custom/tty": {
+	"format": " ",
+	"on-click": "$HOME/.config/hypr/scripts/WaybarScripts.sh --term",
+	"tooltip": true,
+	"tooltip-format": "Launch Terminal",
+},
+
+"custom/browser": {
+	"format": " ",
+	"on-click": "xdg-open https://",
+	"tooltip": true,
+	"tooltip-format": "Launch Browser",
+},
+
+"custom/settings": {
+	"format": " ",
+	"on-click": "$HOME/.config/hypr/scripts/HyprFlux_Quick_Settings.sh",
+	"tooltip": true,
+	"tooltip-format": "Launch HyprFlux Settings Menu",
+},
+
+"custom/cycle_wall": {
+	"format": " ",
+	"on-click": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
+	"on-click-right": "$HOME/.config/hypr/UserScripts/WallpaperRandom.sh",
+	"tooltip": true,
+	"tooltip-format": "Left Click: Wallpaper Menu\nMiddle Click: Random wallpaper",
+},
+
+"custom/hint": {
+	"format": "󰺁 HINT!",
+	"on-click": "$HOME/.config/hypr/scripts/KeyHints.sh",
+	"on-click-right": "$HOME/.config/hypr/scripts/KeyBinds.sh",
+	"tooltip": true,
+	"tooltip-format": "Left Click: Quick Tips\nRight Click: Keybinds",
+},
+
+"custom/dot_update": {
+	"format": " 󰁈 ",
+	"on-click": "$HOME/.config/hypr/scripts/HyprFluxUpdate.sh",
+	"tooltip": true,
+	"tooltip-format": "Check HyprFlux update\nIf available",
+},
+
+// Hypridle inhibitor
+"custom/hypridle": {
+	"format": "󱫗 ",
+	"return-type": "json",
+	"escape": true,
+	"exec-on-event": true,
+	"interval": 60,
+	"exec": "$HOME/.config/hypr/scripts/Hypridle.sh status",
+	"on-click": "$HOME/.config/hypr/scripts/Hypridle.sh toggle",
+	"on-click-right": "hyprlock"
+},
+
+"custom/keyboard": {
+	"exec": "cat $HOME/.cache/kb_layout",
+	"interval": 1,
+	"format": " {}",
+	"on-click": "$HOME/.config/hypr/scripts/SwitchKeyboardLayout.sh",
+},
+
+"custom/light_dark": {
+	"format": "󰔎 ",
+	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
+	"tooltip": true,
+	"tooltip-format": "Middle Click: Wallpaper Menu",
+},
+
+"custom/lock": {
+	"format": "󰌾",
+	"on-click": "$HOME/.config/hypr/scripts/LockScreen.sh",
+	"tooltip": true,
+	"tooltip-format": "󰷛 Screen Lock",
+},
+
+"custom/menu": {
+	"format": "  ",
+	"on-click": "pkill rofi || rofi -show drun -modi run,drun,filebrowser,window",
+	"on-click-middle": "$HOME/.config/hypr/UserScripts/WallpaperSelect.sh",
+	"tooltip": true,
+	"tooltip-format": "Left Click: Rofi Menu\nMiddle Click: Wallpaper Menu",
+},
+// This is a custom cava visualizer
+"custom/cava_mviz": {
+	"exec": "$HOME/.config/hypr/scripts/WaybarCava.sh",
+	"format": "{}"
+},
+
+"custom/playerctl": {
+	"format": "<span>{}</span>",
+	"return-type": "json",
+	"max-length": 25,
+	"exec": "playerctl -a metadata --format '{\"text\": \"{{artist}}  {{markup_escape(title)}}\", \"tooltip\": \"{{playerName}} : {{markup_escape(title)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
+	"on-click-middle": "playerctl play-pause",
+	"on-click": "playerctl previous",
+	"on-click-right": "playerctl next",
+	"scroll-step": 5.0,
+	"on-scroll-up": "$HOME/.config/hypr/scripts/Volume.sh --inc",
+	"on-scroll-down": "$HOME/.config/hypr/scripts/Volume.sh --dec",
+	"smooth-scrolling-threshold": 1,
+},
+    
+"custom/power": {
+	"format": " ⏻ ",
+	"on-click": "$HOME/.config/hypr/scripts/Wlogout.sh",
+	"on-click-right": "$HOME/.config/hypr/scripts/ChangeBlur.sh",
+	"tooltip": true,
+	"tooltip-format": "Left Click: Logout Menu\nRight Click: Change Blur",
+},
+
+"custom/reboot": {
+    "format": "󰜉",
+    "on-click": "systemctl reboot",
+    "tooltip": true,
+	"tooltip-format": "Left Click: Reboot",
+},
+    
+"custom/quit": {
+    "format": "󰗼",
+    "on-click": "hyprctl dispatch hl.dsp.exit()",
+    "tooltip": true,
+	"tooltip-format": "Left Click: Exit Hyprland",
+},
+
+"custom/swaync": {
+	"tooltip": true,
+	"tooltip-format": "Left Click: Launch Notification Center\nRight Click: Do not Disturb",
+	"format": "{} {icon} ",
+	"format-icons": {
+		"notification": "<span foreground='red'><sup></sup></span>",
+		"none": "",
+		"dnd-notification": "<span foreground='red'><sup></sup></span>",
+		"dnd-none": "",
+		"inhibited-notification": "<span foreground='red'><sup></sup></span>",
+		"inhibited-none": "",
+		"dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+		"dnd-inhibited-none": ""
+	},
+	"return-type": "json",
+	"exec-if": "which swaync-client",
+	"exec": "swaync-client -swb",
+	"on-click": "sleep 0.1 && swaync-client -t -sw",
+	"on-click-right": "swaync-client -d -sw",
+	"escape": true,
+},
+// NOTE:! This is mainly for Arch and Arch Based Distros  depend: pacman-contrib
+// Other Distro dont have notifications but can use to check for update for any other distro
+"custom/updater": {
+	"format": " {}",
+	"exec": "checkupdates | wc -l",
+	"exec-if": "[[ $(checkupdates | wc -l) ]]",
+	"interval": 43200, // (Arch Linux will try to check 12 hrs interval only
+	"on-click": "$HOME/.config/hypr/scripts/Distro_update.sh",
+	"tooltip": true,
+	"tooltip-format": "Left Click: Update System\nArch (w/ notification)\nFedora, OpenSuse, Debian/Ubuntu click to update",
+},
+// Separators
+"custom/separator#dot": {
+	"format": "",
+	"interval": "once",
+	"tooltip": false
+},
+"custom/separator#dot-line": {
+	"format": "",
+	"interval": "once",
+	"tooltip": false
+},
+"custom/separator#line": {
+	"format": "|",
+	"interval": "once",
+	"tooltip": false
+},
+"custom/separator#blank": {
+	"format": "",
+	"interval": "once",
+	"tooltip": false
+},
+"custom/separator#blank_2": {
+	"format": "  ",
+	"interval": "once",
+	"tooltip": false
+},
+"custom/separator#blank_3": {
+	"format": "   ",
+	"interval": "once",
+	"tooltip": false
+},
+"custom/arrow1": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow2": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow3": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow4": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow5": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow6": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow7": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow8": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow9": {
+	"format": "",
+	"tooltip": false
+},
+
+"custom/arrow10": {
+	"format": "",
+	"tooltip": false
+}
+}

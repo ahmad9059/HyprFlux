@@ -82,23 +82,19 @@ log_info "Updating system and ensuring git & vim are installed..."
 sudo pacman -Syu --noconfirm git vim
 log_ok "System updated, git & vim are ready."
 
-# ====== Configurable URLs ======
-ARCH_HYPRLAND_REPO="${ARCH_HYPRLAND_REPO:-https://github.com/ahmad9059/Arch-Hyprland.git}"
-ARCH_HYPRLAND_DIR="${ARCH_HYPRLAND_DIR:-$HOME/Arch-Hyprland}"
+# ====== Step 1: Run merged Arch-Hyprland installer ======
+# Arch-Hyprland is merged into this repo (Arch-Hyprland/) — no clone needed.
+# Its install.sh is already pre-patched for fully automated installation
+# (whiptail dialogs bypassed, options pre-selected). Hyprland-Dots is also
+# merged (Hyprland-Dots/) and pre-patched; dotfiles-main.sh points to it.
+ARCH_HYPRLAND_DIR="$HYPRFLUX_DIR/Arch-Hyprland"
 
-# ====== Step 1: Clone & run Arch-Hyprland ======
-ensure_repo "$ARCH_HYPRLAND_REPO" "$ARCH_HYPRLAND_DIR" --depth=1
+if [[ ! -f "$ARCH_HYPRLAND_DIR/install.sh" ]]; then
+  log_error "Merged Arch-Hyprland installer not found at $ARCH_HYPRLAND_DIR/install.sh"
+  exit 1
+fi
 
-log_info "Applying HyprFlux automated installation patches..."
-
-# Apply dialog bypass (removes whiptail prompts, pre-selects options)
-chmod +x "$HYPRFLUX_DIR/scripts/bypass_dialogs.sh"
-bash "$HYPRFLUX_DIR/scripts/bypass_dialogs.sh"
-
-# Additional sed replacements for any remaining prompts
-sed -i '/^[[:space:]]*read HYP$/c\HYP="n"' "$ARCH_HYPRLAND_DIR/install.sh"
-
-log_info "Running Arch-Hyprland/install.sh (fully automated)..."
+log_info "Running Arch-Hyprland/install.sh (merged, fully automated)..."
 chmod +x "$ARCH_HYPRLAND_DIR/install.sh"
 # IMPORTANT: Must cd into the directory because Arch-Hyprland's install.sh
 # uses relative paths (e.g., install-scripts/) that only resolve from there.
@@ -114,9 +110,7 @@ echo -e "${MAGENTA}─┴┘└─┘ ┴ └  ┴┴─┘└─┘└─┘└
 echo -e "${CYAN}✻─────────────────────ahmad9059──────────────────────✻${RESET}"
 echo -e "\n"
 
-# ====== Step 3: Clone & run HyprFlux dotsSetup ======
-ensure_repo "$HYPRFLUX_REPO" "$HYPRFLUX_DIR" --depth=1
-
+# ====== Step 3: Run HyprFlux dotsSetup ======
 log_info "Running HyprFlux dotsSetup.sh..."
 chmod +x "$HYPRFLUX_DIR/dotsSetup.sh"
 bash "$HYPRFLUX_DIR/dotsSetup.sh"

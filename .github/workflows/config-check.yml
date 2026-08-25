@@ -10,6 +10,9 @@ on:
       - ".config/swaync/**"
       - ".config/kitty/**"
       - ".config/foot/**"
+      - "Arch-Hyprland/**"
+      - "Hyprland-Dots/**"
+
   pull_request:
     paths:
       - ".config/hypr/**"
@@ -19,6 +22,8 @@ on:
       - ".config/swaync/**"
       - ".config/kitty/**"
       - ".config/foot/**"
+      - "Arch-Hyprland/**"
+      - "Hyprland-Dots/**"
   workflow_dispatch:
 
 jobs:
@@ -52,6 +57,15 @@ jobs:
           chmod 700 "$XDG_RUNTIME_DIR"
           Hyprland --config .config/hypr/hyprland.lua --verify-config
           echo "Hyprland verify-config OK"
+
+      - name: Shell syntax check (merged installers + scripts)
+        run: |
+          FAIL=0
+          while IFS= read -r -d '' f; do
+            bash -n "$f" 2>/dev/null || { echo "BASH SYNTAX FAIL: $f"; FAIL=1; }
+          done < <(find Arch-Hyprland Hyprland-Dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
+          [ $FAIL -eq 0 ] || exit 1
+          echo "All shell scripts parse OK"
 
       - name: sync-colors up-to-date check
         run: |

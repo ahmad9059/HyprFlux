@@ -114,6 +114,18 @@ Reorganized routing (97 + 2 layer rules):
 | SwayNC visual redesign (solid bg, compact entries, purple accents) | 2026-08 | 2026-08 | User wanted the original look/colors |
 | Rofi compact theme (padding/spacing/icons, 40% width) | 2026-08 | 2026-08 | User reverted; kept original spacing |
 
+## Merged Arch-Hyprland + Hyprland-Dots (2026-08-25)
+
+- **Arch-Hyprland/** merged into the repo (plain copy, GPL-3.0 LICENSE.md kept): install.sh pre-patched (9 bypass patches baked: welcome/proceed/AUR-helper/NVIDIA/input-group/login-manager/options-checklist/SDDM-loop/read HYP), internal refs made relative, replace_reads call removed
+- **Hyprland-Dots/** merged into the repo (plain copy, GPL-3.0 LICENSE.md kept): copy.sh pre-patched (resolution auto-select, SDDM wallpaper auto-yes, wallpapers auto-no, Ubuntu continue auto-yes), copy_menu.sh/lib_prompts.sh/lib_apps.sh pre-patched (auto-install/keyboard/12H-clock/express-skip/editor)
+- Removed from Dots: configs/ags, config/quickshell, config/wallust (apps removed from HyprFlux) + all refs in copy.sh/scripts
+- Wallpapers trimmed 37MB → 3.7MB (kept Balcony-ja.png, Night monochrome.jpg)
+- `install.sh`: no more cloning Arch-Hyprland; runs `$HYPRFLUX_DIR/Arch-Hyprland/install.sh` (cd'd, relative paths)
+- `dotfiles-main.sh`: points at merged `Hyprland-Dots/copy.sh` (no git clone)
+- Deleted `scripts/bypass_dialogs.sh` + `scripts/replace_reads.sh` (patches baked in)
+- ISO repo: step 10 clones only HyprFlux; chroot wrapper paths → `$TARGET_HOME/HyprFlux/Arch-Hyprland`; AGENTS.md/README updated
+- CI: config-check.yml now also shellsyntax-checks Arch-Hyprland/ + Hyprland-Dots/ + triggers on their paths
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

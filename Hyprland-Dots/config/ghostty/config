@@ -1,0 +1,85 @@
+# This is the configuration file for Ghostty.
+#
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   /home/ahmad/.config/ghostty/config
+#
+# The template does not set any default options, since Ghostty ships
+# with sensible defaults for all options. Users should only need to set
+# options that they want to change from the default.
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Additionally, each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+
+# Config syntax crash course
+# ==========================
+# # The config file consists of simple key-value pairs,
+# # separated by equals signs.
+font-family = "JetBrainsMono Nerd Font"
+font-size = 14
+window-padding-x = 12
+window-padding-y = 12
+#
+# # Spacing around the equals sign does not matter.
+# # All of these are identical:
+# key=value
+# key= value
+# key =value
+# key = value
+# background-opacity = 0.8
+# # Any line beginning with a # is a comment. It's not possible to put
+# # a comment after a config option, since it would be interpreted as a
+# # part of the value. For example, this will have a value of "#123abc":
+# background = #0a0e14
+
+# theme = tokyonight
+
+palette = 0=#2e2e2e
+palette = 1=#eb4129
+palette = 2=#abe047
+palette = 3=#f6c744
+palette = 4=#47a0f3
+palette = 5=#7b5cb0
+palette = 6=#64dbed
+palette = 7=#e5e9f0
+palette = 8=#2e2e2e
+palette = 9=#eb4129
+palette = 10=#abe047
+palette = 11=#f6c744
+palette = 12=#47a0f3
+palette = 13=#7b5cb0
+palette = 14=#64dbed
+palette = 15=#e5e9f0
+
+background = #0a0e14
+foreground = #fffbf6
+cursor-color = #fffbf6
+cursor-text = #0a0e14
+selection-background = #fffacd
+selection-foreground = #000000
+
+
+# Alt+number sends ESC + number, so tmux picks up M-1..M-0
+keybind = alt+1=esc:1
+keybind = alt+2=esc:2
+keybind = alt+3=esc:3
+keybind = alt+4=esc:4
+keybind = alt+5=esc:5
+keybind = alt+6=esc:6
+keybind = alt+7=esc:7
+keybind = alt+8=esc:8
+keybind = alt+9=esc:9
+keybind = alt+0=esc:0
+
+
+# # Empty values are used to reset config keys to default.
+# key =
+#
+# # Some config options have unique syntaxes for their value,
+# # which is explained in the docs for that config option.
+# # Just for example:
+# resize-overlay-duration = 4s 200ms

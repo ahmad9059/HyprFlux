@@ -177,6 +177,8 @@ Useful locations:
 
 ```text
 HyprFlux/
+├── Arch-Hyprland/   # Merged base installer (pre-patched, fully automated)
+├── Hyprland-Dots/   # Merged base dotfiles (pre-patched, non-interactive)
 ├── config/          # Project configuration files
 ├── dotsSetup.sh     # Main modular platform setup entrypoint
 ├── install.sh       # Primary install entrypoint
@@ -184,7 +186,7 @@ HyprFlux/
 ├── modules/         # Modular install and setup steps
 ├── review/          # Screenshots and branding assets for the repo
 ├── references/      # Companion and upstream reference repositories, including ISO work
-├── scripts/         # Installer helper scripts and automation patches
+├── scripts/         # Installer helper scripts
 ├── utilities/       # Themes, archives, logos, cursors, boot assets
 └── .config/         # Maintained HyprFlux desktop environment files
 ```
@@ -194,6 +196,8 @@ HyprFlux/
 - `install.sh` - top-level install entrypoint
 - `dotsSetup.sh` - orchestrates the modular setup flow
 - `modules/` - feature-specific setup units such as GTK, SDDM, Plymouth, cursors, AI tools, and monitors
+- `Arch-Hyprland/` - merged base installer (formerly a separate repo — no longer cloned at install time)
+- `Hyprland-Dots/` - merged base dotfiles (formerly a separate repo — no longer cloned at install time)
 - `references/Hyprflux-ISO/` - companion ISO project reference built on `archiso`
 - `.config/hypr/` - Hyprland configs, scripts, monitor profiles, and user overrides
 - `.config/waybar/` - layouts, modules, and styling
@@ -227,7 +231,7 @@ This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
 
 ## Acknowledgments
 
-- **[JaKooLit](https://github.com/JaKooLit)** - for the original foundation that HyprFlux grew from
+- **The open-source Hyprland community** - for the original foundation that HyprFlux grew from
 - **Hyprland community** - for the compositor and surrounding ecosystem
 - **Arch Linux** - for the base system that makes this possible
 - **Open source maintainers** - for the tools, themes, packages, and workflows HyprFlux builds on

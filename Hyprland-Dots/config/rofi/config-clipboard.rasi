@@ -1,0 +1,16 @@
+/* Clipboard Config - Clipboard */
+
+@import "~/.config/rofi/config.rasi" 
+
+/* ---- Entry ---- */
+entry {
+  width: 37%;
+  placeholder: "   Clipboard Manager";
+	font: "JetBrains Mono 9";
+}
+
+/* ---- Listview ---- */
+listview {
+  columns: 1;
+  lines: 8;
+}
