@@ -653,15 +653,13 @@ hl.window_rule({
     match = { class = "^(seahorse)$" }, -- gnome-keyring gui
 })
 
--- live machine: Playwright MCP browser (Chrome for Testing) -> workspace 6
--- class alone is "chromium-browser" (would also match a real system Chromium),
--- so the title is also matched since only the playwright-launched browser
--- reports "... - Google Chrome for Testing" in its title.
-hl.window_rule({
-    name = "windowrule-97",
-    workspace = "6 silent",
-    match = { class = "^(chromium-browser)$", title = ".*Chrome for Testing.*" },
-})
+-- LIVE-MACHINE ONLY: Playwright MCP browser (Chrome for Testing) -> workspace 6.
+-- Kept commented for the distro; uncomment to restore.
+-- hl.window_rule({
+--     name = "windowrule-97",
+--     workspace = "6 silent",
+--     match = { class = "^(chromium-browser)$", title = ".*Chrome for Testing.*" },
+-- })
 
 -- ============================= LAYER RULES ==============================
 hl.layer_rule({

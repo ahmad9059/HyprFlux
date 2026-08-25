@@ -6,7 +6,7 @@ should_skip "bibata" && return 0
 
 _bib_archive="${BIBATA_CURSOR_ARCHIVE:-$REPO_DIR/utilities/Bibata-Modern-Classic.tar.xz}"
 _bib_cursor_dir="$HOME/.icons"
-_bib_env_file="$HOME/.config/hypr/UserConfigs/ENVariables.conf"
+_bib_env_file="$HOME/.config/hypr/UserConfigs/env-variables.lua"
 _bib_target_dir="$_bib_cursor_dir/Bibata-Modern-Classic"
 _bib_cursor_size="${CURSOR_SIZE:-24}"
 
@@ -67,19 +67,19 @@ fi
 rm -rf "$_bib_tmp"
 log_ok "Bibata cursor extracted into $_bib_target_dir."
 
-# Update Hyprland ENVariables.conf
+# Update Hyprland env-variables.lua (Lua config — hyprlang ENVariables.conf no longer exists)
 if [[ -f "$_bib_env_file" ]]; then
-  sed -i "s/^env = HYPRCURSOR_THEME.*/env = HYPRCURSOR_THEME,Bibata-Modern-Classic/" "$_bib_env_file"
-  sed -i "s/^env = HYPRCURSOR_SIZE.*/env = HYPRCURSOR_SIZE,$_bib_cursor_size/" "$_bib_env_file"
-  log_ok "Updated Hyprland ENVariables.conf with Bibata cursor settings."
+  sed -i 's/^hl.env("HYPRCURSOR_THEME", .*/hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Classic")/' "$_bib_env_file"
+  sed -i 's/^hl.env("HYPRCURSOR_SIZE", .*/hl.env("HYPRCURSOR_SIZE", "'"$_bib_cursor_size"'")/' "$_bib_env_file"
+  log_ok "Updated Hyprland env-variables.lua with Bibata cursor settings."
 else
-  log_warn "ENVariables.conf not found, creating a new one."
+  log_warn "env-variables.lua not found, creating a new one."
   mkdir -p "$(dirname "$_bib_env_file")"
   {
-    echo "env = HYPRCURSOR_THEME,Bibata-Modern-Classic"
-    echo "env = HYPRCURSOR_SIZE,$_bib_cursor_size"
+    echo 'hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Classic")'
+    echo "hl.env("HYPRCURSOR_SIZE", "$_bib_cursor_size")"
   } > "$_bib_env_file"
-  log_ok "Created ENVariables.conf with cursor settings."
+  log_ok "Created env-variables.lua with cursor settings."
 fi
 
 unset _bib_archive _bib_cursor_dir _bib_env_file _bib_target_dir _bib_cursor_size

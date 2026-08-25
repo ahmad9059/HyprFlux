@@ -54,6 +54,12 @@ fi
 SCRIPT_DIR="$_script_dir"
 unset _script_dir
 
+# The repo may live anywhere (default $HOME/HyprFlux, but ISO clones it under
+# the target user's home too). Pin HYPRFLUX_DIR to this clone unless the user
+# explicitly overrode it — otherwise dotsSetup/Arch-Hyprland would resolve
+# paths against $HOME/HyprFlux and break on custom checkout locations.
+HYPRFLUX_DIR="${HYPRFLUX_DIR:-$SCRIPT_DIR}"
+
 # ====== Source shared libraries ======
 source "$SCRIPT_DIR/lib/common.sh"
 source "$SCRIPT_DIR/lib/git.sh"

@@ -54,8 +54,11 @@ echo "${NOTE} Installing yay (AUR helper)...${RESET}"
 if ! command -v yay &>/dev/null; then
   sudo pacman -S --needed --noconfirm go base-devel git
 
-  while ! command -v yay &>/dev/null; do
-    echo "${INFO} Attempting to build and install yay...${RESET}"
+  # Retry capped: 5 attempts, then fall back to yay-bin from Chaotic-AUR.
+  local _yay_attempts=0
+  while ! command -v yay &>/dev/null && [ "$_yay_attempts" -lt 5 ]; do
+    _yay_attempts=$((_yay_attempts + 1))
+    echo "${INFO} Attempting to build and install yay ($_yay_attempts/5)...${RESET}"
 
     rm -rf /tmp/yay
     git clone https://aur.archlinux.org/yay.git /tmp/yay || {
@@ -67,6 +70,8 @@ if ! command -v yay &>/dev/null; then
     cd /tmp/yay
     if makepkg -si --noconfirm; then
       echo "${OK} yay installed successfully!${RESET}"
+      cd - >/dev/null
+      break
     else
       echo "${WARN} Failed to build yay, retrying in 5s...${RESET}"
       sleep 5
@@ -75,6 +80,12 @@ if ! command -v yay &>/dev/null; then
   done
 
   rm -rf /tmp/yay
+
+  # Fallback: yay-bin from Chaotic-AUR (no AUR build needed)
+  if ! command -v yay &>/dev/null; then
+    echo "${NOTE} Falling back to yay-bin from Chaotic-AUR...${RESET}"
+    sudo pacman -S --needed --noconfirm yay-bin
+  fi
 else
   echo "${NOTE} yay is already installed, skipping.${RESET}"
 fi

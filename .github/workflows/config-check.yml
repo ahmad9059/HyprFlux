@@ -62,10 +62,25 @@ jobs:
         run: |
           FAIL=0
           while IFS= read -r -d '' f; do
+            # RofiEmoji.sh is a known false positive: self-extracting emoji
+            # data after `exit` makes bash -n fail while the script works.
+            case "$f" in
+              *RofiEmoji.sh) continue ;;
+            esac
             bash -n "$f" 2>/dev/null || { echo "BASH SYNTAX FAIL: $f"; FAIL=1; }
           done < <(find Arch-Hyprland Hyprland-Dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
           [ $FAIL -eq 0 ] || exit 1
           echo "All shell scripts parse OK"
+
+      - name: Hyprland-Dots config parity check
+        run: |
+          # Hyprland-Dots/config must mirror .config/ (merged-repo contract)
+          if ! diff -rq .config Hyprland-Dots/config >/tmp/parity.diff; then
+            echo "::error::Hyprland-Dots/config is out of sync with .config/ — copy .config/ over it and commit."
+            cat /tmp/parity.diff
+            exit 1
+          fi
+          echo "Config parity OK"
 
       - name: sync-colors up-to-date check
         run: |

@@ -9,8 +9,8 @@ copy_phase1() {
     if [ -d "$DIRPATH" ]; then
       while true; do
         printf "\n${INFO:-[INFO]} Found ${YELLOW:-}$DIR2${RESET:-} config found in ~/.config/\n"
-        echo -n "${CAT:-[ACTION]} Do you want to replace ${YELLOW:-}$DIR2${RESET:-} config? (y/n): "
-        read DIR1_CHOICE
+        echo "${INFO:-[INFO]} [HyprFlux] Found existing $DIR2 config — auto-replacing (backup kept)." 2>&1 | tee -a "$log"
+        DIR1_CHOICE="y"
         case "$DIR1_CHOICE" in
         [Yy]*)
           BACKUP_DIR=$(get_backup_dirname)
@@ -51,8 +51,8 @@ copy_waybar() {
   local DIRPATHw="$HOME/.config/$DIRW"
   if [ -d "$DIRPATHw" ]; then
     while true; do
-      echo -n "${CAT:-[ACTION]} Do you want to replace ${YELLOW:-}$DIRW${RESET:-} config? (y/n): "
-      read DIR1_CHOICE
+      echo "${INFO:-[INFO]} [HyprFlux] Found existing waybar config — auto-replacing (backup kept)." 2>&1 | tee -a "$log"
+      DIR1_CHOICE="y"
       case "$DIR1_CHOICE" in
       [Yy]*)
         BACKUP_DIR=$(get_backup_dirname)
@@ -373,7 +373,7 @@ restore_user_configs() {
 " >&2
 
     if version_gte "$CURRENT_VERSION" "$TARGET_VERSION"; then
-      read -r -p "${CAT:-[ACTION]} Do you want to restore your previous UserConfigs directory? (Y/n): " restore_userconfigs_dir
+      restore_userconfigs_dir="n" # HyprFlux: auto-skip restore (non-interactive)
       if [[ "$restore_userconfigs_dir" != [Nn]* ]]; then
         echo "${NOTE:-[NOTE]} Restoring UserConfigs directory..." 2>&1 | tee -a "$log"
         rsync -a "$BACKUP_DIR_PATH/" "$DIRPATH/UserConfigs/" 2>&1 | tee -a "$log"
@@ -411,7 +411,7 @@ restore_user_configs() {
           fi
 
           printf "\n${INFO:-[INFO]} Found ${YELLOW:-}$FILE_NAME${RESET:-} in hypr backup...\n"
-          read -r -p "${CAT:-[ACTION]} Do you want to restore ${YELLOW:-}$FILE_NAME${RESET:-} from backup? (Y/n): " file_restore
+          file_restore="n" # HyprFlux: auto-skip restore (non-interactive)
 
           if [[ "$file_restore" != [Nn]* ]]; then
             if cp "$BACKUP_FILE" "$DIRPATH/UserConfigs/$FILE_NAME"; then
@@ -463,7 +463,7 @@ restore_user_scripts() {
       local BACKUP_SCRIPT="$BACKUP_DIR_PATH_S/$SCRIPT_NAME"
       if [ -f "$BACKUP_SCRIPT" ]; then
         printf "\n${INFO:-[INFO]} Found ${YELLOW:-}$SCRIPT_NAME${RESET:-} in hypr backup...\n"
-        read -r -p "${CAT:-[ACTION]} Do you want to restore ${YELLOW:-}$SCRIPT_NAME${RESET:-} from backup? (y/N): " script_restore
+        script_restore="n" # HyprFlux: auto-skip restore (non-interactive)
 
         if [[ "$script_restore" == [Yy]* ]]; then
           if cp "$BACKUP_SCRIPT" "$DIRSHPATH/UserScripts/$SCRIPT_NAME"; then
@@ -501,7 +501,7 @@ restore_hypr_files() {
       local BACKUP_FILE="$BACKUP_DIR_PATH_F/$FILE_RESTORE"
       if [ -f "$BACKUP_FILE" ]; then
         echo -e "\n${INFO:-[INFO]} Found ${YELLOW:-}$FILE_RESTORE${RESET:-} in hypr backup..."
-        read -r -p "${CAT:-[ACTION]} Do you want to restore ${YELLOW:-}$FILE_RESTORE${RESET:-} from backup? (y/N): " file2restore
+        file2restore="n" # HyprFlux: auto-skip restore (non-interactive)
 
         if [[ "$file2restore" == [Yy]* ]]; then
           if cp "$BACKUP_FILE" "$DIRPATH/$FILE_RESTORE"; then

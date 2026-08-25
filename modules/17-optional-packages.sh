@@ -8,7 +8,7 @@ should_skip "optional-packages" && return 0
 PACMAN_PACKAGES=(
   foot alacritty lsd bat tmux neovim tldr
   obs-studio vlc yazi luacheck luarocks hyprpicker
-  obsidian github-cli noto-fonts-emoji
+  obsidian github-cli noto-fonts-emoji tuned
   ttf-noto-nerd noto-fonts
 )
 

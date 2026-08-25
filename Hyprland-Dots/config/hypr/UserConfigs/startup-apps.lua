@@ -49,9 +49,9 @@ hl.on("hyprland.start", function()
     -- Starting hypridle to start hyprlock
     hl.exec_cmd("hypridle")
 
-    -- live machine: refresh-rate daemon (165Hz AC / 60Hz battery) is a
-    -- systemd user service; restart it so login always pairs with this config
-    hl.exec_cmd("systemctl --user restart hypr-refresh-rate.service")
+    -- NOTE: machine-specific services (e.g. hypr-refresh-rate.service on the
+    -- maintainer's laptop) are NOT part of the distro config. Add your own
+    -- systemd user units + hl.exec_cmd("systemctl --user restart <svc>") here.
 end)
 
 -- Here are a list of features available but disabled by default

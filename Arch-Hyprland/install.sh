@@ -184,6 +184,13 @@ if lspci | grep -i "nvidia" &>/dev/null; then
   echo "${NOTE} [HyprFlux] NVIDIA GPU detected - will configure if selected" | tee -a "$LOG"
 fi
 
+# Check if user is in the input group (needed for Waybar keyboard-state)
+input_group_detected=false
+if ! groups "$(whoami)" | grep -q '\binput\b'; then
+  input_group_detected=true
+  echo "${NOTE} [HyprFlux] User not in input group - will add if selected" | tee -a "$LOG"
+fi
+
 # HyprFlux: Pre-selected installation options (no whiptail dialogs)
 echo "${INFO} [HyprFlux] Using pre-configured installation options..." | tee -a "$LOG"
 

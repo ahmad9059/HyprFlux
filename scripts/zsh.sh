@@ -108,15 +108,18 @@ if command -v zsh >/dev/null; then
     printf "\n%.0s" {1..2}
 
     # Use sudo chsh (with temporary sudoers entry) for non-interactive shell change
-    if sudo chsh -s "$(command -v zsh)" "$USER_NAME"; then
-      printf "${INFO} [HyprFlux] Shell changed successfully to ${MAGENTA}zsh${RESET}\n" 2>&1 | tee -a "$LOG"
-    else
-      echo "${ERROR} [HyprFlux] Failed to change shell. Will retry..." 2>&1 | tee -a "$LOG"
-      # Retry loop as fallback
-      while ! sudo chsh -s "$(command -v zsh)" "$USER_NAME"; do
-        echo "${ERROR} [HyprFlux] Failed to change shell. Retrying..." 2>&1 | tee -a "$LOG"
-        sleep 1
-      done
+    # Cap retries: 5 attempts, then warn (shell can be changed manually)
+    local _chsh_attempts=0
+    until sudo chsh -s "$(command -v zsh)" "$USER_NAME"; do
+      _chsh_attempts=$((_chsh_attempts + 1))
+      if [ "$_chsh_attempts" -ge 5 ]; then
+        echo "${ERROR} [HyprFlux] Failed to change shell after 5 attempts. Run: sudo chsh -s \"$(command -v zsh)\" $USER_NAME" 2>&1 | tee -a "$LOG"
+        break
+      fi
+      echo "${ERROR} [HyprFlux] Failed to change shell. Retrying ($_chsh_attempts/5)..." 2>&1 | tee -a "$LOG"
+      sleep 1
+    done
+    if [ "$_chsh_attempts" -lt 5 ]; then
       printf "${INFO} [HyprFlux] Shell changed successfully to ${MAGENTA}zsh${RESET}\n" 2>&1 | tee -a "$LOG"
     fi
   else

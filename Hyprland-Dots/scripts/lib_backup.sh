@@ -57,8 +57,7 @@ cleanup_backups() {
     for BACKUP in "${BACKUP_DIRS[@]}"; do
       echo "  - ${BACKUP##*/}"
     done
-    echo -n "${CAT:-[ACTION]} Delete older backups and keep only the latest? (y/N): "
-    read back_choice
+    back_choice="n" # HyprFlux: auto-skip backup trim (non-interactive)
     if [[ "$back_choice" == [Yy]* ]]; then
       for BACKUP in "${BACKUP_DIRS[@]}"; do
         if [ "$BACKUP" != "$latest_backup" ]; then

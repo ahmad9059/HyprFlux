@@ -126,6 +126,39 @@ Reorganized routing (97 + 2 layer rules):
 - ISO repo: step 10 clones only HyprFlux; chroot wrapper paths → `$TARGET_HOME/HyprFlux/Arch-Hyprland`; AGENTS.md/README updated
 - CI: config-check.yml now also shellsyntax-checks Arch-Hyprland/ + Hyprland-Dots/ + triggers on their paths
 
+## Production-hardening audit (2026-08-25)
+
+Deep edge-case audit + fixes across the whole install pipeline:
+
+**Main install flow**
+- `install.sh`: HYPRFLUX_DIR now pins to the actual clone location (SCRIPT_DIR) — custom checkout paths no longer break; `dotsSetup.sh` REPO_DIR same fix
+- `dotsSetup.sh`: waybar defaults fixed to real HyprFlux paths (HyprFlux-Default.css / HyprFlux-Default-Laptop)
+- module 06-waybar: no longer symlinks (module 02 ships real files) — now verify + reload only
+- module 15-bibata: writes `env-variables.lua` (Lua) instead of dead ENVariables.conf
+- module 03: added **awww-git + mpvpaper** (wallpaper pipeline was broken — awww started by startup-apps.lua but never installed), **networkmanager** (was only in ISO pacstrap, missing on manual path), **power-profiles-daemon**; **waybar-git** moved here (stable waybar removed from 01-hypr-pkgs — workspace-click Lua dispatch requires waybar-git)
+- module 17: tuned added (Toggle-tuned.sh)
+- `scripts/initial.sh`: yay build retry capped at 5 + yay-bin fallback (was infinite loop)
+- `scripts/zsh.sh`: chsh retry capped at 5 (was infinite loop)
+- Machine-specific leaks removed from distro configs (commented with restore notes):
+  env-variables.lua AQ_DRM_DEVICES/Mesa-EGL block; window-rules Chrome-for-Testing rule;
+  startup-apps.lua hypr-refresh-rate.service restart. laptops.lua touchpad kept as
+  no-op-if-absent hl.device()
+
+**Hyprland-Dots**
+- All remaining interactive reads auto-answered (copy_phase1/waybar replace=y, restore prompts=n, backup trim=n) — install can never hang on prompts
+- config/ now byte-identical to .config/ (parity enforced by CI)
+
+**ISO repo**
+- gum/fzf runtime dependency check at TUI init (fail-fast)
+- Stale-mount cleanup in pre-flight (re-runs after failed installs work)
+- SWAP_SIZE validated as positive integer (was: sgdig garbage input)
+- chroot wrapper: A0 step injects HyprFlux zsh.sh + initial.sh (matches first-boot path);
+  module env file fully aligned with dotsSetup defaults incl. REPO_DIR (was missing → modules broke)
+
+**CI**
+- config-check: Hyprland-Dots/.config parity gate; RofiEmoji excluded from bash -n (known false positive)
+- build-iso: shell syntax gate on airootfs scripts
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

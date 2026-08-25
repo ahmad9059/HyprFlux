@@ -1,24 +1,28 @@
 #!/bin/bash
 # ============================================================
-# modules/06-waybar.sh — Waybar symlinks and reload
+# modules/06-waybar.sh — Waybar config verify and reload
 # ============================================================
 should_skip "waybar" && return 0
 
-log_action "Linking custom Waybar style and layout..."
+# NOTE: module 02-dotfiles already deploys the real waybar files
+# (config + style.css + include files). This module only verifies
+# they exist and reloads waybar if it is running.
+# Old symlink behaviour was removed: the repo ships real files now.
 
-# BUG FIX: Check BOTH style and layout files exist before symlinking
-if [[ -f "$CUSTOM_WAYBAR_STYLE" ]] && [[ -f "$CUSTOM_WAYBAR_LAYOUT" ]]; then
-  ln -sf "$CUSTOM_WAYBAR_LAYOUT" "$WAYBAR_LAYOUT_TARGET"
-  ln -sf "$CUSTOM_WAYBAR_STYLE" "$WAYBAR_STYLE_TARGET"
+if [[ ! -f "$WAYBAR_LAYOUT_TARGET" ]]; then
+  log_warn "Waybar config not found at ${WAYBAR_LAYOUT_TARGET}, skipping."
+  return 0
+fi
+if [[ ! -f "$WAYBAR_STYLE_TARGET" ]]; then
+  log_warn "Waybar style not found at ${WAYBAR_STYLE_TARGET}, skipping."
+  return 0
+fi
 
-  if pgrep -x "waybar" &>/dev/null; then
-    pkill -SIGUSR2 waybar || true
-    log_ok "Waybar style applied and reloaded."
-  else
-    log_warn "Waybar not running. Style will apply on next launch."
-  fi
-elif [[ ! -f "$CUSTOM_WAYBAR_STYLE" ]]; then
-  log_warn "Custom Waybar style not found at ${CUSTOM_WAYBAR_STYLE}, skipping."
-elif [[ ! -f "$CUSTOM_WAYBAR_LAYOUT" ]]; then
-  log_warn "Custom Waybar layout not found at ${CUSTOM_WAYBAR_LAYOUT}, skipping."
+log_ok "Waybar config and style verified."
+
+if pgrep -x "waybar" &>/dev/null; then
+  pkill -SIGUSR2 waybar || true
+  log_ok "Waybar reloaded."
+else
+  log_warn "Waybar not running. Style will apply on next launch."
 fi

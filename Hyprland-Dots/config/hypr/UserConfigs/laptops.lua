@@ -9,7 +9,9 @@ local mainMod = "SUPER"
 local scriptsDir = Home .. "/.config/hypr/scripts"
 local UserConfigs = Home .. "/.config/hypr/UserConfigs"
 
--- for disabling the touchpad: `hyprctl devices` to get the device name
+-- Touchpad: hl.device() is a documented no-op when the device name is not
+-- present on the machine, so this is safe on any hardware. Find your own
+-- device name with `hyprctl devices`. (Maintainer's ASUS ROG laptop shown.)
 local Touchpad_Device = "asue1209:00-04f3:319f-touchpad"
 
 hl.device({ name = Touchpad_Device, enabled = true })

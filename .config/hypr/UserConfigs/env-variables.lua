@@ -85,26 +85,19 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto") -- auto selects Wayland if possib
 -- https://wiki.hypr.land/Configuring/Environment-variables/
 -- hl.env("AQ_TRACE", "1") -- Enables more verbose logging.
 
--- Force Hyprland/Aquamarine to prefer the AMD iGPU as primary (the internal
--- panel eDP-1 is wired to it). NOTE: this does NOT put the NVIDIA GPU to
--- sleep in practice (confirmed 2026-08-04) - something outside Aquamarine's
--- device list (likely GLVND's default EGL/GLX vendor resolution) still keeps
--- it active. Tested stable across multiple logins; do not remove card1 from
--- this list again without a TTY safety net (doing so caused a login crash
--- loop on 2026-08-04 - see coredumpctl around 00:53 that day for the trace).
--- Use `prime-run <cmd>` to explicitly offload something to the NVIDIA GPU.
-hl.env("AQ_DRM_DEVICES", "/dev/dri/card2:/dev/dri/card1")
-
--- Force EGL/GLX vendor to Mesa (AMD) so nothing in the session (Hyprland
--- itself, swaync, Chrome) defaults to the NVIDIA EGL ICD just because
--- 10_nvidia.json sorts before 50_mesa.json. Added 2026-08-05 to let the
--- NVIDIA dGPU actually reach RTD3 suspend (NVreg_DynamicPowerManagement=3
--- was already set at the kernel level, but fuser /dev/nvidia* showed
--- Hyprland/swaync/chrome holding it open regardless of AQ_DRM_DEVICES).
--- Revert: delete/comment these 3 lines and relogin.
-hl.env("__GLX_VENDOR_LIBRARY_NAME", "mesa")
-hl.env("__EGL_VENDOR_LIBRARY_FILENAMES", "/usr/share/glvnd/egl_vendor.d/50_mesa.json")
-hl.env("LIBVA_DRIVER_NAME", "radeonsi")
+-- ======================================================================
+-- LIVE-MACHINE ONLY (maintainer's AMD iGPU + NVIDIA dGPU laptop)
+-- NOT part of the distro defaults — commented out so other hardware boots
+-- cleanly. To restore on a hybrid AMD/NVIDIA machine, uncomment the block
+-- below (and adjust card paths to your own hardware).
+--   AQ_DRM_DEVICES=/dev/dri/card2:/dev/dri/card1  (AMD primary)
+--   __GLX_VENDOR_LIBRARY_NAME=mesa / EGL vendor 50_mesa.json /
+--   LIBVA_DRIVER_NAME=radeonsi                    (force Mesa EGL)
+-- ======================================================================
+-- hl.env("AQ_DRM_DEVICES", "/dev/dri/card2:/dev/dri/card1")
+-- hl.env("__GLX_VENDOR_LIBRARY_NAME", "mesa")
+-- hl.env("__EGL_VENDOR_LIBRARY_FILENAMES", "/usr/share/glvnd/egl_vendor.d/50_mesa.json")
+-- hl.env("LIBVA_DRIVER_NAME", "radeonsi")
 
 -- hl.env("AQ_MGPU_NO_EXPLICIT", "1") -- Disables explicit syncing on mgpu buffers
 -- hl.env("AQ_NO_MODIFIERS", "1")     -- Disables modifiers for DRM buffers

@@ -42,7 +42,8 @@ hypr_package=(
   swaync 
   swww
   unzip # needed later
-  waybar
+  # NOTE: waybar removed here — HyprFlux requires waybar-git (chaotic-aur)
+  # for workspace-click Lua dispatch (hl.dsp); installed by module 03.
   wget
   wl-clipboard
   wlogout
