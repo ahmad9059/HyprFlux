@@ -318,7 +318,6 @@ fastfetch       # fetch info config
 foot            # foot terminal (foot.ini + colors.ini)
 ghostty         # ghostty terminal config
 hypr            # THE main config (detailed below)
-hypr_old        # archived legacy hyprlang config (rollback path)
 kitty           # kitty terminal (kitty.conf + kitty-colors.conf)
 Kvantum         # Kvantum theme engine config
 mimeapps.list   # default apps
@@ -1274,7 +1273,7 @@ Merged into the HyprFlux repo (2026-08-25) at `Hyprland-Dots/`. Its `copy.sh` is
 2. **Online-only install:** nothing pre-baked beyond the live env; everything clones from GitHub at install time (keeps ISO small, always-fresh).
 3. **Merge-don't-clone (2026-08-25):** Arch-Hyprland and Hyprland-Dots are merged into this repo with all automation patches baked in — no runtime patching, no extra clones, one repo to manage. Both keep their GPL-3.0 LICENSE.md.
 4. **Chroot shims** solve the systemctl/gsettings/chsh/nwg-look-in-chroot problem without forking upstream scripts.
-5. **Lua-first config:** Hyprland ≥ 0.55 mandates Lua; legacy `.conf` archived in `hypr_old/` for rollback; nwg-displays owns monitors.lua/workspaces.lua.
+5. **Lua-first config:** Hyprland ≥ 0.55 mandates Lua (legacy `hypr_old/` archive removed 2026-08-26); nwg-displays owns monitors.lua/workspaces.lua.
 6. **Single color source:** one `.conf` → 6 generated files + 2 injected blocks; CI enforces freshness; nothing hand-edited downstream.
 7. **Module sourcing:** modules are `source`d (shared scope) → SKIP_MODULES + env overrides give full control; same orchestrator powers full installs and granular re-runs.
 8. **Resilience:** every cosmetic step (plymouth, grub theme, SDDM theme) is non-fatal; retries everywhere (pacman 5×, pacstrap 3×, git clone 5×); verbose logs for every stage.
@@ -1306,7 +1305,6 @@ Merged into the HyprFlux repo (2026-08-25) at `Hyprland-Dots/`. Its `copy.sh` is
 - `docs/plan/progress.md` + `docs/WORK-LOG.md` track all work
 - CI config-check workflow green (validated locally)
 - Working tree clean; repo ↔ live in sync for all managed configs
-- Legacy config archived at `.config/hypr_old/`
 
 ## 12.2 ISO repo
 

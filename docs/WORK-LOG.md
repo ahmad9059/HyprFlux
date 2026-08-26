@@ -11,7 +11,7 @@ Complete log of all work done on this repository. See `docs/plan/` for the migra
 **What was done:**
 - Full config converted to `hyprland.lua` (entrypoint) + modular files under `.config/hypr/configs/` and `.config/hypr/UserConfigs/`
 - Migration fully documented in `docs/plan/` (docs 00–16 + 99-appendix): syntax crash course, hyprlang→Lua mapping, keybinds, monitors/workspaces, window rules, autostart/env, animations/devices, testing, advanced patterns, troubleshooting
-- Legacy config archived as `~/.config/hypr_old/` (repo + live) — kept by user decision; rollback = `cp hypr_old/hyprland.conf ~/.config/hypr/` + remove `hyprland.lua`
+- Legacy config was archived as `~/.config/hypr_old/` — **removed 2026-08-26** (Lua is the only config format; no rollback path needed)
 - **Verified live:** `dispatcher: __lua`, 152 binds, all options `set: true`, `hyprctl eval` works
 - Gotchas discovered (documented in 16-troubleshooting):
   - `hyprctl dispatch <old-hyprlang-string>` is broken in Lua mode (parsed as Lua) — use `hl.dsp.*` / `hyprctl eval`

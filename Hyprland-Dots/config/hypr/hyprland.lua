@@ -3,7 +3,8 @@
 --
 -- Wiki: https://wiki.hypr.land/Configuring/Start/
 -- Validation: Hyprland --config ~/.config/hypr/hyprland.lua --verify-config
--- Rollback: copy hypr_old/hyprland.conf over and remove this file.
+-- Rollback: the legacy hyprlang config was archived in hypr_old/ (removed 2026-08-26).
+-- Lua is now the only config format for Hyprland >= 0.55.
 
 local Home = os.getenv("HOME")
 

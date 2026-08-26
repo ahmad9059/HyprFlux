@@ -401,14 +401,8 @@ fi
 
 printf "\n%.0s" {1..1}
 
-# wallpaper stuff
-PICTURES_DIR="$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Pictures")"
-mkdir -p "$PICTURES_DIR/wallpapers"
-if cp -r wallpapers "$PICTURES_DIR/"; then
-  echo "${OK} Some ${MAGENTA}wallpapers${RESET} copied successfully!" | tee -a "$LOG"
-else
-  echo "${ERROR} Failed to copy some ${YELLOW}wallpapers${RESET}" | tee -a "$LOG"
-fi
+# HyprFlux: wallpapers handled by module 13 (wallpapers-bank clone) —
+# the old bundled wallpapers/ dir is removed (was copied then deleted).
 
 # Set some files as executable
 chmod +x "$HOME/.config/hypr/scripts/"* 2>&1 | tee -a "$LOG"
@@ -470,51 +464,8 @@ elif [ -d "$sddm_simple_sddm_2" ]; then
   done
 fi
 
-# additional wallpapers
-printf "\n%.0s" {1..1}
-echo "${MAGENTA}By default only a few wallpapers are copied${RESET}..."
-
-if [ "$EXPRESS_MODE" -eq 1 ]; then
-  echo "${NOTE} Express mode: skipping additional wallpaper download prompt." 2>&1 | tee -a "$LOG"
-else
-  while true; do
-    echo "${NOTE} A number of these wallpapers are AI generated or enhanced. Select (N/n) if this is an issue for you. "
-    echo -n "${CAT} Would you like to download additional wallpapers? ${WARN} This is 1GB in size (y/n): "
-    WALL="n"
-
-    case $WALL in
-    [Yy])
-      echo "${NOTE} Downloading additional wallpapers..."
-      if git clone "https://github.com/ahmad9059/WallpaperBank.git"; then
-        echo "${OK} Wallpapers downloaded successfully." 2>&1 | tee -a "$LOG"
-
-        # Check if wallpapers directory exists and create it if not
-        if [ ! -d "$PICTURES_DIR/wallpapers" ]; then
-          mkdir -p "$PICTURES_DIR/wallpapers"
-          echo "${OK} Created wallpapers directory." 2>&1 | tee -a "$LOG"
-        fi
-
-        if cp -R Wallpaper-Bank/wallpapers/* "$PICTURES_DIR/wallpapers/" >>"$LOG" 2>&1; then
-          echo "${OK} Wallpapers copied successfully." 2>&1 | tee -a "$LOG"
-          rm -rf Wallpaper-Bank 2>&1 # Remove cloned repository after copying wallpapers
-          break
-        else
-          echo "${ERROR} Copying wallpapers failed" 2>&1 | tee -a "$LOG"
-        fi
-      else
-        echo "${ERROR} Downloading additional wallpapers failed" 2>&1 | tee -a "$LOG"
-      fi
-      ;;
-    [Nn])
-      echo "${NOTE} You chose not to download additional wallpapers." 2>&1 | tee -a "$LOG"
-      break
-      ;;
-    *)
-      echo "Please enter 'y' or 'n' to proceed."
-      ;;
-    esac
-  done
-fi
+# HyprFlux: additional-wallpapers download removed — module 13 (wallpapers-bank)
+# is the single wallpaper source.
 
 # Execute the cleanup function
 if [ "$EXPRESS_MODE" -eq 1 ]; then
