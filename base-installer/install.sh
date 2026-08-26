@@ -75,7 +75,7 @@ printf "\n%.0s" {1..1}
 
 # Welcome message using whiptail (for displaying information)
 # HyprFlux: Skipped welcome dialog
-echo "${INFO} [HyprFlux] Welcome to HyprFlux Arch-Hyprland Install Script!" | tee -a "$LOG"
+echo "${INFO} [HyprFlux] Welcome to the HyprFlux base-installer!" | tee -a "$LOG"
 echo "${NOTE} [HyprFlux] ATTENTION: Ensure system is updated before installation." | tee -a "$LOG"
 
 # HyprFlux: Auto-proceed with installation
@@ -227,7 +227,7 @@ execute_script "pacman.sh"
 sleep 1
 
 # Custom HyprFlux Scripts (local, merged layout)
-# This install.sh now lives inside the HyprFlux repo: <repo>/Arch-Hyprland/
+# This install.sh now lives inside the HyprFlux repo: <repo>/base-installer/
 HYPRFLUX_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL_SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/install-scripts"
 cp "$HYPRFLUX_DIR/scripts/zsh.sh" "$INSTALL_SCRIPTS_DIR/zsh.sh"

@@ -177,8 +177,8 @@ Useful locations:
 
 ```text
 HyprFlux/
-├── Arch-Hyprland/   # Merged base installer (pre-patched, fully automated)
-├── Hyprland-Dots/   # Merged base dotfiles (pre-patched, non-interactive)
+├── base-installer/ # Merged base installer (pre-patched, fully automated)
+├── base-dots/      # Merged base dotfiles (pre-patched, non-interactive)
 ├── config/          # Project configuration files
 ├── dotsSetup.sh     # Main modular platform setup entrypoint
 ├── install.sh       # Primary install entrypoint
@@ -196,8 +196,8 @@ HyprFlux/
 - `install.sh` - top-level install entrypoint
 - `dotsSetup.sh` - orchestrates the modular setup flow
 - `modules/` - feature-specific setup units such as GTK, SDDM, Plymouth, cursors, AI tools, and monitors
-- `Arch-Hyprland/` - merged base installer (formerly a separate repo — no longer cloned at install time)
-- `Hyprland-Dots/` - merged base dotfiles (formerly a separate repo — no longer cloned at install time)
+- `base-installer/` - merged base installer (formerly the separate Arch-Hyprland repo — no longer cloned at install time)
+- `base-dots/` - merged base dotfiles (formerly the separate Hyprland-Dots repo — no longer cloned at install time)
 - `references/Hyprflux-ISO/` - companion ISO project reference built on `archiso`
 - `.config/hypr/` - Hyprland configs, scripts, monitor profiles, and user overrides
 - `.config/waybar/` - layouts, modules, and styling

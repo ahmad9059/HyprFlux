@@ -10,8 +10,8 @@ on:
       - ".config/swaync/**"
       - ".config/kitty/**"
       - ".config/foot/**"
-      - "Arch-Hyprland/**"
-      - "Hyprland-Dots/**"
+      - "base-installer/**"
+      - "base-dots/**"
 
   pull_request:
     paths:
@@ -22,8 +22,8 @@ on:
       - ".config/swaync/**"
       - ".config/kitty/**"
       - ".config/foot/**"
-      - "Arch-Hyprland/**"
-      - "Hyprland-Dots/**"
+      - "base-installer/**"
+      - "base-dots/**"
   workflow_dispatch:
 
 jobs:
@@ -68,15 +68,15 @@ jobs:
               *RofiEmoji.sh) continue ;;
             esac
             bash -n "$f" 2>/dev/null || { echo "BASH SYNTAX FAIL: $f"; FAIL=1; }
-          done < <(find Arch-Hyprland Hyprland-Dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
+          done < <(find base-installer base-dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
           [ $FAIL -eq 0 ] || exit 1
           echo "All shell scripts parse OK"
 
-      - name: Hyprland-Dots config parity check
+      - name: base-dots config parity check
         run: |
-          # Hyprland-Dots/config must mirror .config/ (merged-repo contract)
-          if ! diff -rq .config Hyprland-Dots/config >/tmp/parity.diff; then
-            echo "::error::Hyprland-Dots/config is out of sync with .config/ — copy .config/ over it and commit."
+          # base-dots/config must mirror .config/ (merged-repo contract)
+          if ! diff -rq .config base-dots/config >/tmp/parity.diff; then
+            echo "::error::base-dots/config is out of sync with .config/ — copy .config/ over it and commit."
             cat /tmp/parity.diff
             exit 1
           fi

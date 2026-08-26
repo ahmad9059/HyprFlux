@@ -204,7 +204,7 @@ if version_gt "$latest_version" "$stored_version"; then
         echo "$MAGENTA Upgrade declined. No files or directories changed" 2>&1 | tee -a "$LOG"
     fi
 else
-    echo "$OK 👌 No upgrade found. The installed version ${MAGENTA}($stored_version)${RESET} is up to date with the HyprFlux Hyprland-Dots version ${YELLOW}($latest_version)${RESET}" 2>&1 | tee -a "$LOG"
+    echo "$OK 👌 No upgrade found. The installed version ${MAGENTA}($stored_version)${RESET} is up to date with the HyprFlux base-dots version ${YELLOW}($latest_version)${RESET}" 2>&1 | tee -a "$LOG"
 fi
 
 printf "\n%.0s" {1..3}

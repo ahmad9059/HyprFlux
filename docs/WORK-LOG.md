@@ -114,17 +114,17 @@ Reorganized routing (97 + 2 layer rules):
 | SwayNC visual redesign (solid bg, compact entries, purple accents) | 2026-08 | 2026-08 | User wanted the original look/colors |
 | Rofi compact theme (padding/spacing/icons, 40% width) | 2026-08 | 2026-08 | User reverted; kept original spacing |
 
-## Merged Arch-Hyprland + Hyprland-Dots (2026-08-25)
+## Merged Arch-Hyprland + Hyprland-Dots → base-installer + base-dots (2026-08-25)
 
-- **Arch-Hyprland/** merged into the repo (plain copy, GPL-3.0 LICENSE.md kept): install.sh pre-patched (9 bypass patches baked: welcome/proceed/AUR-helper/NVIDIA/input-group/login-manager/options-checklist/SDDM-loop/read HYP), internal refs made relative, replace_reads call removed
-- **Hyprland-Dots/** merged into the repo (plain copy, GPL-3.0 LICENSE.md kept): copy.sh pre-patched (resolution auto-select, SDDM wallpaper auto-yes, wallpapers auto-no, Ubuntu continue auto-yes), copy_menu.sh/lib_prompts.sh/lib_apps.sh pre-patched (auto-install/keyboard/12H-clock/express-skip/editor)
+- **base-installer/** merged into the repo (plain copy, GPL-3.0 LICENSE.md kept): install.sh pre-patched (9 bypass patches baked: welcome/proceed/AUR-helper/NVIDIA/input-group/login-manager/options-checklist/SDDM-loop/read HYP), internal refs made relative, replace_reads call removed
+- **base-dots/** merged into the repo (plain copy, GPL-3.0 LICENSE.md kept): copy.sh pre-patched (resolution auto-select, SDDM wallpaper auto-yes, wallpapers auto-no, Ubuntu continue auto-yes), copy_menu.sh/lib_prompts.sh/lib_apps.sh pre-patched (auto-install/keyboard/12H-clock/express-skip/editor)
 - Removed from Dots: configs/ags, config/quickshell, config/wallust (apps removed from HyprFlux) + all refs in copy.sh/scripts
 - Wallpapers trimmed 37MB → 3.7MB (kept Balcony-ja.png, Night monochrome.jpg)
-- `install.sh`: no more cloning Arch-Hyprland; runs `$HYPRFLUX_DIR/Arch-Hyprland/install.sh` (cd'd, relative paths)
-- `dotfiles-main.sh`: points at merged `Hyprland-Dots/copy.sh` (no git clone)
+- `install.sh`: no more cloning base-installer; runs `$HYPRFLUX_DIR/base-installer/install.sh` (cd'd, relative paths)
+- `dotfiles-main.sh`: points at merged `base-dots/copy.sh` (no git clone)
 - Deleted `scripts/bypass_dialogs.sh` + `scripts/replace_reads.sh` (patches baked in)
-- ISO repo: step 10 clones only HyprFlux; chroot wrapper paths → `$TARGET_HOME/HyprFlux/Arch-Hyprland`; AGENTS.md/README updated
-- CI: config-check.yml now also shellsyntax-checks Arch-Hyprland/ + Hyprland-Dots/ + triggers on their paths
+- ISO repo: step 10 clones only HyprFlux; chroot wrapper paths → `$TARGET_HOME/HyprFlux/base-installer`; AGENTS.md/README updated
+- CI: config-check.yml now also shellsyntax-checks base-installer/ + base-dots/ + triggers on their paths
 
 ## Production-hardening audit (2026-08-25)
 
@@ -144,7 +144,7 @@ Deep edge-case audit + fixes across the whole install pipeline:
   startup-apps.lua hypr-refresh-rate.service restart. laptops.lua touchpad kept as
   no-op-if-absent hl.device()
 
-**Hyprland-Dots**
+**base-dots**
 - All remaining interactive reads auto-answered (copy_phase1/waybar replace=y, restore prompts=n, backup trim=n) — install can never hang on prompts
 - config/ now byte-identical to .config/ (parity enforced by CI)
 
@@ -156,7 +156,7 @@ Deep edge-case audit + fixes across the whole install pipeline:
   module env file fully aligned with dotsSetup defaults incl. REPO_DIR (was missing → modules broke)
 
 **CI**
-- config-check: Hyprland-Dots/.config parity gate; RofiEmoji excluded from bash -n (known false positive)
+- config-check: base-dots/.config parity gate; RofiEmoji excluded from bash -n (known false positive)
 - build-iso: shell syntax gate on airootfs scripts
 
 ## Zsh/shell install fixes (KVM/QEMU test fallout, 2026-08-25)
@@ -169,8 +169,15 @@ Test on KVM/QEMU with the merged script landed users in **bash** with **fzf miss
 - **`chsh` hardening:** zsh now added to `/etc/shells` before chsh (chsh rejects unknown shells); temp sudo permission uses a **sudoers.d drop-in** (`/etc/sudoers.d/99-hyprflux-temp`, mode 440) instead of appending to `/etc/sudoers`; **`usermod -s` fallback** if chsh fails after 5 attempts; cleanup is non-fatal (`sudo -n rm -f` then plain rm).
 - **fzf/zsh packages now yay-independent:** `_install_any()` helper — installs via AUR helper, falls back to `sudo pacman -S` (zsh, lsd, mercurial, zsh-completions, fzf are all in the extra repo).
 - **fzf installed BEFORE .zshrc copy** (the .zshrc sources fzf at startup).
-- **`.zshrc` guarded:** `source <(fzf --zsh)` now wrapped in `if command -v fzf` (repo `.zshrc` + Arch-Hyprland `assets/.zshrc`).
-- `Arch-Hyprland/install.sh`: `bash initial.sh` call site now guarded with `|| echo warn` so a future failure can't cascade.
+- **`.zshrc` guarded:** `source <(fzf --zsh)` now wrapped in `if command -v fzf` (repo `.zshrc` + base-installer `assets/.zshrc`).
+- `base-installer/install.sh`: `bash initial.sh` call site now guarded with `|| echo warn` so a future failure can't cascade.
+
+## Folders renamed (2026-08-26)
+
+- `Arch-Hyprland/` → **`base-installer/`** — merged base installer (install.sh, install-scripts/, assets/)
+- `Hyprland-Dots/` → **`base-dots/`** — merged base dotfiles (copy.sh, scripts/, config/, assets/)
+- All code refs updated: install.sh, base-installer/install.sh, dotfiles-main.sh (DOTS_DIR), CI workflow paths, parity gate, docs
+- Internal self-names updated (lib_update.sh expected_name, archive scripts, uninstall.sh title)
 
 ## Current state
 

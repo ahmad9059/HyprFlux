@@ -56,7 +56,7 @@ unset _script_dir
 
 # The repo may live anywhere (default $HOME/HyprFlux, but ISO clones it under
 # the target user's home too). Pin HYPRFLUX_DIR to this clone unless the user
-# explicitly overrode it — otherwise dotsSetup/Arch-Hyprland would resolve
+# explicitly overrode it — otherwise dotsSetup/base-installer would resolve
 # paths against $HOME/HyprFlux and break on custom checkout locations.
 HYPRFLUX_DIR="${HYPRFLUX_DIR:-$SCRIPT_DIR}"
 
@@ -88,24 +88,24 @@ log_info "Updating system and ensuring git & vim are installed..."
 sudo pacman -Syu --noconfirm git vim
 log_ok "System updated, git & vim are ready."
 
-# ====== Step 1: Run merged Arch-Hyprland installer ======
-# Arch-Hyprland is merged into this repo (Arch-Hyprland/) — no clone needed.
+# ====== Step 1: Run merged base-installer ======
+# base-installer (was Arch-Hyprland) is merged into this repo — no clone needed.
 # Its install.sh is already pre-patched for fully automated installation
-# (whiptail dialogs bypassed, options pre-selected). Hyprland-Dots is also
-# merged (Hyprland-Dots/) and pre-patched; dotfiles-main.sh points to it.
-ARCH_HYPRLAND_DIR="$HYPRFLUX_DIR/Arch-Hyprland"
+# (whiptail dialogs bypassed, options pre-selected). base-dots (was
+# base-dots (was Hyprland-Dots) is also merged and pre-patched; dotfiles-main.sh points to it.
+ARCH_HYPRLAND_DIR="$HYPRFLUX_DIR/base-installer"
 
 if [[ ! -f "$ARCH_HYPRLAND_DIR/install.sh" ]]; then
-  log_error "Merged Arch-Hyprland installer not found at $ARCH_HYPRLAND_DIR/install.sh"
+  log_error "Merged base-installer not found at $ARCH_HYPRLAND_DIR/install.sh"
   exit 1
 fi
 
-log_info "Running Arch-Hyprland/install.sh (merged, fully automated)..."
+log_info "Running base-installer/install.sh (merged, fully automated)..."
 chmod +x "$ARCH_HYPRLAND_DIR/install.sh"
-# IMPORTANT: Must cd into the directory because Arch-Hyprland's install.sh
+# IMPORTANT: Must cd into the directory because base-installer's install.sh
 # uses relative paths (e.g., install-scripts/) that only resolve from there.
 (cd "$ARCH_HYPRLAND_DIR" && bash install.sh)
-log_ok "Arch-Hyprland script completed!"
+log_ok "base-installer script completed!"
 
 # ====== Step 2: HyprFlux banner ======
 clear

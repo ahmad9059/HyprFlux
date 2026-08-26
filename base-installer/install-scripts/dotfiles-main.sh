@@ -19,7 +19,7 @@ fi
 # HyprFlux: Hyprland-Dots is merged into the HyprFlux repo (no clone needed)
 printf "${NOTE} Installing ${SKY_BLUE}HyprFlux Dots${RESET} (merged, pre-patched)....\n"
 
-DOTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../Hyprland-Dots" && pwd)"
+DOTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../base-dots" && pwd)"
 
 if [ -d "$DOTS_DIR" ]; then
   cd "$DOTS_DIR" || { echo -e "$ERROR Hyprland-Dots directory not found at $DOTS_DIR"; exit 1; }

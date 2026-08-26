@@ -4,13 +4,13 @@
 # Arguments:
 #   $1 - expected repository root (typically SCRIPT_DIR from copy.sh)
 # Behavior:
-#   * Verifies the script is executed from Hyprland-Dots root.
+#   * Verifies the script is executed from base-dots root.
 #   * Stashes local changes (including untracked), pulls latest changes.
 #   * Shows progress, reports errors, and summarizes results.
 #   * Waits for user input before returning control to caller.
 run_repo_update() {
   local repo_dir="${1:-$(pwd)}"
-  local expected_name="Hyprland-Dots"
+  local expected_name="base-dots"
   local log_dir="$repo_dir/Copy-Logs"
   local log_file="$log_dir/update-$(date +%d-%H%M%S)_git.log"
 

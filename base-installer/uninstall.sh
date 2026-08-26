@@ -1,6 +1,6 @@
 #!/bin/bash
 # 💫 https://github.com/ahmad9059/HyprFlux 💫 #
-# HyprFlux Arch-Hyprland uninstall script #
+# HyprFlux base-installer uninstall script #
 
 clear
 
@@ -29,7 +29,7 @@ echo -e "\e[35m
 printf "\n%.0s" {1..1}
 
 # Show welcome message using whiptail with Yes/No options
-whiptail --title "Arch-Hyprland HyprFlux Dots Uninstall Script" --yesno \
+whiptail --title "HyprFlux base-installer Uninstall Script" --yesno \
 "Hello! This script will uninstall HyprFlux Hyprland packages and configs.
 
 You can choose packages and directories you want to remove.
