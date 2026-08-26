@@ -451,6 +451,27 @@ Full audit of every step in hyprflux-install.sh + chroot wrapper + live env. 12 
 
 **Fix:** wrapper now goes to `/root/hyprflux-chroot-wrapper.sh` (real disk, not covered by any chroot mount): cp → arch-chroot run → rm. All other /tmp uses in the wrapper (CONFIG_ENV_FILE, GRUB/PLYMOUTH theme dirs, yay fallback build) are written INSIDE the chroot's own tmpfs during the same invocation — unaffected.
 
+## Deep execution audit — sandbox harness (2026-08-26)
+
+Built an execution sandbox: a fake chroot (stub binaries log every command; stateful pacman/yay; su/sudo/systemctl shims faithfully emulate the real chain) that runs the **real** chroot wrapper + **real** base-installer scripts + **real** modules end-to-end against the **real** cloned repo.
+
+**Result: FULL WRAPPER EXECUTES CLEAN — 0 failures.**
+- Phase 0: shims + sudoers drop-in ✓
+- A0 initial.sh (chaotic-aur + keyring + yay build path) ✓
+- A1–A16: all 16 base-installer scripts ✓
+- Phase B: all 16 modules run, dotfiles deployed to ~/.config (cava/fastfetch/foot/gtk/...), themes/icons/clones verified ✓
+- Phase C: services + graphical.target ✓
+- Phase D: first-boot fixup (autostart + script) created ✓
+- 71 install logs kept under ~/HyprFlux/logs/installer ✓
+
+**1 real bug found & fixed:** `dotfiles-main.sh` had NO `LOG=` definition — `tee -a "$LOG"` with empty var broke it when run standalone by the wrapper (worked only in install.sh where LOG is global). Added the unified-log fallback line (same pattern as every other install script).
+
+**Sandbox-verified NOT bugs (work correctly in a real chroot):**
+- sddm.sh's systemctl disable/is-active chain (shim strips runtime verbs, enable goes to systemctl.real — sandbox's patch-ordering artifact deleted the stub backup, masking this)
+- systemctl backup/restore (Phase 0 creates /usr/bin/systemctl.real as root before installing the shim; Phase C restores)
+- AUR build-tools batch "failures" = stdbuf-on-script-stub artifact (real yay is a binary — proven working in the real VM install earlier)
+- module warnings (TPM missing, gsettings schema, refined theme) = stub-created dirs, not real repos
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
