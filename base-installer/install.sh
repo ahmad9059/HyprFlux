@@ -8,7 +8,7 @@ OK="$(tput setaf 2)[OK]$(tput sgr0)"
 ERROR="$(tput setaf 1)[ERROR]$(tput sgr0)"
 NOTE="$(tput setaf 3)[NOTE]$(tput sgr0)"
 INFO="$(tput setaf 4)[INFO]$(tput sgr0)"
-WARN="$(tput setaf 1)[WARN]$(tput sgr0)"
+WARN="$(tput setaf 3)[WARN]$(tput sgr0)"
 CAT="$(tput setaf 6)[ACTION]$(tput sgr0)"
 MAGENTA="$(tput setaf 5)"
 ORANGE="$(tput setaf 214)"
@@ -47,9 +47,9 @@ else
   echo "$NOTE Install base-devel.........."
 
   if sudo pacman -S --noconfirm base-devel; then
-    echo "👌 ${OK} base-devel has been installed successfully." | tee -a "$LOG"
+    echo "${OK} base-devel has been installed successfully." | tee -a "$LOG"
   else
-    echo "❌ $ERROR base-devel not found nor cannot be installed." | tee -a "$LOG"
+    echo "$ERROR base-devel not found nor cannot be installed." | tee -a "$LOG"
     echo "$ACTION Please install base-devel manually before running this script... Exiting" | tee -a "$LOG"
     exit 1
   fi
@@ -80,7 +80,7 @@ echo "${NOTE} [HyprFlux] ATTENTION: Ensure system is updated before installation
 # HyprFlux: Auto-proceed with installation
 echo "${OK} [HyprFlux] Auto-proceeding with installation..." | tee -a "$LOG"
 
-echo "👌 ${OK} 🇵🇰 ${MAGENTA}HyprFlux..${RESET} ${SKY_BLUE}lets continue with the installation...${RESET}" | tee -a "$LOG"
+echo "${OK} ${MAGENTA}HyprFlux${RESET} — continuing with the installation..." | tee -a "$LOG"
 
 sleep 1
 printf "\n%.0s" {1..1}
@@ -121,7 +121,6 @@ sddm_theme="OFF"
 xdph="OFF"
 zsh="OFF"
 pokemon="OFF"
-rog="OFF"
 dots="OFF"
 input_group="OFF"
 nvidia="OFF"
@@ -130,10 +129,10 @@ nouveau="OFF"
 # Function to load preset file
 load_preset() {
   if [ -f "$1" ]; then
-    echo "✅ Loading preset: $1"
+    echo "${OK} Loading preset: $1"
     source "$1"
   else
-    echo "⚠️ Preset file not found: $1. Using default values."
+    echo "${WARN} Preset file not found: $1. Using default values."
   fi
 }
 
@@ -221,9 +220,7 @@ printf "\n%.0s" {1..1}
 
 # Ensuring base-devel is installed
 execute_script "00-base.sh"
-sleep 1
 execute_script "pacman.sh"
-sleep 1
 
 # Custom HyprFlux Scripts (local, merged layout)
 # This install.sh now lives inside the HyprFlux repo: <repo>/base-installer/
@@ -234,7 +231,6 @@ chmod +x "$INSTALL_SCRIPTS_DIR/zsh.sh"
 # NOTE: replace_reads.sh is no longer needed - Hyprland-Dots is merged and
 # its scripts are already pre-patched for non-interactive installation.
 bash "$HYPRFLUX_DIR/scripts/initial.sh" || echo "${WARN} [HyprFlux] initial.sh had issues — continuing" | tee -a "$LOG"
-sleep 1
 
 # Execute AUR helper script after other installations if applicable
 if [ "$aur_helper" == "paru" ]; then
@@ -243,23 +239,17 @@ elif [ "$aur_helper" == "yay" ]; then
   execute_script "yay.sh"
 fi
 
-sleep 1
-
 # Run the Hyprland related scripts
 echo "${INFO} Installing ${SKY_BLUE}HyprFlux Hyprland additional packages...${RESET}" | tee -a "$LOG"
-sleep 1
 execute_script "01-hypr-pkgs.sh"
 
 echo "${INFO} Installing ${SKY_BLUE}pipewire and pipewire-audio...${RESET}" | tee -a "$LOG"
-sleep 1
 execute_script "pipewire.sh"
 
 echo "${INFO} Installing ${SKY_BLUE}necessary fonts...${RESET}" | tee -a "$LOG"
-sleep 1
 execute_script "fonts.sh"
 
 echo "${INFO} Installing ${SKY_BLUE}Hyprland...${RESET}"
-sleep 1
 execute_script "hyprland.sh"
 
 # Clean up the selected options (remove quotes and trim spaces)
@@ -308,10 +298,6 @@ for option in "${options[@]}"; do
     echo "${INFO} Installing ${SKY_BLUE}zsh with Oh-My-Zsh...${RESET}" | tee -a "$LOG"
     execute_script "zsh.sh"
     ;;
-  rog)
-    echo "${INFO} Installing ${SKY_BLUE}ROG laptop packages...${RESET}" | tee -a "$LOG"
-    execute_script "rog.sh"
-    ;;
   dots)
     echo "${INFO} Installing pre-configured ${SKY_BLUE}HyprFlux Hyprland dotfiles...${RESET}" | tee -a "$LOG"
     execute_script "dotfiles-main.sh"
@@ -337,12 +323,11 @@ printf "\n%.0s" {1..1}
 
 # Check if hyprland or hyprland-git is installed
 if pacman -Q hyprland &>/dev/null || pacman -Q hyprland-git &>/dev/null; then
-  printf "\n ${OK} 👌 Hyprland is installed. However, some essential packages may not be installed. Please see above!"
+  printf "\n ${OK} Hyprland is installed. However, some essential packages may not be installed. Please see above!"
   printf "\n${CAT} Ignore this message if it states ${YELLOW}All essential packages${RESET} are installed as per above\n"
-  sleep 2
   printf "\n%.0s" {1..2}
 
-  printf "${SKY_BLUE}Thank you${RESET} 🫰 for using 🇵🇰 ${MAGENTA}HyprFlux's Hyprland Dots${RESET}. ${YELLOW}Enjoy and Have a good day!${RESET}"
+  printf "${SKY_BLUE}Thank you${RESET} for using ${MAGENTA}HyprFlux${RESET}. ${YELLOW}Enjoy!${RESET}"
   printf "\n%.0s" {1..2}
 
   printf "\n${NOTE} You can start Hyprland by typing ${SKY_BLUE}Hyprland${RESET} (IF SDDM is not installed) (note the capital H!).\n"
@@ -359,7 +344,7 @@ if pacman -Q hyprland &>/dev/null || pacman -Q hyprland-git &>/dev/null; then
       systemctl reboot
       break
     elif [[ "$HYP" == "n" || "$HYP" == "no" ]]; then
-      echo "👌 ${OK} You chose NOT to reboot"
+      echo "${OK} You chose NOT to reboot"
       printf "\n%.0s" {1..1}
       # Check if NVIDIA GPU is present
       if lspci | grep -i "nvidia" &>/dev/null; then

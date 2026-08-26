@@ -9,7 +9,7 @@ OK="$(tput setaf 2)[OK]$(tput sgr0)"
 ERROR="$(tput setaf 1)[ERROR]$(tput sgr0)"
 NOTE="$(tput setaf 3)[NOTE]$(tput sgr0)"
 INFO="$(tput setaf 4)[INFO]$(tput sgr0)"
-WARN="$(tput setaf 1)[WARN]$(tput sgr0)"
+WARN="$(tput setaf 3)[WARN]$(tput sgr0)"
 CAT="$(tput setaf 6)[ACTION]$(tput sgr0)"
 MAGENTA="$(tput setaf 5)"
 ORANGE="$(tput setaf 214)"
@@ -101,6 +101,44 @@ install_package() {
       echo -e "\n${ERROR} ${YELLOW}$1${RESET} failed to install :( , please check the install.log. You may need to install manually! Sorry I have tried :("
     fi
   fi
+}
+
+# Batch-install many packages in ONE transaction (official repo packages).
+# Much faster than per-package yay spawns; skips already-installed.
+# Usage: install_package_batch "LOG" pkg1 pkg2 ...
+install_package_batch() {
+  local log="$1"
+  shift
+  local todo=()
+  local pkg
+  for pkg in "$@"; do
+    $ISAUR -Q "$pkg" &>> /dev/null || todo+=("$pkg")
+  done
+  if [ ${#todo[@]} -eq 0 ]; then
+    echo -e "${OK} All packages already installed."
+    return 0
+  fi
+  echo -e "${INFO} Installing ${#todo[@]} packages in one transaction (batched)..."
+  (
+    stdbuf -oL $ISAUR -S --noconfirm --needed "${todo[@]}" 2>&1
+  ) >> "$log" 2>&1 &
+  PID=$!
+  show_progress $PID "${#todo[@]} packages"
+  wait $PID 2>/dev/null
+  local rc=$?
+
+  # Verify the batch result
+  local still_missing=()
+  for pkg in "$@"; do
+    $ISAUR -Q "$pkg" &>> /dev/null || still_missing+=("$pkg")
+  done
+
+  if [ ${#still_missing[@]} -eq 0 ]; then
+    echo -e "${OK} Package batch installed successfully!"
+    return 0
+  fi
+  echo -e "\n${ERROR} Some packages failed to install in batch: ${still_missing[*]}"
+  return 1
 }
 
 # Function to just install packages with either yay or paru without checking if installed

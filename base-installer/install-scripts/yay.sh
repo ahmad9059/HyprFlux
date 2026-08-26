@@ -48,11 +48,14 @@ fi
   cd ..
 fi
 
-# Update system before proceeding (fall back to pacman if no AUR helper)
-printf "\n%s - Performing a full system update to avoid issues.... \n" "${NOTE}"
+# Only refresh the package DB if we JUST installed the helper here.
+# (HyprFlux/install.sh already ran a full -Syu before this step, so a second
+# full upgrade here would be pure duplicate work and can hit lock conflicts.)
 ISAUR=$(command -v yay || command -v paru)
-[ -z "$ISAUR" ] && ISAUR="sudo pacman"
-
-$ISAUR -Syu --noconfirm 2>&1 | tee -a "$LOG" || { printf "%s - Failed to update system\n" "${ERROR}"; exit 1; }
+if [ -n "$ISAUR" ]; then
+  $ISAUR -Sy --noconfirm 2>&1 | tee -a "$LOG" || true
+else
+  sudo pacman -Sy --noconfirm 2>&1 | tee -a "$LOG" || true
+fi
 
 printf "\n%.0s" {1..2}

@@ -48,10 +48,9 @@ fi
   cd ..
 fi
 
-# Update system before proceeding
-printf "\n%s - Performing a full system update to avoid issues.... \n" "${NOTE}"
+# Only refresh the package DB (HyprFlux/install.sh already ran -Syu).
 ISAUR=$(command -v yay || command -v paru)
-
-$ISAUR -Syu --noconfirm 2>&1 | tee -a "$LOG" || { printf "%s - Failed to update system\n" "${ERROR}"; exit 1; }
+[ -z "$ISAUR" ] && ISAUR="sudo pacman"
+$ISAUR -Sy --noconfirm 2>&1 | tee -a "$LOG" || true
 
 printf "\n%.0s" {1..2}

@@ -14,15 +14,10 @@ should_skip "plymouth" && return 0
 
 log_action "Installing Plymouth..."
 
-# 1. Install plymouth package if missing (non-fatal on failure)
+# 1. plymouth package is guaranteed by base-installer 01-hypr-pkgs — just verify.
 if ! pacman -Qi plymouth &>/dev/null; then
-  if ! sudo pacman -S --needed --noconfirm plymouth; then
-    log_warn "Failed to install Plymouth. Skipping Plymouth setup."
-    return 0
-  fi
-  log_ok "Plymouth installed successfully."
-else
-  log_info "Plymouth already installed."
+  log_warn "plymouth package missing — skipping Plymouth theme setup."
+  return 0
 fi
 
 _plymouth_theme_archive="${PLYMOUTH_THEME_ARCHIVE:-$REPO_DIR/utilities/hyprflux-plymouth.tar.xz}"

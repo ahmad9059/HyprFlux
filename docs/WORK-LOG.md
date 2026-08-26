@@ -318,6 +318,39 @@ All logs now live in ONE place: **`~/HyprFlux/logs/`**
 - ISO chroot wrapper: `Install-Logs` → `${TARGET_HOME}/HyprFlux/logs/installer` (+ chown)
 - Old `hyprflux_log/` and per-repo `Install-Logs/`/`Copy-Logs/` folders eliminated
 
+## Phase 1: Performance & dual-work elimination (2026-08-26)
+
+- **Repeated full system upgrades removed**: install.sh already runs `pacman -Syu` before base-installer; yay.sh/paru.sh final `-Syu` → `-Sy` refresh-only (were full re-upgrades hitting lock conflicts), initial.sh keeps its one `-Syu` (needed to sync the newly-added Chaotic-AUR repo)
+- **Package installs batched**: added `install_package_batch()` to Global_functions.sh — official-repo packages (hypr_package + hypr_package_2, ~78 pkgs) install in ONE `yay -S --needed` transaction instead of 78 per-package spawns (each taking the DB lock + spinner). Fallback: retries individually on batch failure. Build tools batched too. AUR packages stay per-package (one failure shouldn't kill the batch).
+- **Sleep pacing trimmed**: removed 9× `sleep 1` between base-installer steps (~10s saved); kept banner pause + post-loop pause
+- Verified: batch function works (mock test: 3 pkgs → 1 yay call), all syntax OK
+
+## Phase 2+3: Message unification & dead-code cleanup (2026-08-26)
+
+**Phase 2 — clean, consistent install UI:**
+- All install-flow messages now use the same `[OK] [NOTE] [INFO] [WARN] [ERROR] [ACTION]` labels
+- base-installer WARN color fixed: RED → YELLOW (matches HyprFlux)
+- Removed emojis (👌❌🫰🫵🇵🇰✅⚠️) from base-installer/install.sh messages — clean label-only style (HyprFlux already clean; the one remaining emoji is inside a zsh prompt theme asset, intentional)
+- `install_package_batch` now shows a live progress spinner + verifies each package post-install (missing ones reported by name)
+
+**Phase 3 — dead code & duplicates removed:**
+- Deleted never-called scripts: `battery-monitor.sh`, `disk-monitor.sh`, `temp-monitor.sh` (old upstream helpers)
+- Deleted `rog.sh` + its install.sh branch (ASUS ROG handled by laptops.lua guards now)
+- Deleted `base-dots/archive/` (release/upgrade.sh — old standalone-repo model)
+- Removed font duplicates from 01-hypr-pkgs (`noto-fonts`, `noto-fonts-emoji` — fonts.sh owns them)
+- Module 09-plymouth: removed redundant `pacman -S plymouth` (guaranteed by 01-hypr-pkgs; now just verifies)
+
+## Phase 4: Final full-flow audit (2026-08-26)
+
+- **Module smoke test**: all 16 modules pass the exact dotsSetup `if source` pattern (OK=16 FAIL=0)
+- **Batch install verified**: 90 packages, no duplicates, single `yay -S --needed` transaction
+- **ISO wrapper**: removed dead A14 sddm_theme.sh reference (theme ships via module 06-sddm); all remaining Phase-A scripts verified present
+- **Full syntax**: main (all .sh) + ISO (installer + libs) OK; all Lua OK; config parity OK
+- **No stale refs**: zero references to removed scripts (rog.sh, monitor scripts, archive/*) or old log paths
+- **Unified logging**: all logs → `~/HyprFlux/logs/` (install.log, dotsSetup.log, installer/*, copy/*)
+
+**Final install experience:** single clean flow — keyring init → one `-Syu` → batched package install (fast, progress spinner) → AUR packages (prebuilt awww + per-pkg builds with deps) → single config deploy → 16 modules → unified logs. Clean `[OK]/[NOTE]/[WARN]/[ERROR]` messages throughout, no emojis, consistent colors.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

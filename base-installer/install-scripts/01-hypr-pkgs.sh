@@ -80,8 +80,8 @@ hypr_package_2=(
   #    longer optional; everything installs in this one pass) ──
   alacritty tldr
   obs-studio vlc luacheck luarocks hyprpicker
-  obsidian noto-fonts-emoji tuned
-  ttf-noto-nerd noto-fonts
+  obsidian tuned
+  ttf-noto-nerd
   kdenlive
 )
 
@@ -145,20 +145,20 @@ hypr_aur_package=(
   freedownloadmanager
 )
 
-# Installation of main components
-printf "\n%s - Installing ${SKY_BLUE}HyprFlux necessary packages${RESET} .... \n" "${NOTE}"
+# Installation of main components — BATCHED into one transaction for speed
+# (per-package yay spawns are slow; --needed skips what's already there).
+printf "\n%s - Installing ${SKY_BLUE}HyprFlux packages${RESET} (batched) .... \n" "${NOTE}"
 
-for PKG1 in "${hypr_package[@]}" "${hypr_package_2[@]}" "${Extra[@]}"; do
-  install_package "$PKG1" "$LOG"
-done
+install_package_batch "$LOG" "${hypr_package[@]}" "${hypr_package_2[@]}" "${Extra[@]}" \
+  || { echo "${WARN} Batch install had failures — retrying individually."; 
+       for PKG1 in "${hypr_package[@]}" "${hypr_package_2[@]}" "${Extra[@]}"; do install_package "$PKG1" "$LOG"; done; }
 
 # ── Build tools for source-built AUR packages (awww-git, waybar-git, mpvpaper) ──
 # These are makedepends that makepkg needs; installing them up-front avoids
 # slow/failed source builds on machines without a full toolchain.
-printf "\n%s - Installing ${SKY_BLUE}AUR build tools${RESET} .... \n" "${NOTE}"
-for _bt in cmake meson ninja scdoc rust dav1d catch2; do
-  install_package "$_bt" "$LOG"
-done
+printf "\n%s - Installing ${SKY_BLUE}AUR build tools${RESET} (batched) .... \n" "${NOTE}"
+install_package_batch "$LOG" cmake meson ninja scdoc rust dav1d catch2 \
+  || { for _bt in cmake meson ninja scdoc rust dav1d catch2; do install_package "$_bt" "$LOG"; done; }
 unset _bt
 
 printf "\n%s - Installing ${SKY_BLUE}HyprFlux AUR packages${RESET} .... \n" "${NOTE}"
