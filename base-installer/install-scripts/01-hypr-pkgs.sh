@@ -82,6 +82,7 @@ hypr_package_2=(
   obs-studio vlc luacheck luarocks hyprpicker
   obsidian noto-fonts-emoji tuned
   ttf-noto-nerd noto-fonts
+  kdenlive
 )
 
 # List of packages to uninstall as it conflicts some packages
@@ -138,6 +139,7 @@ hypr_aur_package=(
   visual-studio-code-bin 64gram-desktop-bin vesktop
   foliate localsend-bin tuxedo-bin
   claude-code opencode-bin openai-codex-bin
+  freedownloadmanager
 )
 
 # Installation of main components

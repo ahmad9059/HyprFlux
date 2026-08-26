@@ -50,9 +50,10 @@ fi
   cd ..
 fi
 
-# Update system before proceeding
+# Update system before proceeding (fall back to pacman if no AUR helper)
 printf "\n%s - Performing a full system update to avoid issues.... \n" "${NOTE}"
 ISAUR=$(command -v yay || command -v paru)
+[ -z "$ISAUR" ] && ISAUR="sudo pacman"
 
 $ISAUR -Syu --noconfirm 2>&1 | tee -a "$LOG" || { printf "%s - Failed to update system\n" "${ERROR}"; exit 1; }
 

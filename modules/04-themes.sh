@@ -16,22 +16,19 @@ else
 fi
 
 # ====== Icons (Papirus) ======
-if command -v yay &>/dev/null; then
-  log_action "Installing 'papirus-icon-theme' via pacman..."
-  if sudo pacman -S --needed --noconfirm papirus-icon-theme papirus-folders; then
-    log_ok "'papirus-icon-theme' installed successfully."
+# Installed via pacman directly (official repo) — no AUR helper needed.
+log_action "Installing 'papirus-icon-theme' via pacman..."
+if sudo pacman -S --needed --noconfirm papirus-icon-theme papirus-folders; then
+  log_ok "'papirus-icon-theme' installed successfully."
 
-    # Set folder color to cyan for Papirus-Dark
-    log_action "Setting Papirus folders to cyan (Papirus-Dark)."
-    if command -v papirus-folders &>/dev/null; then
-      papirus-folders -C cyan --theme Papirus-Dark
-      log_ok "Papirus folders set to cyan (Papirus-Dark)."
-    fi
-  else
-    log_error "Failed to install 'papirus-icon-theme'."
+  # Set folder color to cyan for Papirus-Dark
+  log_action "Setting Papirus folders to cyan (Papirus-Dark)."
+  if command -v papirus-folders &>/dev/null; then
+    papirus-folders -C cyan --theme Papirus-Dark
+    log_ok "Papirus folders set to cyan (Papirus-Dark)."
   fi
 else
-  log_warn "yay not found. Skipping 'papirus-icon-theme' installation."
+  log_error "Failed to install 'papirus-icon-theme'."
 fi
 
 # ====== Cursor theme (Future Black) ======

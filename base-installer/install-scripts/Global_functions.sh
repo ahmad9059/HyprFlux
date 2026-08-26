@@ -71,7 +71,13 @@ install_package_pacman() {
 }
 
 ISAUR=$(command -v yay || command -v paru)
-# Function to install packages with either yay or paru
+# If no AUR helper exists, fall back to plain pacman (official repo packages
+# still install; AUR-only packages will be reported as failed, not fatal).
+if [ -z "$ISAUR" ]; then
+  ISAUR="sudo pacman"
+fi
+
+# Function to install packages with either yay/paru/pacman
 install_package() {
   if $ISAUR -Q "$1" &>> /dev/null ; then
     echo -e "${INFO} ${MAGENTA}$1${RESET} is already installed. Skipping..."

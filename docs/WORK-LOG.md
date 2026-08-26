@@ -270,6 +270,25 @@ Both boot-theme modules rewritten to install fully and handle every edge case:
 
 Tested: corrupt archive, missing archive, no-GRUB, no-sudo-terminal (graceful), full happy path with mocks, idempotent re-runs on real machine (themes re-verified present), HOOKS 3-case logic, GRUB token 4-case logic.
 
+## Cross-machine install hardening (2026-08-26)
+
+Deep audit to make the install work smoothly on ANY hardware, not just the maintainer's machine. Found + fixed:
+
+**Machine-specific leaks in shipped configs:**
+- `qt5ct.conf` / `qt6ct.conf`: hardcoded `/home/ahmad/` color_scheme_path → `__HYPRFLUX_HOME__` placeholder; module 02 substitutes the real `$HOME` at install (qt5ct reads the path literally, no env expansion)
+- `laptops.lua`: ASUS-only binds (rog-control-center, asusctl) now guarded by `command -v` checks — never fire on non-ASUS
+- Waybar `temperature` hwmon-path: hardcoded `hwmon1` → module 16 now auto-detects a real thermal sensor (k10temp/coretemp > acpitz > thermal_zone > any hwmon) and rewrites the block (idempotent, JSONC-safe)
+- hyprlock bundled fonts (SF Pro Display) were never registered with fontconfig → added `~/.config/fontconfig/fonts.conf` registering `~/.config/hypr/hyprlock/Fonts` (verified fc-list picks them up)
+- keybinds SUPER+K (kdenlive) + SUPER+M (freedownloadmanager) referenced apps NOT in the package list → added to merged list
+
+**Package/installer failure resilience:**
+- `install.sh`: pacman keyring init/populate before first `-Syu` (fresh Arch installs fail with "GPG keys are outdated" otherwise) + refresh-keys retry
+- `Global_functions.sh`: `ISAUR` falls back to `sudo pacman` when no AUR helper exists — `install_package`/`install_package_f` no longer run bare `-Q`/`-S` (command-not-found) when yay is missing
+- `yay.sh`: final `-Syu` guarded with the same fallback (was: empty ISAUR → command not found → exit 1 → whole installer died)
+- Verified all 93 merged packages parse cleanly; every keybind/waybar/runtime binary maps to an installed package
+
+**Verified machine-agnostic:** ISO installer (TTY width auto, keyring init, both microcodes, virtio/qxl detection), SDDM session dir, initial-boot.sh ($HOME-based), Volume/Brightness/Battery scripts (default devices), startup execs, window-rules classes (no-op when app absent).
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

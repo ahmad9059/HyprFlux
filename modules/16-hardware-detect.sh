@@ -456,12 +456,84 @@ _hd_write_keyboard() {
 }
 
 # ------------------------------------------------------------------
+# 4. Waybar temperature hwmon path (machine-specific)
+# ------------------------------------------------------------------
+# The waybar Modules file ships with the maintainer's hwmon path, which does
+# not exist (or points at the wrong sensor) on other machines. Detect a real
+# thermal sensor and rewrite the "temperature" block to use it.
+_hd_write_temperature() {
+  local wb_file="$HOME/.config/waybar/Modules"
+  [[ -f "$wb_file" ]] || { log_warn "waybar Modules not found — skipping temperature path."; return 0; }
+
+  # Priority: dedicated CPU temp sensor (k10temp/coretemp) > acpitz > nvme > any
+  local sensor=""
+  local name path
+
+  # 1. hwmon temp1_input from a sensor whose name suggests the CPU/board
+  for h in /sys/class/hwmon/hwmon[0-9]*; do
+    [[ -f "$h/temp1_input" ]] || continue
+    name=$(cat "$h/name" 2>/dev/null)
+    case "$name" in
+      k10temp|coretemp|zenpower|k8temp|acpitz)
+        path="$h/temp1_input"
+        # prefer k10temp/coretemp over acpitz
+        if [[ "$name" == "k10temp" || "$name" == "coretemp" ]]; then
+          sensor="$path"; break
+        fi
+        [[ -z "$sensor" ]] && sensor="$path"
+        ;;
+    esac
+  done
+
+  # 2. fallback: any thermal_zone with a temp file
+  if [[ -z "$sensor" ]]; then
+    for z in /sys/class/thermal/thermal_zone[0-9]*; do
+      [[ -f "$z/temp" ]] && { sensor="$z/temp"; break; }
+    done
+  fi
+
+  # 3. fallback: any hwmon temp1_input
+  if [[ -z "$sensor" ]]; then
+    for h in /sys/class/hwmon/hwmon[0-9]*; do
+      [[ -f "$h/temp1_input" ]] && { sensor="$h/temp1_input"; break; }
+    done
+  fi
+
+  if [[ -z "$sensor" ]]; then
+    log_warn "No thermal sensor found — keeping default temperature config."
+    return 0
+  fi
+
+  log_ok "Temperature sensor: $sensor"
+
+  # Rewrite the temperature block's hwmon-path to the detected sensor.
+  # The file is JSONC (comments allowed); we do a line-based replace:
+  #   "hwmon-path": [                    <- this line + following entries
+  #       "/sys/...",                    <- old entries
+  #   ]                                   <- array close
+  # becomes a single-line array. Sed range replace is used.
+  _HD_TMP="$(mktemp)"
+  # 1. If the new path is ALREADY present, nothing to do.
+  if grep -q "hwmon-path.*$sensor" "$wb_file" 2>/dev/null; then
+    rm -f "$_HD_TMP"
+    return 0
+  fi
+  # 2. Replace from the "hwmon-path": [ line through its closing ] line.
+  sed -i '/"hwmon-path": \[/,/\]/c\
+\t"hwmon-path": [ "'"$sensor"'" ]' "$wb_file" 2>/dev/null \
+    || { rm -f "$_HD_TMP"; log_warn "temperature path write failed (sed). Skipping."; return 0; }
+  rm -f "$_HD_TMP"
+  _HD_TMP=""
+}
+
+# ------------------------------------------------------------------
 # Run (every step individually guarded; nothing can abort the install)
 # ------------------------------------------------------------------
 trap _hd_cleanup EXIT
 _hd_write_gpu_block
 _hd_write_monitors
 _hd_write_keyboard
+_hd_write_temperature
 trap - EXIT
 
 unset _HOME_CONFIG _ENV_FILE _SETTINGS_FILE _MONITORS_CONF _MONITORS_LUA _PROFILES_DIR _HD_TMP

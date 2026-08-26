@@ -9,18 +9,24 @@ local mainMod = "SUPER"
 local scriptsDir = Home .. "/.config/hypr/scripts"
 local UserConfigs = Home .. "/.config/hypr/UserConfigs"
 
--- Touchpad: hl.device() is a documented no-op when the device name is not
--- present on the machine, so this is safe on any hardware. Find your own
--- device name with `hyprctl devices`. (Maintainer's ASUS ROG laptop shown.)
-local Touchpad_Device = "asue1209:00-04f3:319f-touchpad"
+-- ASUS ROG specifics are guarded: on non-ASUS machines the device name
+-- does not exist (hl.device is a documented no-op) and the tools below are
+-- absent, so these binds simply never fire. Safe on any hardware.
+local Touchpad_Device = "asue1209:00-04f3:319f-touchpad" -- maintainer's ROG
 
 hl.device({ name = Touchpad_Device, enabled = true })
 
 hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd(scriptsDir .. "/BrightnessKbd.sh --dec"), { repeating = true }) -- keyboard brightness down
 hl.bind("XF86KbdBrightnessUp",   hl.dsp.exec_cmd(scriptsDir .. "/BrightnessKbd.sh --inc"), { repeating = true }) -- keyboard brightness up
-hl.bind("XF86Launch1", hl.dsp.exec_cmd("rog-control-center"), { description = "ASUS Armory crate button" })
-hl.bind("XF86Launch3", hl.dsp.exec_cmd("asusctl led-mode -n"), { description = "FN+F4: Switch keyboard RGB profile" })
-hl.bind("XF86Launch4", hl.dsp.exec_cmd("asusctl profile -n"), { description = "FN+F5: fan profiles (Quiet, Balance, Performance)" })
+
+-- ASUS-only keys (XF86Launch* only exist on ASUS keyboards / asusctl)
+if os.execute("command -v rog-control-center >/dev/null 2>&1") then
+    hl.bind("XF86Launch1", hl.dsp.exec_cmd("rog-control-center"), { description = "ASUS Armory crate button" })
+end
+if os.execute("command -v asusctl >/dev/null 2>&1") then
+    hl.bind("XF86Launch3", hl.dsp.exec_cmd("asusctl led-mode -n"), { description = "FN+F4: Switch keyboard RGB profile" })
+    hl.bind("XF86Launch4", hl.dsp.exec_cmd("asusctl profile -n"), { description = "FN+F5: fan profiles (Quiet, Balance, Performance)" })
+end
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(scriptsDir .. "/Brightness.sh --dec"), { repeating = true }) -- monitor brightness down
 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(scriptsDir .. "/Brightness.sh --inc"), { repeating = true }) -- monitor brightness up
 hl.bind("XF86TouchpadToggle", hl.dsp.exec_cmd(scriptsDir .. "/TouchPad.sh"), { description = "Toggle touchpad" })

@@ -84,15 +84,31 @@ echo -e "\n"
 setup_sudo
 
 # ====== System update & prerequisites ======
+# Fresh Arch installs often have a stale/empty keyring that makes the very
+# first `pacman -Syu` fail with "GPG keys are outdated". Initialize/populate
+# it first (safe even if already present), then sync.
+log_info "Ensuring pacman keyring is initialized..."
+if ! sudo pacman-key --init 2>/dev/null; then
+  log_warn "pacman-key --init failed (non-fatal, continuing)."
+fi
+if ! sudo pacman-key --populate archlinux 2>/dev/null; then
+  log_warn "pacman-key --populate failed (non-fatal, continuing)."
+fi
+
 log_info "Updating system and ensuring git & vim are installed..."
-sudo pacman -Syu --noconfirm git vim
+if ! sudo pacman -Syu --noconfirm git vim; then
+  # Retry once after refreshing the keyring (common on stale installs)
+  log_warn "First sync failed — refreshing keyring and retrying..."
+  sudo pacman-key --refresh-keys 2>/dev/null || true
+  sudo pacman -Syu --noconfirm git vim
+fi
 log_ok "System updated, git & vim are ready."
 
 # ====== Step 1: Run merged base-installer ======
 # base-installer (was Arch-Hyprland) is merged into this repo — no clone needed.
 # Its install.sh is already pre-patched for fully automated installation
-# (whiptail dialogs bypassed, options pre-selected). base-dots (was
-# base-dots (was Hyprland-Dots) is also merged and pre-patched; dotfiles-main.sh points to it.
+# (whiptail dialogs bypassed, options pre-selected). base-dots is also
+# merged and pre-patched; dotfiles-main.sh points to it.
 ARCH_HYPRLAND_DIR="$HYPRFLUX_DIR/base-installer"
 
 if [[ ! -f "$ARCH_HYPRLAND_DIR/install.sh" ]]; then
