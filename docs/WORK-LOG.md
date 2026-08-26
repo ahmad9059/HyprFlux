@@ -362,6 +362,95 @@ All logs now live in ONE place: **`~/HyprFlux/logs/`**
 
 **Non-issues observed:** transient mirror 404 on debugedit (pacman retried, succeeded); kulala.nvim submodule fmt warning (plugin-side, non-fatal); papirus-folders hook warning (then set cyan OK); GRUB cmdline preserved VM's nomodeset/console params while adding quiet+splash (correct token-safe append); monitor fallback warning expected on headless VM.
 
+## ISO repo overhaul (2026-08-26) — HyprFlux-ISO
+
+**Root problem found:** Step 10 of hyprflux-install.sh did NOT run the chroot wrapper (hyprflux-chroot-wrapper.sh, 568 lines, written but dead code). It instead cloned the repo and deferred the WHOLE install to a first-boot `.bash_profile` hack — contradicting the AGENTS.md Option A design (install everything in chroot during installation).
+
+**Fixes applied (HyprFlux-ISO):**
+1. **Step 10 rewired** (hyprflux-install.sh): clone merged HyprFlux repo → copy wrapper to chroot /tmp → `arch-chroot` runs wrapper with (username, has_nvidia) → wrapper output teed live to TUI progress AND persisted to `~/HyprFlux/logs/iso-wrapper.log`. First-boot `.bash_profile`/`.hyprflux-firstboot.sh` hack deleted entirely. Non-zero wrapper exit → die() with log path.
+2. **Cleanup/reboot messages updated** (no more "installer starts on tty1 after reboot" — everything happens during ISO install; SDDM starts Hyprland on first login).
+3. **Wrapper**: install logs under ~/HyprFlux/logs now KEPT (were rm -rf'd at cleanup — the debugging trail).
+4. **efiboot/loader entries**: added `quiet splash loglevel=3 systemd.show_status=auto rd.udev.log_level=3 vt.global_cursor_default=0` — matches grub/syslinux entries; required because the live initramfs has the plymouth hook.
+5. **Live env services enabled**: `multi-user.target.wants/pacman-init.service` + `sshd.service` symlinks added (releng parity — keyring init + SSH installs).
+6. **Serial console support**: `serial-getty@ttyS0.service.d/autologin.conf` added (AWS/VM testing over serial).
+7. **Stale docs**: instructions.md (old Arch-Hyprland/Hyprland-Dotes clone flow), README.md first-boot wording, AGENTS.md "implementation has NOT started" — all updated.
+8. **Verified integration contract**: every path the wrapper references exists in the main repo (scripts/initial.sh, scripts/zsh.sh, base-installer/*.sh, modules 01-16, lib/{common,packages,git}.sh, utilities/*, config/webapps.conf). Module chroot-safety audit: all 16 modules pass the wrapper Phase B source simulation with real assets (OK=16 FAIL=0); hyprctl/gsettings/nwg-look/pkill calls all guarded; chroot-hostile ops covered by systemctl/chsh/gsettings/nwg-look shims.
+9. **archiso version check**: bootmodes `bios.syslinux` + `uefi.grub` are valid in archiso 89 (`_make_bootmode_bios.syslinux`, `_make_bootmode_uefi.grub`); pacstrap `-K` used; wiki-verified profile structure (airootfs, file_permissions, pacman-init, locale hooks).
+
+## ISO Step 0 simplified (2026-08-26)
+
+- Removed the whole network-setup UI (setup_network/setup_ethernet/setup_wifi menus — Ethernet/WiFi/Manual/Skip loop).
+- Step 0 is now a single connectivity gate: `ping -c 1 -W 3 1.1.1.1` (common.sh check_internet). If it responds → proceed immediately. If not → 5 quick retries (3s apart, NetworkManager may still be starting), then clear error + exit with a hint to use `nmtui` for WiFi.
+- Live ISO boots with NetworkManager enabled (Ethernet DHCP out of the box), so no config UI is needed.
+
+## Production-grade edge-case hardening pass (2026-08-26)
+
+Full audit of every step in hyprflux-install.sh + chroot wrapper + live env. 12 issues found, ALL fixed:
+
+1. **Username validation** — rejects "root" + any existing system account (nobody, dbus...) via `id` check (useradd would fail or hijack an account).
+2. **Hostname validation** — rejects "localhost" (collides with /etc/hosts loopback entry the installer writes).
+3. **Password validation** — rejects `:` in passwords (chpasswd uses `user:pass` framing — a colon silently truncates the password → login never works). Was previously unused; now wired into the loop.
+4. **Disk list excludes the live-ISO device** — derived from /run/archiso/bootmnt, the USB the installer runs from can no longer be selected for wiping (previously it was offered and one wrong keystroke killed the installer mid-flight).
+5. **Disk-size warning** — disks < 25 GiB flagged with a WARN before the erase confirmation.
+6. **Partition-node wait** — after sgdisk+partprobe+udevadm settle, wait up to 30s for each partition node to appear (`-b` check) before mkfs — partprobe is async on USB/SATA and mkfs on a missing node died with a confusing error.
+7. **Empty-mirrorlist guard** — if reflector produces a zero-byte mirrorlist, fall back to the packaged default mirrors instead of failing pacstrap 3×.
+8. **fstab overwrite not append** — a stale fstab from a failed earlier run previously produced duplicate mount entries (genfstab >>). Now rm + write + empty-file check.
+9. **hwclock tolerant** — VMs/containers without RTC no longer abort the whole chroot config.
+10. **GRUB hard-fail** — previously a silent grub-install failure still shipped the ISO as "successful" (non-bootable system). Now: retry → `--removable` fallback (boots without NVRAM) → hard fail with clear message. Same for grub-mkconfig.
+11. **git clone retries (×3)** — GitHub flakiness no longer kills Step 10; resolv.conf copy guarded.
+12. **Wrapper crash recovery** — a stale systemctl shim from a power-loss mid-Phase-A is restored before installing a new one (was double-wrapping).
+13. **yay fallback fixed** — `pacman -S yay-bin` can NEVER succeed (AUR-only). Now clones the PKGBUILD + makepkg -si as the target user.
+14. **Serial console support** — .zlogin launches the installer on ttyS0 too (EC2/cloud) with a flock so only ONE instance runs even with both consoles connected.
+15. **build.sh mount-safety** — refuses to rm -rf a still-mounted work dir (archiso wiki warning: can delete bound host data).
+16. **test-qemu.sh disk fallback** — falls back to /tmp when the configured qcow2 path isn't writable.
+
+## test-qemu.sh display fix (2026-08-26)
+
+**Failure:** `qemu-system-x86_64: OpenGL is not supported by display backend 'gtk'` — the hardcoded `-display gtk,gl=on` can't init GL when no display server/GL is reachable (SSH/headless/VM).
+
+**Fix — bulletproof display system with verified fallback chain (mock-tested):**
+1. **Auto-detect**: no `DISPLAY`/`WAYLAND_DISPLAY` → headless mode directly. The installer's TUI is fully interactive over the serial console (`-display none -serial stdio -monitor none` — ttyS0 autologin was added in the earlier hardening pass).
+2. **Fallback chain** (explicit `--gl` or display present): gl → software GTK (`virtio-vga`, no GL) → headless. A display-init failure exits QEMU within ~8s; the script detects the quick exit and retries the next mode.
+3. **New flags**: `--headless`, `--software`, `--gl`, `--vnc` (VNC on :0 alongside headless).
+4. **KVM degrade**: missing/unusable `/dev/kvm` → falls back to `-cpu max` (TCG, slow but works) instead of dying.
+5. **Bug caught by mock testing**: `local` at top level + unbound var under `set -u` in the first fallback implementation — fixed.
+
+## Display failure root cause + fix (2026-08-26)
+
+**Root cause of `OpenGL is not supported by display backend 'gtk'` on the user's machine:**
+- Session is **Wayland** (`WAYLAND_DISPLAY=wayland-1`) — GTK finds Wayland sockets ONLY via `XDG_RUNTIME_DIR`
+- Running `sudo bash test-qemu.sh` → sudo(8) strips `XDG_RUNTIME_DIR` → Wayland undiscoverable
+- `DISPLAY=:1` was stale (only `X0` socket exists) → X fallback also dead
+- → GTK connects to nothing → `gl=on` fails with that message
+
+**Fix in test-qemu.sh (mock-verified):**
+1. Display sanity check: if `WAYLAND_DISPLAY` set but `XDG_RUNTIME_DIR` missing + `SUDO_USER` present → re-export `/run/user/<sudo uid>` (root can connect to the user's Wayland socket)
+2. Socket existence verified (`-S` test); broken Wayland OR missing X socket → clear explanation + auto-headless (installer fully interactive over serial ttyS0)
+3. User guidance: QEMU doesn't need root — `bash test-qemu.sh` (no sudo) works directly; the /tmp disk fallback already covers the root-only qcow2 path
+
+## test-qemu.sh disk-path fix (2026-08-26)
+
+**Failure:** `qemu-img: /tmp/hyprflux-test-disk.qcow2: Permission denied` — the earlier sudo run created that /tmp file as ROOT; /tmp is sticky so the user couldn't overwrite it. Root cause: primary path `/mnt/vmachines/images/...` (machine-specific, parent dir doesn't exist even for root) always fell back to a fixed /tmp name.
+
+**Fix (mock-verified):**
+1. Default test disk = `./hyprflux-test-disk.qcow2` next to the script (user-writable); new `--disk=PATH` override.
+2. Fallback chain: primary → rm-stale-retry → per-user `/tmp/hyprflux-test-disk-<uid>.qcow2` → numbered suffixes `-1..-5` (sticky-bit-proof).
+3. Two more top-level `local` bugs caught by mock testing (fallback block outside a function) — fixed.
+4. `.gitignore` now excludes the default qcow2.
+
+## test-qemu.sh clean-start (2026-08-26)
+
+- `create_test_disk()` now `rm -f`s any existing qcow2 BEFORE `qemu-img create` — every run starts from a fresh 40G disk (verified with mock: pre-existing file removed, new one created, QEMU launched).
+- Simplified fallback chain (rm moved inside the helper; dropped the redundant "Replaced stale" branch).
+
+## CRITICAL FIX: wrapper exit 127 in QEMU test (2026-08-26)
+
+**Symptom:** install cloned the HyprFlux repo, then immediately failed: `HyprFlux installation failed (exit 127)` + dropped to debug shell.
+
+**Root cause (confirmed against /usr/bin/arch-chroot source):** arch-chroot mounts a FRESH TMPFS over the target's `/tmp` (arch-install-scripts `chroot_add_mount tmp "$1/tmp" -t tmpfs`). The wrapper was copied to `${MOUNT_POINT}/tmp/hyprflux-chroot-wrapper.sh` → invisible inside the chroot → `bash /tmp/...` → "No such file or directory" → **exit 127**.
+
+**Fix:** wrapper now goes to `/root/hyprflux-chroot-wrapper.sh` (real disk, not covered by any chroot mount): cp → arch-chroot run → rm. All other /tmp uses in the wrapper (CONFIG_ENV_FILE, GRUB/PLYMOUTH theme dirs, yay fallback build) are written INSIDE the chroot's own tmpfs during the same invocation — unaffected.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
