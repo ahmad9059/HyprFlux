@@ -1,0 +1,53 @@
+/* HyprFlux Edit Rofi Config */
+
+@import "~/.config/rofi/config.rasi"  
+
+/* ---- Mainbox ---- */
+mainbox {
+  children:
+    [ "inputbar", "listview"];
+}
+
+
+/* ---- Configuration ---- */ 
+configuration {
+  modi: "drun";
+}
+
+/* ---- Window ---- */
+window {
+   width: 70%;
+   height: inherit;
+}
+
+
+/* ---- Listview ---- */
+listview {
+  columns: 3;
+  lines: 6;
+  fixed-height: false;
+  scrollbar: true;
+  spacing: 6px;
+  cycle: true;
+}
+
+/* ---- Entry input ---- */
+entry {
+  expand: true;
+  placeholder: "  Customize HyprFlux";
+}
+
+
+/* ---- Elements ---- */
+element {
+  orientation: horizontal;
+}
+
+element-icon {
+  size: 0%;
+}
+element-text {
+  horizontal-align: 0.0;
+  margin: 0px;
+  padding: 0px;
+}

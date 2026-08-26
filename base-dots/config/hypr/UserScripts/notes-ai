@@ -1,0 +1,302 @@
+#!/usr/bin/env bash
+# notes-ai.sh — Generate Obsidian notes from course VTT/SRT subtitles
+# Usage: vtt-notes <path/to/lecture.en_US.vtt|srt>
+# Deps: claude | gemini | codex | copilot — set AI_CMD below
+#       python3 (for title casing)
+
+set -euo pipefail
+
+# ── Ensure PATH includes local bins (needed when launched from keybinds) ─────
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+
+# ── CONFIG ────────────────────────────────────────────────────────────────────
+COURSES_ROOT="/media/Media/Courses"
+NOTES_ROOT="/home/ahmad/Documents/obsidian/1-Notes"
+AI_CMD="codex" # claude | gemini | codex | copilot
+
+# ── COURSE → OBSIDIAN PATH MAPPING ───────────────────────────────────────────
+# Map course folder names to their Obsidian output paths (relative to NOTES_ROOT).
+# Courses not listed here default to: NOTES_ROOT/<Course Folder Name>/<module>/<lecture>.md
+declare -A COURSE_MAP=(
+  ["NodeJS Course"]="Full-Stack Development/Backend"
+  ["Twitter Clone"]="Full-Stack Development/Twitter Clone"
+  # ["Docker - Containerisation for Modern Development"]="DevOps/Docker"
+  # ["AWS Certified Solutions Architect - Associate"]="DevOps/AWS SAA"
+  # ["Shell Scripting"]="Linux/Shell Scripting"
+)
+
+# ── COURSE → TAG MAPPING ─────────────────────────────────────────────────────
+declare -A TAG_MAP=(
+  ["NodeJS Course"]="backend"
+  ["Twitter Clone"]="fullstack"
+  ["Docker - Containerisation for Modern Development"]="docker"
+  ["AWS Certified Solutions Architect - Associate"]="aws"
+  ["Shell Scripting"]="bash"
+)
+# ─────────────────────────────────────────────────────────────────────────────
+
+SUB_FILE="${1:-}"
+
+if [[ -z "$SUB_FILE" || ! -f "$SUB_FILE" ]]; then
+  echo "Usage: vtt-notes <path/to/lecture.{vtt,srt}>"
+  exit 1
+fi
+
+SUB_FILE="$(realpath -- "$SUB_FILE")"
+
+# ── Detect subtitle format ────────────────────────────────────────────────────
+case "$SUB_FILE" in
+*.vtt) SUB_FMT="vtt" ;;
+*.srt) SUB_FMT="srt" ;;
+*)
+  echo "Error: file must have a .vtt or .srt extension."
+  exit 1
+  ;;
+esac
+
+# ── Validate subtitle file ───────────────────────────────────────────────────
+if [[ "$SUB_FMT" == "vtt" ]]; then
+  if ! head -1 "$SUB_FILE" | grep -q '^WEBVTT'; then
+    echo "Error: not a valid VTT file (missing WEBVTT header)."
+    exit 1
+  fi
+elif [[ "$SUB_FMT" == "srt" ]]; then
+  if ! head -5 "$SUB_FILE" | grep -qP '^\d+$'; then
+    echo "Error: not a valid SRT file (expected cue numbers)."
+    exit 1
+  fi
+fi
+
+# ── Detect course from file path ─────────────────────────────────────────────
+REL_PATH="${SUB_FILE#"$COURSES_ROOT/"}"
+COURSE_NAME="${REL_PATH%%/*}"
+
+if [[ -z "$COURSE_NAME" || "$COURSE_NAME" == "$REL_PATH" ]]; then
+  echo "Error: could not detect course from path."
+  echo "Expected file to be under: $COURSES_ROOT/<Course Name>/..."
+  exit 1
+fi
+
+# ── Resolve Obsidian output base path ─────────────────────────────────────────
+if [[ -v "COURSE_MAP[$COURSE_NAME]" ]]; then
+  NOTES_BASE="$NOTES_ROOT/${COURSE_MAP[$COURSE_NAME]}"
+else
+  NOTES_BASE="$NOTES_ROOT/$COURSE_NAME"
+fi
+
+# ── Derive module and lecture names ───────────────────────────────────────────
+MODULE_DIR="$(basename -- "$(dirname -- "$SUB_FILE")")"
+LECTURE_BASENAME="$(basename -- "$SUB_FILE")"
+
+# Guard: if file is directly under course root, MODULE_DIR == COURSE_NAME
+if [[ "$MODULE_DIR" == "$COURSE_NAME" ]]; then
+  MODULE_DIR="General"
+fi
+
+# Strip subtitle extensions (format-aware)
+LECTURE_NAME="$LECTURE_BASENAME"
+if [[ "$SUB_FMT" == "vtt" ]]; then
+  for ext in .en_US.vtt .en.vtt .vtt; do
+    LECTURE_NAME="${LECTURE_NAME%"$ext"}"
+  done
+else
+  for ext in .en_US.srt .en.srt .srt; do
+    LECTURE_NAME="${LECTURE_NAME%"$ext"}"
+  done
+fi
+
+# Extract and zero-pad lecture number
+LECTURE_NUM="$(grep -oP '^\d+' <<<"$LECTURE_NAME" || echo "00")"
+LECTURE_NUM="$(printf '%02d' "$LECTURE_NUM")"
+
+# Clean name and apply Title Case
+LECTURE_CLEAN="$(sed 's/^[0-9]*\. //' <<<"$LECTURE_NAME" | python3 -c "
+import sys
+s = sys.stdin.read().strip()
+minor = {'a','an','the','and','but','or','for','nor','on','at','to','by','in','of','up','as','is','vs'}
+words = s.split()
+result = []
+for i, w in enumerate(words):
+    lower = w.lower()
+    if i == 0 or lower not in minor:
+        result.append(w[0].upper() + w[1:] if w else w)
+    else:
+        result.append(lower)
+print(' '.join(result))
+")"
+
+# ── Derive course domain tag ─────────────────────────────────────────────────
+if [[ -v "TAG_MAP[$COURSE_NAME]" ]]; then
+  COURSE_TAG="${TAG_MAP[$COURSE_NAME]}"
+else
+  COURSE_TAG="$(tr '[:upper:]' '[:lower:]' <<<"$COURSE_NAME" | sed 's/[^a-z0-9]\+/-/g; s/^-//; s/-$//')"
+fi
+
+# ── Output path ───────────────────────────────────────────────────────────────
+OUT_DIR="$NOTES_BASE/$MODULE_DIR"
+OUT_FILE="$OUT_DIR/${LECTURE_NUM}. ${LECTURE_CLEAN}.md"
+
+mkdir -p "$OUT_DIR"
+
+echo "Course  : $COURSE_NAME"
+echo "Tag     : #$COURSE_TAG"
+echo "Module  : $MODULE_DIR"
+echo "Lecture : $LECTURE_CLEAN"
+echo "Output  : $OUT_FILE"
+echo ""
+
+# ── Skip if note already exists ───────────────────────────────────────────────
+if [[ -f "$OUT_FILE" ]]; then
+  read -rp "Note already exists. Overwrite? [y/N] " confirm
+  [[ "$confirm" =~ ^[Yy]$ ]] || {
+    echo "Skipped."
+    exit 0
+  }
+fi
+
+# ── Extract transcript ────────────────────────────────────────────────────────
+if [[ "$SUB_FMT" == "vtt" ]]; then
+  TRANSCRIPT="$(
+    grep -v '^WEBVTT' "$SUB_FILE" |
+      grep -v '^NOTE' |
+      grep -v '^\s*$' |
+      grep -vP '^\d{2}:\d{2}:\d{2}\.\d{3} --> \d{2}:\d{2}:\d{2}\.\d{3}' |
+      sed 's/<[^>]*>//g' |
+      tr '\n' ' ' |
+      sed 's/  */ /g; s/^\s*//; s/\s*$//'
+  )"
+elif [[ "$SUB_FMT" == "srt" ]]; then
+  TRANSCRIPT="$(
+    grep -v '^\s*$' "$SUB_FILE" |
+      grep -v '^[0-9]\+$' |
+      grep -vP '^\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}' |
+      sed 's/<[^>]*>//g; s/{[^}]*}//g' |
+      tr '\n' ' ' |
+      sed 's/  */ /g; s/^\s*//; s/\s*$//'
+  )"
+fi
+
+if [[ -z "$TRANSCRIPT" ]]; then
+  echo "Error: could not extract transcript from subtitle file."
+  exit 1
+fi
+
+# ── Write prompt to tmpfile (avoids ARG_MAX issues with long transcripts) ────
+PROMPT_FILE="$(mktemp /tmp/vtt-prompt-XXXXXX.txt)"
+trap 'rm -f "$PROMPT_FILE"' EXIT
+
+cat >"$PROMPT_FILE" <<PROMPT_EOF
+You are creating Obsidian study notes for Ahmad Hassan, a software engineer from Multan, Pakistan specializing in Linux and web development. When examples require personal context (names, countries, professions, etc.), use Ahmad's details instead of the instructor's.
+
+FORMAT RULES (follow exactly, no exceptions):
+1. Line 1: tags on a single line, space-separated:
+   - First tag: #${COURSE_TAG}
+   - Remaining tags: based on lecture content (e.g. #variables #scope #const)
+   - 3-6 tags total, all lowercase, hyphens for multi-word (#higher-order-functions)
+2. Line 2: blank
+3. Line 3: # Title — concise, derived from transcript topic (do NOT copy the lecture field below)
+4. No YAML frontmatter, no metadata, no date, no module info
+
+CONTENT RULES:
+- ## for sections, ### for subsections
+- Short paragraphs, 3-5 lines max
+- Bullet points only for genuinely list-like items
+- Fenced code blocks with correct language tag (js, ts, bash, etc.)
+- Brief, useful code comments only
+- No emojis, no bold-as-heading, no horizontal rules
+- Tables are fine for comparisons
+- Write (diagram) as placeholder where visual aids are referenced
+- Tone: technical, direct
+- End with ## Summary (4-6 lines)
+- Ignore instructor filler ("in the next video", "let's take a break", etc.)
+- Output raw Markdown only — no wrapping \`\`\`markdown fences
+
+EXAMPLE OUTPUT:
+<example>
+#javascript #arrays #data-structures
+
+# Arrays
+
+An array stores ordered collections, unlike objects which are unordered key-value pairs.
+
+## Declaration
+
+\`\`\`js
+let arr = [];
+let fruits = ['Apple', 'Orange', 'Plum'];
+\`\`\`
+
+Array elements are zero-indexed. Use \`.length\` to get the count.
+
+## Methods
+
+\`pop\` removes and returns the last element. \`push\` appends to the end.
+\`shift\` removes the first element. \`unshift\` adds to the beginning.
+
+## Summary
+
+Arrays are the go-to structure for ordered data in JavaScript.
+Use \`push\`/\`pop\` for stack behavior and \`shift\`/\`unshift\` for queue behavior.
+</example>
+
+LENGTH: Be thorough. Cover every concept, example, and code snippet from the transcript. Aim for 400-2000+ words. Do not summarize away detail — if the instructor explained it, include it.
+
+Course: ${COURSE_NAME}
+Module: ${MODULE_DIR}
+Lecture: ${LECTURE_CLEAN}
+
+Output ONLY the Markdown. No preamble, no explanation.
+
+TRANSCRIPT:
+${TRANSCRIPT}
+PROMPT_EOF
+
+# ── Generate notes ────────────────────────────────────────────────────────────
+case "$AI_CMD" in
+claude) AI_MODEL="claude-sonnet-4-6" ;;
+gemini) AI_MODEL="gemini-2.5-pro" ;;
+codex) AI_MODEL="gpt-5.2-codex" ;;
+copilot) AI_MODEL="claude-opus-4.6" ;;
+esac
+
+echo "Generating notes with $AI_CMD ($AI_MODEL)..."
+echo ""
+
+case "$AI_CMD" in
+claude)
+  claude --print --model claude-sonnet-4-6 <"$PROMPT_FILE" >"$OUT_FILE"
+  ;;
+gemini)
+  gemini -m gemini-2.5-pro <"$PROMPT_FILE" >"$OUT_FILE"
+  ;;
+codex)
+  TASK="Read $PROMPT_FILE. Generate markdown study notes from the transcript inside it. Write ONLY the final markdown to $OUT_FILE. No explanation, no preamble."
+  codex exec \
+    --skip-git-repo-check \
+    --dangerously-bypass-approvals-and-sandbox \
+    -m gpt-5.2-codex \
+    "$TASK" 2>/dev/null
+  ;;
+copilot)
+  copilot -p "$(cat "$PROMPT_FILE")" -s --allow-all-tools --model claude-opus-4.6 >"$OUT_FILE"
+  ;;
+*)
+  echo "Unknown AI_CMD: $AI_CMD. Valid options: claude | gemini | codex | copilot"
+  exit 1
+  ;;
+esac
+
+# ── Strip wrapping markdown fences (safety net) ──────────────────────────────
+if [[ -s "$OUT_FILE" ]]; then
+  sed -i '1{/^```\(markdown\)\?$/d}' "$OUT_FILE"
+  sed -i '${/^```$/d}' "$OUT_FILE"
+  sed -i '1{/^$/d}' "$OUT_FILE"
+fi
+
+# ── Verify output ─────────────────────────────────────────────────────────────
+if [[ ! -s "$OUT_FILE" ]]; then
+  echo "Error: output file is empty. Something went wrong."
+  exit 1
+fi
+
+echo "Done: $OUT_FILE"

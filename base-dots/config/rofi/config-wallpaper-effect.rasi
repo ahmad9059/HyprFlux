@@ -1,0 +1,22 @@
+/* Wallpaper Effects */
+
+@import "~/.config/rofi/config.rasi" 
+
+/* ---- Entry ---- */ 
+entry {
+  width: 20%;
+  placeholder: " 󰸉 Choose desired wallpaper effect";
+}
+
+/* ---- Window ---- */
+window {
+  width: 24%;
+}
+
+/* ---- Listview ---- */
+listview {
+  fixed-columns: false;
+  colums: 2;
+  lines: 7;
+}
+

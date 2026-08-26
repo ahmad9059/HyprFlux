@@ -10,6 +10,9 @@ on:
       - ".config/swaync/**"
       - ".config/kitty/**"
       - ".config/foot/**"
+      - "base-installer/**"
+      - "base-dots/**"
+
   pull_request:
     paths:
       - ".config/hypr/**"
@@ -19,6 +22,8 @@ on:
       - ".config/swaync/**"
       - ".config/kitty/**"
       - ".config/foot/**"
+      - "base-installer/**"
+      - "base-dots/**"
   workflow_dispatch:
 
 jobs:
@@ -52,6 +57,30 @@ jobs:
           chmod 700 "$XDG_RUNTIME_DIR"
           Hyprland --config .config/hypr/hyprland.lua --verify-config
           echo "Hyprland verify-config OK"
+
+      - name: Shell syntax check (merged installers + scripts)
+        run: |
+          FAIL=0
+          while IFS= read -r -d '' f; do
+            # RofiEmoji.sh is a known false positive: self-extracting emoji
+            # data after `exit` makes bash -n fail while the script works.
+            case "$f" in
+              *RofiEmoji.sh) continue ;;
+            esac
+            bash -n "$f" 2>/dev/null || { echo "BASH SYNTAX FAIL: $f"; FAIL=1; }
+          done < <(find base-installer base-dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
+          [ $FAIL -eq 0 ] || exit 1
+          echo "All shell scripts parse OK"
+
+      - name: base-dots config parity check
+        run: |
+          # base-dots/config must mirror .config/ (merged-repo contract)
+          if ! diff -rq .config base-dots/config >/tmp/parity.diff; then
+            echo "::error::base-dots/config is out of sync with .config/ — copy .config/ over it and commit."
+            cat /tmp/parity.diff
+            exit 1
+          fi
+          echo "Config parity OK"
 
       - name: sync-colors up-to-date check
         run: |

@@ -1,0 +1,15 @@
+# Place your new scripts here.
+# If you need to edit a script from the main scripts dir (~/.config/hypr/scripts),
+# copy it to THIS directory and edit it here.
+# Make sure to update keybinds in ~/.config/hypr/UserConfigs if any script is linked to it.
+
+# ─── Duplication policy ───
+# ~/.config/hypr/scripts/    = managed by HyprFlux upgrades (may be overwritten)
+# ~/.config/hypr/UserScripts/ = YOUR scripts (never touched by upgrades)
+#
+# Rules:
+# 1. If a script exists in BOTH directories, the UserScripts version is the
+#    authoritative one — bind keybinds/waybar to the UserScripts path.
+# 2. Never edit scripts/ directly for personal tweaks — copy to UserScripts first.
+# 3. Keep one copy per script (no duplicates): if you copy it here, the original
+#    in scripts/ is dead weight — remove it (or leave a comment in its header).

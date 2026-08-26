@@ -1,0 +1,34 @@
+# Ghostty theme based on your provided Kitty theme
+
+[colors]
+foreground = "#fffbf6"
+background = "#0a0e14"
+selection-foreground = "#000000"
+selection-background = "#fffacd"
+cursor = "#fffbf6"
+
+# 16-color palette
+ansi = [
+  "#2e2e2e", # black
+  "#eb4129", # red
+  "#abe047", # green
+  "#f6c744", # yellow
+  "#47a0f3", # blue
+  "#7b5cb0", # magenta
+  "#64dbed", # cyan
+  "#e5e9f0"  # white
+]
+
+brights = [
+  "#2e2e2e", # bright black
+  "#eb4129", # bright red
+  "#abe047", # bright green
+  "#f6c744", # bright yellow
+  "#47a0f3", # bright blue
+  "#7b5cb0", # bright magenta
+  "#64dbed", # bright cyan
+  "#e5e9f0"  # bright white
+]
+
+[background]
+opacity = 0.80

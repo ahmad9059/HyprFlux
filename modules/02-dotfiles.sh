@@ -29,6 +29,21 @@ if [[ -d "$REPO_DIR/.config" ]]; then
   cp "$REPO_DIR/.tmux.conf" "$HOME/"
 
   log_ok "HyprFlux dotfiles copied successfully."
+
+  # Substitute the real home dir into configs that cannot use env vars
+  # (qt5ct/qt6ct read color_scheme_path literally — placeholder in repo).
+  if [[ -f "$HOME/.config/qt5ct/qt5ct.conf" ]]; then
+    sed -i "s|__HYPRFLUX_HOME__|$HOME|g" "$HOME/.config/qt5ct/qt5ct.conf" 2>/dev/null || true
+  fi
+  if [[ -f "$HOME/.config/qt6ct/qt6ct.conf" ]]; then
+    sed -i "s|__HYPRFLUX_HOME__|$HOME|g" "$HOME/.config/qt6ct/qt6ct.conf" 2>/dev/null || true
+  fi
+
+  # Ensure runtime scripts are executable regardless of umask/git-mode.
+  chmod +x "$HOME/.config/hypr/scripts/"* 2>/dev/null || true
+  chmod +x "$HOME/.config/hypr/UserScripts/"* 2>/dev/null || true
+  chmod +x "$HOME/.config/hypr/initial-boot.sh" 2>/dev/null || true
+  chmod +x "$HOME/.tmuxifier/layouts/"* 2>/dev/null || true
 else
   log_error "'$REPO_DIR/.config' does not exist. Dotfiles not copied."
   return 1

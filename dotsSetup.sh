@@ -26,7 +26,7 @@ source "$SCRIPT_DIR/lib/git.sh"
 # BUG FIX: removed dead mkdir + LOG_FILE assignment that wrote to
 # $HOME/installer_log. Single tee via setup_logging — no more
 # double tee (exec tee + per-command tee).
-setup_logging "$HOME/hyprflux_log/dotsSetup.log"
+setup_logging "$HYPRFLUX_LOGS_DIR/dotsSetup.log"
 
 # ====== Sudo ======
 setup_sudo
@@ -41,15 +41,17 @@ REPO_URL_NVIM="${REPO_URL_NVIM:-https://github.com/ahmad9059/nvim}"
 TMUXIFIER_REPO="${TMUXIFIER_REPO:-https://github.com/jimeh/tmuxifier.git}"
 
 # Paths
-# BUG FIX: use $REPO_DIR everywhere instead of mixing $HOME/HyprFlux
-REPO_DIR="${REPO_DIR:-$HOME/HyprFlux}"
+# The repo may live anywhere (default $HOME/HyprFlux). Pin REPO_DIR to this
+# clone unless explicitly overridden, so modules resolve utilities/assets
+# correctly on custom checkout locations (e.g. ISO target user's home).
+REPO_DIR="${REPO_DIR:-$SCRIPT_DIR}"
 BACKUP_DIR="${BACKUP_DIR:-$HOME/dotfiles_backup}"
 
 # Waybar
 WAYBAR_STYLE_TARGET="${WAYBAR_STYLE_TARGET:-$HOME/.config/waybar/style.css}"
 WAYBAR_LAYOUT_TARGET="${WAYBAR_LAYOUT_TARGET:-$HOME/.config/waybar/config}"
-CUSTOM_WAYBAR_STYLE="${CUSTOM_WAYBAR_STYLE:-$HOME/.config/waybar/style/Catppuccin Mocha Custom.css}"
-CUSTOM_WAYBAR_LAYOUT="${CUSTOM_WAYBAR_LAYOUT:-$HOME/.config/waybar/configs/[TOP] Default Laptop}"
+CUSTOM_WAYBAR_STYLE="${CUSTOM_WAYBAR_STYLE:-$HOME/.config/waybar/style/HyprFlux-Default.css}"
+CUSTOM_WAYBAR_LAYOUT="${CUSTOM_WAYBAR_LAYOUT:-$HOME/.config/waybar/configs/HyprFlux-Default-Laptop}"
 
 # Neovim
 NVIM_CONFIG_DIR="${NVIM_CONFIG_DIR:-$HOME/.config/nvim}"

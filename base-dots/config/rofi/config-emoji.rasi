@@ -1,0 +1,15 @@
+/* Main Config - emoji */
+
+@import "~/.config/rofi/config.rasi" 
+
+/* ---- Entry ---- */
+entry {
+  width: 37%;
+  placeholder: " 󰞅 Click or Return to choose | Ctrl V to Paste";
+}
+
+/* ---- Listview ---- */
+listview {
+  columns: 1;
+  lines: 8;
+}

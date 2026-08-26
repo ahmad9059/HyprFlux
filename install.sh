@@ -54,12 +54,18 @@ fi
 SCRIPT_DIR="$_script_dir"
 unset _script_dir
 
+# The repo may live anywhere (default $HOME/HyprFlux, but ISO clones it under
+# the target user's home too). Pin HYPRFLUX_DIR to this clone unless the user
+# explicitly overrode it — otherwise dotsSetup/base-installer would resolve
+# paths against $HOME/HyprFlux and break on custom checkout locations.
+HYPRFLUX_DIR="${HYPRFLUX_DIR:-$SCRIPT_DIR}"
+
 # ====== Source shared libraries ======
 source "$SCRIPT_DIR/lib/common.sh"
 source "$SCRIPT_DIR/lib/git.sh"
 
 # ====== Logging ======
-setup_logging "$HOME/hyprflux_log/install.log"
+setup_logging "$HYPRFLUX_LOGS_DIR/install.log"
 
 # ====== Banner ======
 clear
@@ -78,32 +84,44 @@ echo -e "\n"
 setup_sudo
 
 # ====== System update & prerequisites ======
+# Fresh Arch installs often have a stale/empty keyring that makes the very
+# first `pacman -Syu` fail with "GPG keys are outdated". Initialize/populate
+# it first (safe even if already present), then sync.
+log_info "Ensuring pacman keyring is initialized..."
+if ! sudo pacman-key --init 2>/dev/null; then
+  log_warn "pacman-key --init failed (non-fatal, continuing)."
+fi
+if ! sudo pacman-key --populate archlinux 2>/dev/null; then
+  log_warn "pacman-key --populate failed (non-fatal, continuing)."
+fi
+
 log_info "Updating system and ensuring git & vim are installed..."
-sudo pacman -Syu --noconfirm git vim
+if ! sudo pacman -Syu --noconfirm git vim; then
+  # Retry once after refreshing the keyring (common on stale installs)
+  log_warn "First sync failed — refreshing keyring and retrying..."
+  sudo pacman-key --refresh-keys 2>/dev/null || true
+  sudo pacman -Syu --noconfirm git vim
+fi
 log_ok "System updated, git & vim are ready."
 
-# ====== Configurable URLs ======
-ARCH_HYPRLAND_REPO="${ARCH_HYPRLAND_REPO:-https://github.com/ahmad9059/Arch-Hyprland.git}"
-ARCH_HYPRLAND_DIR="${ARCH_HYPRLAND_DIR:-$HOME/Arch-Hyprland}"
+# ====== Step 1: Run merged base-installer ======
+# base-installer (was Arch-Hyprland) is merged into this repo — no clone needed.
+# Its install.sh is already pre-patched for fully automated installation
+# (whiptail dialogs bypassed, options pre-selected). base-dots is also
+# merged and pre-patched; dotfiles-main.sh points to it.
+ARCH_HYPRLAND_DIR="$HYPRFLUX_DIR/base-installer"
 
-# ====== Step 1: Clone & run Arch-Hyprland ======
-ensure_repo "$ARCH_HYPRLAND_REPO" "$ARCH_HYPRLAND_DIR" --depth=1
+if [[ ! -f "$ARCH_HYPRLAND_DIR/install.sh" ]]; then
+  log_error "Merged base-installer not found at $ARCH_HYPRLAND_DIR/install.sh"
+  exit 1
+fi
 
-log_info "Applying HyprFlux automated installation patches..."
-
-# Apply dialog bypass (removes whiptail prompts, pre-selects options)
-chmod +x "$HYPRFLUX_DIR/scripts/bypass_dialogs.sh"
-bash "$HYPRFLUX_DIR/scripts/bypass_dialogs.sh"
-
-# Additional sed replacements for any remaining prompts
-sed -i '/^[[:space:]]*read HYP$/c\HYP="n"' "$ARCH_HYPRLAND_DIR/install.sh"
-
-log_info "Running Arch-Hyprland/install.sh (fully automated)..."
+log_info "Running base-installer/install.sh (merged, fully automated)..."
 chmod +x "$ARCH_HYPRLAND_DIR/install.sh"
-# IMPORTANT: Must cd into the directory because Arch-Hyprland's install.sh
+# IMPORTANT: Must cd into the directory because base-installer's install.sh
 # uses relative paths (e.g., install-scripts/) that only resolve from there.
 (cd "$ARCH_HYPRLAND_DIR" && bash install.sh)
-log_ok "Arch-Hyprland script completed!"
+log_ok "base-installer script completed!"
 
 # ====== Step 2: HyprFlux banner ======
 clear
@@ -114,9 +132,7 @@ echo -e "${MAGENTA}─┴┘└─┘ ┴ └  ┴┴─┘└─┘└─┘└
 echo -e "${CYAN}✻─────────────────────ahmad9059──────────────────────✻${RESET}"
 echo -e "\n"
 
-# ====== Step 3: Clone & run HyprFlux dotsSetup ======
-ensure_repo "$HYPRFLUX_REPO" "$HYPRFLUX_DIR" --depth=1
-
+# ====== Step 3: Run HyprFlux dotsSetup ======
 log_info "Running HyprFlux dotsSetup.sh..."
 chmod +x "$HYPRFLUX_DIR/dotsSetup.sh"
 bash "$HYPRFLUX_DIR/dotsSetup.sh"

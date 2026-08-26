@@ -1,7 +1,7 @@
 # HyprFlux — Complete Architecture Report (Deep Dive)
 
 **Date:** 2026-08-24
-**Scope:** Full source analysis of HyprFlux, HyprFlux-ISO, Arch-Hyprland and related repos.
+**Scope:** Full source analysis of HyprFlux, HyprFlux-ISO, base-installer and related repos.
 **Level of detail:** file-by-file architecture, both installation paths, every component.
 
 ---
@@ -27,21 +27,21 @@ The stated goal (from README): *"start from a fresh Arch installation and end up
 |------|------|-----|
 | **HyprFlux** (this repo) | Main: desktop configs, install entrypoints, 18 setup modules, assets, docs | `github.com/ahmad9059/HyprFlux` |
 | **HyprFlux-ISO** | archiso profile, TUI installer, boot configs, CI ISO builds | `github.com/ahmad9059/HyprFlux-ISO` |
-| **Arch-Hyprland** | Fork of JaKooLit's installer: whiptail-based `install.sh` + 24 `install-scripts/` | `github.com/ahmad9059/Arch-Hyprland` |
-| **Hyprland-Dots** | JaKooLit's dotfiles (cloned + `copy.sh` run at install time by Arch-Hyprland) | `github.com/JaKooLit/Hyprland-Dots` |
+| **base-installer** *(merged 2026-08-25)* | Base installer (upstream-derived) — now a subdir of HyprFlux: pre-patched `install.sh` + 24 `install-scripts/` | `base-installer/` in this repo |
+| **base-dots** *(merged 2026-08-25)* | Base dotfiles (upstream-derived) — now a subdir of HyprFlux, pre-patched, no clone at install time | `base-dots/` in this repo |
 | **nvim** | Separate maintained Neovim config (cloned by module 04-neovim) | `github.com/ahmad9059/nvim` |
 | **wallpapers-bank** | Wallpaper collection (cloned by module 13-wallpapers) | `github.com/ahmad9059/wallpapers-bank` |
 
 **Dependency direction:**
 
 ```
-HyprFlux-ISO ──clones──▶ HyprFlux ──clones──▶ Arch-Hyprland ──clones──▶ Hyprland-Dots (JaKooLit)
+HyprFlux-ISO ──clones──▶ HyprFlux (contains base-installer/ + base-dots/ merged)
                               │
                               ├──▶ nvim (ahmad9059)
                               └──▶ wallpapers-bank (ahmad9059)
 ```
 
-The ISO does not bake HyprFlux into the image — it **pre-clones the repos into the target system** during install, then runs the exact same `install.sh` used by the manual path on first boot. Everything is online-install.
+The ISO does not bake HyprFlux into the image — it **clones only HyprFlux** into the target system during install, then runs the exact same `install.sh` used by the manual path on first boot. base-installer and base-dots are merged subdirs; nothing else is cloned at install time.
 
 ## 1.3 System Requirements
 
@@ -67,8 +67,6 @@ HyprFlux/
 │   └── packages.sh            # pacman/yay install with retry + verification
 ├── modules/                   # 18 numbered setup units (01–18), sourced in order
 ├── scripts/                   # Installer helper scripts (patch/automation tools)
-│   ├── bypass_dialogs.sh      # Patches Arch-Hyprland whiptail dialogs
-│   ├── replace_reads.sh       # Patches Hyprland-Dots copy.sh prompts
 │   ├── initial.sh             # Chaotic-AUR + yay bootstrap
 │   ├── zsh.sh                 # Zsh + Oh-My-Zsh non-interactive install
 │   └── ai-commit-msg          # AI commit message helper
@@ -121,7 +119,7 @@ This makes the one-liner `sh <(curl -fsSL https://hyprflux.dev/install)` fully s
 ### Mode B — local run
 
 1. Sources `lib/common.sh` + `lib/git.sh`
-2. `setup_logging "$HOME/hyprflux_log/install.log"` — all output teed to log
+2. `setup_logging "$HYPRFLUX_LOGS_DIR/install.log"` (default `~/HyprFlux/logs/`) — all output teed to log
 3. Prints the ASCII "HYPRFLUX" banner + "ahmad9059 ✻" separator
 4. `setup_sudo` — asks once, keeps alive every 30s, traps cleanup
 5. `sudo pacman -Syu --noconfirm git vim` — full system update
@@ -129,17 +127,14 @@ This makes the one-liner `sh <(curl -fsSL https://hyprflux.dev/install)` fully s
 ### The main flow (4 steps)
 
 ```
-Step 1  Clone Arch-Hyprland
-        ensure_repo "https://github.com/ahmad9059/Arch-Hyprland.git" "$HOME/Arch-Hyprland" --depth=1
-
-Step 2  Run Arch-Hyprland install.sh (automated)
-        - bash scripts/bypass_dialogs.sh          # patches whiptail prompts out
-        - sed -i '/^[[:space:]]*read HYP$/c\HYP="n"' "$ARCH_HYPRLAND_DIR/install.sh"   # auto-skip prompt
-        - (cd "$ARCH_HYPRLAND_DIR" && bash install.sh)   # MUST cd: uses relative install-scripts/
-        NOTE: Arch-Hyprland's own install.sh also copies HyprFlux's scripts/zsh.sh over its
-        zsh.sh, runs scripts/replace_reads.sh (patches Hyprland-Dots copy.sh prompts),
-        and runs scripts/initial.sh (Chaotic-AUR + yay). So the "external" installer
-        is itself HyprFlux-patched at runtime.
+Step 1  Run merged base-installer install.sh (pre-patched, fully automated)
+        ARCH_HYPRLAND_DIR="$HYPRFLUX_DIR/base-installer"    # merged subdir, no clone
+        - All 9 whiptail bypass patches are BAKED IN (welcome/proceed/AUR helper/
+          NVIDIA/input-group/login-manager/options-checklist/SDDM-loop/read HYP)
+        - (cd "$ARCH_HYPRLAND_DIR" && bash install.sh)     # MUST cd: relative install-scripts/
+        - install.sh copies HyprFlux's scripts/zsh.sh over its own, runs
+          scripts/initial.sh (Chaotic-AUR + yay) via relative $HYPRFLUX_DIR
+        - scripts/bypass_dialogs.sh + replace_reads.sh were DELETED (patches baked in)
 
 Step 3  Run HyprFlux dotsSetup.sh
         ensure_repo "$HYPRFLUX_REPO" "$HYPRFLUX_DIR" --depth=1   (self, already present)
@@ -157,7 +152,7 @@ Step 4  Reboot prompt (ask_yes_no)
 **Flow:**
 1. Resolve `SCRIPT_DIR`
 2. Source `lib/common.sh`, `lib/packages.sh`, `lib/git.sh`
-3. `setup_logging "$HOME/hyprflux_log/dotsSetup.log"` (single tee — a previous double-tee bug was fixed)
+3. `setup_logging "$HYPRFLUX_LOGS_DIR/dotsSetup.log"` (single tee — a previous double-tee bug was fixed)
 4. `setup_sudo`
 5. Define ~30 config variables, **all overridable via environment**:
 
@@ -200,40 +195,40 @@ Step 4  Reboot prompt (ask_yes_no)
 - Copies `$REPO_DIR/.config/*` → `~/.config/`, plus `~/.zshrc`, `~/.tmux.conf`
 - This is why the repo's `.config` must stay complete and self-consistent
 
-## 3.3 modules/03-packages.sh
+## 3.3 module 03 removed — packages merged into base installer
 
-Required pacman packages:
+All package installation now happens ONCE in `base-installer/install-scripts/01-hypr-pkgs.sh`:
+- `hypr_package` + `hypr_package_2` (base ecosystem, from upstream)
+- Merged HyprFlux-required pacman packages (was module 03): foot, lsd, bat, neovim, firefox, tmux, yazi, zoxide, qt6-5compat, chromium, npm, plymouth, rclone, lazygit, github-cli, networkmanager, power-profiles-daemon
+- Merged default apps (was module 17 optional — now installed unconditionally): alacritty, tldr, obs-studio, vlc, luacheck, luarocks, hyprpicker, obsidian, noto-fonts-emoji, tuned, ttf-noto-nerd, noto-fonts
+- Merged AUR packages (was modules 03/16/17): awww-git, mpvpaper, waybar-git, visual-studio-code-bin, 64gram-desktop-bin, vesktop, foliate, localsend-bin, tuxedo-bin, claude-code, opencode-bin, openai-codex-bin
 
-```
-foot lsd bat neovim firefox tmux yazi zoxide qt6-5compat chromium npm plymouth rclone lazygit github-cli
-```
+All go through `install_package` (yay — handles pacman + AUR in one pass).
 
-Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR array is intentionally empty (placeholder; the empty-array guard in `install_yay` prevents a useless retry loop).
-
-## 3.4 modules/04-neovim.sh
+## 3.4 modules/03-neovim.sh
 
 - `rm -rf ~/.config/nvim`, `git clone $REPO_URL_NVIM ~/.config/nvim`
 - If `nvim` binary exists: `nvim --headless -c 'qa'` (first-run Lazy bootstrap) then `nvim --headless -c 'Lazy sync' -c 'qa'` (installs plugins + Mason tools)
 
-## 3.5 modules/05-themes.sh
+## 3.5 modules/04-themes.sh
 
 - Copies `.themes/*` → `~/.themes/` (HyprFlux-Compact, Material-DeepOcean-BL)
 - Papirus: `pacman -S papirus-icon-theme papirus-folders`, then `papirus-folders -C cyan --theme Papirus-Dark`
 - Cursors: extracts `utilities/Future-black-cursors.tar.gz` → `~/.icons/`
 
-## 3.6 modules/06-waybar.sh
+## 3.6 modules/05-waybar.sh
 
 - **Bugfix note in file:** checks BOTH style and layout exist before symlinking
 - `ln -sf CUSTOM_WAYBAR_LAYOUT WAYBAR_LAYOUT_TARGET` and `ln -sf CUSTOM_WAYBAR_STYLE WAYBAR_STYLE_TARGET`
 - If waybar running: `pkill -SIGUSR2 waybar` (reload)
 
-## 3.7 modules/07-sddm.sh
+## 3.7 modules/06-sddm.sh
 
 - `sudo cp -r utilities/HyprFlux-sddm-theme → /usr/share/sddm/themes/`
 - Ensures `/etc/sddm.conf` exists; sets `[Theme] Current=HyprFlux-sddm-theme` (inserts if missing)
 - Non-fatal if theme folder missing
 
-## 3.8 modules/08-gtk.sh (most defensive module)
+## 3.8 modules/07-gtk.sh (most defensive module)
 
 1. Verifies theme dir exists (else falls back to `adwaita` with warning)
 2. Installs GTK2 engines: `gtk-engines gtk-engine-murrine`
@@ -243,12 +238,12 @@ Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR 
 6. `nwg-look -x` export if available
 7. Non-fatal on every step
 
-## 3.9 modules/09-grub.sh
+## 3.9 modules/08-grub.sh
 
 - Detects GRUB (`grub-install`/`grub-mkconfig`); skips silently if absent
 - Extracts `HyprFlux-1080p.tar.xz` → `/tmp/hyprflux-grub`, finds inner `install.sh`, runs it with `sudo` (output silenced)
 
-## 3.10 modules/10-plymouth.sh
+## 3.10 modules/09-plymouth.sh
 
 - **Bugfix:** plymouth failure no longer kills the install (cosmetic boot screen)
 - Installs `plymouth` if missing; extracts `hyprflux-plymouth.tar.xz` (strip-components=1) → `/usr/share/plymouth/themes/hyprflux`
@@ -257,46 +252,45 @@ Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR 
 - Ensures `quiet splash` in `/etc/default/grub` + `grub-mkconfig`
 - `mkinitcpio -P` rebuild (non-fatal)
 
-## 3.11 modules/11-tmux.sh
+## 3.11 modules/10-tmux.sh
 
 - Clones `tmuxifier` fresh (removes existing), copies repo's `.tmuxifier/layouts/.` into it
 - Clones TPM (`tmux-plugins/tpm`), runs `tpm/bin/install_plugins`
 
-## 3.12 modules/12-zsh.sh
+## 3.12 modules/11-zsh.sh
 
 - Single purpose: remove leading `\n` from `print -P` line in `~/.oh-my-zsh/themes/refined.zsh-theme`
 - Guarded; non-fatal if file missing
 
-## 3.13 modules/13-wallpapers.sh
+## 3.13 modules/12-wallpapers.sh
 
 - Removes `~/Pictures/wallpapers`, then `clone_with_retry wallpapers-bank 5 --depth=1`
 - Non-fatal after 5 attempts
 
-## 3.14 modules/14-webapps.sh
+## 3.14 modules/13-webapps.sh
 
 - Reads `config/webapps.conf` lines: `Name|URL|IconName`
 - `_download_icon()`: tries Homarr CDN (`cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/<name>[-light|-dark].png`), then Google S2 favicon API, then direct `favicon.ico`; validates with `file --mime-type`
 - `_make_desktop_entry()`: writes `~/.local/share/applications/<icon>.desktop` with `Exec=chromium --new-window --ozone-platform=wayland --app=<url>`
 - Default webapps: Netflix, WhatsApp, ChatGPT, YouTube, GitHub
 
-## 3.15 modules/15-bibata.sh
+## 3.15 modules/14-bibata.sh
 
 - Extracts bundled `Bibata-Modern-Classic.tar.xz` → `~/.icons/Bibata-Modern-Classic`
 - **Defensive normalization:** if `.hlc` files extracted flat, moves them under `hyprcursors/`; validates `manifest.hl` + `hyprcursors/` exist
-- Updates `~/.config/hypr/UserConfigs/ENVariables.conf`: `env = HYPRCURSOR_THEME,Bibata-Modern-Classic` + `HYPRCURSOR_SIZE,24` (creates file if missing)
-- NOTE: in the Lua migration this file became `UserConfigs/env-variables.lua` — the module still writes the legacy conf path (kept for compatibility; the live Lua config sets the same values via `hl.env`)
+- Updates `~/.config/hypr/UserConfigs/env-variables.lua` (Lua): `hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Classic")` + `HYPRCURSOR_SIZE`
 
-## 3.16 modules/16-ai-tools.sh
+## 3.16 removed — AI tools merged into base installer AUR list
 
 - `install_yay 5 claude-code opencode-bin openai-codex-bin` (configurable via `AI_TOOLS_AUR_PACKAGES`)
 
-## 3.17 modules/17-optional-packages.sh (interactive)
+## 3.17 removed — optional packages merged into base installer (installed unconditionally)
 
 - `install_optional_pacman`: foot, alacritty, lsd, bat, tmux, neovim, tldr, obs-studio, vlc, yazi, luacheck, luarocks, hyprpicker, obsidian, github-cli, noto-fonts-emoji, ttf-noto-nerd, noto-fonts
 - `install_optional_yay`: visual-studio-code-bin, 64gram-desktop-bin, vesktop, foliate, localsend-bin, tuxedo-bin
 - Both ask `ask_yes_no` before installing
 
-## 3.18 modules/18-monitors.sh (hardware-aware)
+## 3.18 modules/15-monitors.sh (hardware-aware)
 
 **Detection chain** (first success wins):
 1. `hyprctl -j monitors` (parsed via python3 → `NAME W H RR OX OY SCALE`)
@@ -308,6 +302,19 @@ Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR 
 - `~/.config/hypr/monitors.conf` — legacy hyprlang format (`monitor=NAME,WxH@RR,OXxOY,SCALE`) + commented examples (mirror, bitdepth 10, QEMU Virtual-1)
 - `~/.config/hypr/monitors.lua` — Lua format (`hl.monitor({...})`) with same comments; **this is the file nwg-displays ≥ 2.4 also writes**, so it's the live one for Hyprland ≥ 0.55
 - `~/.config/hypr/Monitor_Profiles/default.conf` + `default.lua` — saved as restorable profile
+## 3.19 modules/16-hardware-detect.sh (machine-specific setup)
+
+Runs after 15 (monitors); handles everything that varies machine-to-machine:
+
+1. **GPU detection** (`lspci` VGA/3D/Display) → rewrites the GPU block in `UserConfigs/env-variables.lua` between `-- >>> GPU_CONFIG_START >>>` / `-- >>> GPU_CONFIG_END <<<` markers (idempotent):
+   - `nvidia` → LIBVA_DRIVER_NAME=nvidia, __GLX_VENDOR_LIBRARY_NAME=nvidia, NVD_BACKEND=direct, GSK_RENDERER=ngl, GBM_BACKEND=nvidia-drm
+   - `amd` → radeonsi + Mesa EGL vendor (50_mesa.json)
+   - `intel` → iHD + Mesa EGL
+   - `hybrid-amd-nvidia` / `hybrid-intel-nvidia` / `hybrid-amd-intel` → `AQ_DRM_DEVICES` built from real `/sys/class/drm/card*/device/vendor` order (preferred vendor first) + Mesa EGL
+   - `none` (VM) → empty block, defaults apply
+2. **Native monitor resolution** (same hyprctl → wlr-randr → xrandr → 1080p chain, self-contained if 18 skipped) → writes `monitors.lua` + `monitors.conf` + `Monitor_Profiles/default.*`
+3. **Keyboard layout** (`localectl` → `setxkbmap` → `us`) → writes `kb_layout` in `UserConfigs/user-settings.lua`
+
 
 **Lib helper detail:** `lib/packages.sh` — `install_pacman N pkgs...` runs `script -qfc "sudo pacman -Sy --noconfirm --needed ..."` in a loop, then re-verifies each package with `pacman -Qi` and retries only the missing ones. `install_yay` mirrors this with yay. Optional variants ask first.
 
@@ -323,7 +330,6 @@ fastfetch       # fetch info config
 foot            # foot terminal (foot.ini + colors.ini)
 ghostty         # ghostty terminal config
 hypr            # THE main config (detailed below)
-hypr_old        # archived legacy hyprlang config (rollback path)
 kitty           # kitty terminal (kitty.conf + kitty-colors.conf)
 Kvantum         # Kvantum theme engine config
 mimeapps.list   # default apps
@@ -792,7 +798,7 @@ Sub-configs (each for a script):
 ## 6.1 Repo structure
 
 ```
-Arch-Hyprland/
+base-installer/
 ├── install.sh           # whiptail-based interactive installer (~515 lines)
 ├── auto-install.sh      # clone+run helper
 ├── uninstall.sh
@@ -803,10 +809,10 @@ Arch-Hyprland/
 
 ## 6.2 install.sh flow
 
-1. Colors, log dir `Install-Logs/`, refuse root (must run as user)
+1. Colors, unified log dir `$HYPRFLUX_LOGS_DIR/installer/`, refuse root (must run as user)
 2. PulseAudio conflict check (refuses if pulseaudio installed)
 3. Ensure `base-devel` + `libnewt` (whiptail)
-4. ASCII "Arch-Hyprland" banner
+4. ASCII "base-installer" banner
 5. `whiptail` welcome msgbox + proceed yes/no
 6. AUR helper selection checklist (yay/paru)
 7. Login-manager detection (non-SDDM warning), NVIDIA detection msgbox
@@ -816,8 +822,8 @@ Arch-Hyprland/
     - `00-base.sh` (base-devel, archlinux-keyring, findutils)
     - `pacman.sh` (pacman.conf spices: Color/CheckSpace/VerbosePkgLists/ParallelDownloads/ILoveCandy + `pacman -Sy`)
     - **HyprFlux custom scripts injected:**
-      - `cp "$HYPRFLUX_DIR/scripts/zsh.sh" ~/Arch-Hyprland/install-scripts/zsh.sh` (replaces JaKooLit's zsh script)
-      - `bash "$HYPRFLUX_DIR/scripts/replace_reads.sh"` (patches Hyprland-Dots copy.sh helpers: copy_menu.sh, lib_prompts.sh, lib_apps.sh → auto-answers)
+      - `cp "$HYPRFLUX_DIR/scripts/zsh.sh" ~/base-installer/install-scripts/zsh.sh` (replaces the base zsh script)
+      - (merged layout: base-dots is already pre-patched — no replace_reads needed)
       - `bash "$HYPRFLUX_DIR/scripts/initial.sh"` (Chaotic-AUR keys + repo + yay)
     - `yay.sh` / `paru.sh` (AUR helper)
     - `01-hypr-pkgs.sh` (Hyprland ecosystem packages — full list below)
@@ -838,7 +844,7 @@ Arch-Hyprland/
 | `fonts.sh` | adobe-source-code-pro, noto-fonts-emoji, otf-font-awesome, ttf-droid, fira-code, fantasque-nerd, jetbrains-mono(+nerd), victor-mono, noto-fonts |
 | `bluetooth.sh` | bluez, bluez-utils, blueman + enable bluetooth.service |
 | `sddm.sh` | qt6-declarative/svg/virtualkeyboard/multimedia-ffmpeg, qt5-quickcontrols2, sddm; disables lightdm/gdm/lxdm; enables sddm; creates wayland-sessions dir |
-| `sddm_theme.sh` | clones JaKooLit/simple-sddm-2 → /usr/share/sddm/themes, sets /etc/sddm.conf |
+| `sddm_theme.sh` | *(removed — HyprFlux ships its own SDDM theme via module 07)* |
 | `nvidia.sh` | nvidia-dkms/settings/utils, libva, libva-nvidia-driver, per-kernel headers; removes hyprland-git/nvidia variants; mkinitcpio modules + rebuild |
 | `nvidia_nouveau.sh` | nouveau blacklist |
 | `InputGroup.sh` | adds user to input group |
@@ -849,7 +855,7 @@ Arch-Hyprland/
 | `thunar_default.sh` | thunar as default file manager (mimeapps) |
 | `xdph.sh` | xdg-desktop-portal-hyprland + gtk + umockdev |
 | `gtk_themes.sh` | gtk themes |
-| `dotfiles-main.sh` | clones JaKooLit/Hyprland-Dots, runs `copy.sh` (patched by replace_reads.sh) |
+| `dotfiles-main.sh` | verifies merged base-dots checkout — config deployed once by dotsSetup module 02 (single source; copy.sh NOT run — would be a redundant second copy) |
 | `02-Final-Check.sh` | post-install verification |
 | `rog.sh`, `disk-monitor.sh`, `temp-monitor.sh`, `battery-monitor.sh` | ROG laptop extras + monitor scripts |
 | `ags.launcher.com.github.Aylur.ags` | ags desktop file |
@@ -1046,12 +1052,12 @@ file_permissions: /root, installer, lib scripts = 755; /etc/shadow = 400
 ### Step 10 — HyprFlux first-boot prep
 
 1. Copies live resolv.conf into target (needed for chroot git)
-2. Clones **Arch-Hyprland** and **HyprFlux** into `/home/$USER/` (300s timeout each, progress-displayed, fatal on failure)
+2. Clones **base-installer** and **HyprFlux** into `/home/$USER/` (300s timeout each, progress-displayed, fatal on failure)
 3. `chown -R user:user /home/$USER`
 4. Writes `~/.hyprflux-firstboot.sh` (not executable — sourced from .bash_profile):
    - Marker-gated (`~/.hyprflux-install-done`), tty1-gated
    - Centered ASCII "Welcome to HyprFlux!" panel
-   - `bash ~/HyprFlux/install.sh` (the FULL manual flow = Arch-Hyprland + dotsSetup)
+   - `bash ~/HyprFlux/install.sh` (the FULL manual flow = base-installer + dotsSetup)
    - On success: touch marker + "To start Hyprland desktop, type: Hyprland"
    - On failure: instructions to re-run manually
    - Self-removes its .bash_profile line
@@ -1116,15 +1122,15 @@ The documented target integration (implemented but the live installer currently 
 | sudoers | temp `/etc/sudoers.d/hyprflux-temp` passwordless sudo for target user |
 | shell | pre-set `/bin/bash` so `su -` works before zsh exists |
 
-### Phase A — Arch-Hyprland scripts (A1–A16)
+### Phase A — base-installer scripts (A1–A16)
 
 `run_as_user()` runs each via `su - $USER -s /bin/bash -c` with HOME/PATH exported; failures are warned-not-fatal.
-A1 00-base → A2 pacman → A3 yay (with Global_functions.sh ISAUR patch + `/usr/local/bin/yay-iso` wrapper + PATH symlink fallback) → A4 01-hypr-pkgs → A5 pipewire → A6 fonts → A7 hyprland → A8 bluetooth → A9 sddm → A10 nvidia (conditional on detection) → A11 zsh → A12 thunar → A13 xdph → A14 sddm_theme → A15 dotfiles-main (JaKooLit/Hyprland-Dots + copy.sh) → A16 02-Final-Check.
+A1 00-base → A2 pacman → A3 yay (with Global_functions.sh ISAUR patch + `/usr/local/bin/yay-iso` wrapper + PATH symlink fallback) → A4 01-hypr-pkgs → A5 pipewire → A6 fonts → A7 hyprland → A8 bluetooth → A9 sddm → A10 nvidia (conditional on detection) → A11 zsh → A12 thunar → A13 xdph → A14 *(removed)* → A15 dotfiles-main (verifies base-dots; config deploy = module 02 only) → A16 02-Final-Check.
 
 ### Phase B — HyprFlux modules
 
 - Writes `/tmp/hyprflux-module-env.sh` (HYPRFLUX_ISO_MODE=1, SDDM_THEME, GRUB_THEME_DIR, GTK_THEME, ICON_THEME, CURSOR_THEME, FONT_NAME, WAYBAR_STYLE, TERMINAL, BROWSER…)
-- Sourced per-module as target user; `08-gtk.sh` deferred (gsettings needs dbus), `17-optional-packages.sh` skipped (interactive)
+- Sourced per-module as target user; `07-gtk.sh` deferred (gsettings needs dbus)
 
 ### Phase C — Services
 
@@ -1187,9 +1193,9 @@ Separate maintained Neovim distribution. Cloned by module 04 into `~/.config/nvi
 
 Wallpaper collection cloned by module 13 to `~/Pictures/wallpapers`. Consumed by: WallpaperSelect.sh (rofi grid), WallpaperRandom.sh, WallpaperAutoChange.sh (awww daemon), initial-boot.sh default wallpaper (`wallpaper-5.jpg`).
 
-## 8.3 Hyprland-Dots (JaKooLit)
+## 8.3 base-dots (merged)
 
-Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` executed. **HyprFlux patches copy.sh's prompt helpers** (scripts/replace_reads.sh) so it runs non-interactively: refactored copy_menu.sh (install/upgrade/express), lib_prompts.sh (keyboard/resolution/clock), lib_apps.sh (editor choice) get auto-answers. This is what actually places JaKooLit's base Hyprland configs before HyprFlux's `.config` copy (module 02) overwrites them with the HyprFlux version.
+Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` remains as a standalone manual tool, but **the install flow no longer runs it**: `base-dots/config` is byte-identical to `.config/` (CI parity gate), so config deployment is done exactly ONCE by dotsSetup module 02 (`.config/` → `~/.config/`). `dotfiles-main.sh` only verifies the merged checkout and warns on drift. ags/quickshell/wallust configs removed (apps removed from HyprFlux); bundled wallpapers removed (module 13 wallpapers-bank is the single source).
 
 ---
 
@@ -1217,15 +1223,15 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
    [Step 8] reflector + pacstrap base (3 retries) + fstab
    [Step 9] chroot: timezone/locale(EN LANG + regional LC_TIME)/keymap/hostname/
             users/sudo/pacman.conf/GRUB/NetworkManager
-   [Step 10] clone Arch-Hyprland + HyprFlux into /home/<user>/
+   [Step 10] clone base-installer + HyprFlux into /home/<user>/
              write .hyprflux-firstboot.sh + .bash_profile hook
    [Step 11] unmount → reboot
 5. First boot → SDDM? NO — tty1 login → .bash_profile → .hyprflux-firstboot.sh
    → bash ~/HyprFlux/install.sh
-6. install.sh: pacman -Syu → clone/run Arch-Hyprland (patched, automated:
+6. install.sh: pacman -Syu → clone/run base-installer (patched, automated:
    base-devel, pacman spices, yay, Chaotic-AUR via initial.sh, Hyprland pkgs,
-   pipewire, fonts, hyprland, sddm, zsh, thunar, xdph, Hyprland-Dots copy.sh
-   patched by replace_reads.sh, HyprFlux zsh.sh) → dotsSetup.sh (18 modules:
+   pipewire, fonts, hyprland, sddm, zsh, thunar, xdph, base-dots verify
+   pre-patched, HyprFlux zsh.sh) → dotsSetup.sh (16 modules:
    backup, dotfiles, packages, nvim, themes, waybar, sddm, gtk, grub, plymouth,
    tmux, zsh patch, wallpapers, webapps, bibata, ai-tools, optional, monitors)
 7. Second reboot → SDDM (HyprFlux theme, sugar-candy fallback) → graphical.target
@@ -1238,16 +1244,16 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
 ```
 1. sh <(curl -fsSL https://hyprflux.dev/install)        [or git clone + bash install.sh]
 2. Bootstrap: git → clone HyprFlux to ~/HyprFlux → exec real install.sh
-3. Logging ~/hyprflux_log/, sudo keep-alive, banner, pacman -Syu
-4. Clone Arch-Hyprland (~/Arch-Hyprland)
-5. bypass_dialogs.sh patches whiptail prompts; read HYP auto-answer; run
-   (cd Arch-Hyprland && bash install.sh)  → same automated base install as above
-6. dotsSetup.sh  → 18 modules (as above; optional packages prompt interactively)
+3. Logging ~/HyprFlux/logs/, sudo keep-alive, banner, pacman -Syu
+4. Clone base-installer (~/base-installer)
+5. Run merged base-installer install.sh (pre-patched, no whiptail prompts); run
+   (cd base-installer && bash install.sh)  → same automated base install as above
+6. dotsSetup.sh  → 16 modules (all non-interactive; packages already installed by step 4)
 7. Reboot prompt → SDDM → HyprFlux desktop (first-boot initial-boot.sh applies
    wallpaper/GTK/kvantum one-shot on live machines)
 ```
 
-**Both paths converge at `HyprFlux/install.sh` → `dotsSetup.sh` → 18 modules.** The ISO only adds: base OS installation + repo pre-cloning + auto-trigger.
+**Both paths converge at `HyprFlux/install.sh` → `dotsSetup.sh` → 16 modules.** The ISO only adds: base OS installation + repo pre-cloning + auto-trigger.
 
 ## 9.3 What a finished system has
 
@@ -1258,7 +1264,7 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
 - Neovim (Lazy/Mason), tmux+tmuxifier, zsh+oh-my-zsh (refined theme)
 - Chromium PWAs (Netflix/WhatsApp/ChatGPT/YouTube/GitHub), wallpapers-bank
 - Auto-detected monitor config (monitors.lua + profiles)
-- Backup of prior dotfiles in ~/dotfiles_backup; install logs in ~/hyprflux_log/
+- Backup of prior dotfiles in ~/dotfiles_backup; all logs in ~/HyprFlux/logs/
 
 ---
 
@@ -1277,9 +1283,9 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
 
 1. **Convergence:** ISO + manual paths both terminate in the same `install.sh` — one pipeline to maintain.
 2. **Online-only install:** nothing pre-baked beyond the live env; everything clones from GitHub at install time (keeps ISO small, always-fresh).
-3. **Patch-don't-fork:** manual install automates Arch-Hyprland via sed patching (bypass_dialogs.sh) rather than maintaining a fork; replace_reads.sh patches JaKooLit's copy.sh the same way.
+3. **Merge-don't-clone (2026-08-25):** base-installer and base-dots are merged into this repo with all automation patches baked in — no runtime patching, no extra clones, one repo to manage. Both keep their GPL-3.0 LICENSE.md.
 4. **Chroot shims** solve the systemctl/gsettings/chsh/nwg-look-in-chroot problem without forking upstream scripts.
-5. **Lua-first config:** Hyprland ≥ 0.55 mandates Lua; legacy `.conf` archived in `hypr_old/` for rollback; nwg-displays owns monitors.lua/workspaces.lua.
+5. **Lua-first config:** Hyprland ≥ 0.55 mandates Lua (legacy `hypr_old/` archive removed 2026-08-26); nwg-displays owns monitors.lua/workspaces.lua.
 6. **Single color source:** one `.conf` → 6 generated files + 2 injected blocks; CI enforces freshness; nothing hand-edited downstream.
 7. **Module sourcing:** modules are `source`d (shared scope) → SKIP_MODULES + env overrides give full control; same orchestrator powers full installs and granular re-runs.
 8. **Resilience:** every cosmetic step (plymouth, grub theme, SDDM theme) is non-fatal; retries everywhere (pacman 5×, pacstrap 3×, git clone 5×); verbose logs for every stage.
@@ -1311,7 +1317,6 @@ Cloned by Arch-Hyprland `dotfiles-main.sh` → `~/Hyprland-Dots`, `copy.sh` exec
 - `docs/plan/progress.md` + `docs/WORK-LOG.md` track all work
 - CI config-check workflow green (validated locally)
 - Working tree clean; repo ↔ live in sync for all managed configs
-- Legacy config archived at `.config/hypr_old/`
 
 ## 12.2 ISO repo
 

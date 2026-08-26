@@ -1,0 +1,64 @@
+/* Main Config (wallpaper) */
+
+@import "~/.config/rofi/config.rasi"  
+
+/* ---- Configuration ---- */ 
+configuration {
+  modi: "drun";
+}
+
+window {
+  width: 75%;
+  height: inherit;
+}
+
+/* ---- Mainbox ---- */
+mainbox {
+  children:
+    [ "inputbar", "listview"];
+}
+
+entry {
+  expand: true;
+  placeholder: " 󰸉 Choose Wallpaper";
+  horizontal-align: 0.01;
+  horizontal-align: 0.01;
+}
+
+/* ---- Listview ---- */
+listview {
+  spacing: 20px;
+  padding: 10px;
+  columns: 6;
+  lines: 3;
+  flow: horizontal;
+  fixed-width: true;
+  fixed-height: true;
+  cycle: true;
+}
+
+/* ---- Element ---- */
+element {
+  orientation: vertical;
+  padding: 0px;
+  spacing: 0px;
+  border-radius: 10px;
+  padding: 0px;
+  margin: 0px;
+}
+
+
+
+element-icon {
+    text-color:                  inherit;
+    size:                        10%;
+    margin:                      -30px;
+    cursor:                      inherit;
+}
+
+element-text {
+  vertical-align: 0.5;
+  horizontal-align: 0.5;
+  padding: 6px;
+  margin: 6px;
+}

@@ -43,6 +43,14 @@ ORANGE="$(_safe_tput setaf 214)"
 [[ -z "$ORANGE" ]] && ORANGE="$YELLOW"
 
 # ====== Logging ======
+# All logs live in ONE place: $HOME/HyprFlux/logs/
+#   logs/install.log          — main installer output
+#   logs/dotsSetup.log        — dotsSetup module output
+#   logs/installer/*.log      — base-installer script logs
+#   logs/copy/*.log           — base-dots copy logs
+# Overridable via HYPRFLUX_LOGS_DIR (used by tests / ISO).
+HYPRFLUX_LOGS_DIR="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}"
+
 # LOG_FILE is set by setup_logging(). Until then, functions just print.
 LOG_FILE="${LOG_FILE:-}"
 
@@ -63,6 +71,7 @@ setup_logging() {
 
   mkdir -p "$log_dir"
   LOG_FILE="$log_path"
+  # tee with exit-code propagation so `set -e` callers still see failures
   exec > >(tee -a "$LOG_FILE") 2>&1
 }
 

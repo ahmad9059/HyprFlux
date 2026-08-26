@@ -1,0 +1,43 @@
+/* Animations Menu */
+
+@import "~/.config/rofi/config.rasi" 
+
+/* ---- Mainbox ---- */
+mainbox {
+  children:
+    [ "inputbar",  "listview"];
+}
+
+/* ---- Window ---- */
+window {
+  width: inherit;
+  height: inherit;
+}
+
+/* ---- Entry ---- */ 
+entry {
+  width: 43%;
+  placeholder: " 󰗘 Choose which Animations to load";
+}
+
+/* ---- Listview ---- */
+listview {
+  columns: 2;
+  lines: 7;
+  fixed-height: false;
+  margin: 10px;
+  scrollbar: true;
+  spacing: 6px;
+  cycle: true;
+}
+
+/* ---- Elements ---- */
+element-icon {
+  size: 0%;
+}
+element-text {
+  horizontal-align: 0.0;
+  vertical-align: 0.0;
+  margin: 0px;
+  padding: 0px;
+}
