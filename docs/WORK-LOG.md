@@ -229,6 +229,47 @@ Edge-case audit + fixes for `modules/19-hardware-detect.sh` so it can NEVER brea
 - `base-dots/copy.sh` kept as a standalone manual tool only
 - Docs updated (ARCHITECTURE, ISO wrapper A15 comment)
 
+## Single package step (2026-08-26)
+
+**Found:** packages were installed TWICE — once by `base-installer/install-scripts/01-hypr-pkgs.sh`, again by HyprFlux modules 03/16/17 (required + optional + AI tools).
+
+**Fix — ONE package step in the base installer:**
+- All packages merged into `base-installer/install-scripts/01-hypr-pkgs.sh`:
+  - `hypr_package` + `hypr_package_2` (base ecosystem)
+  - HyprFlux-required pacman pkgs (was module 03): foot lsd bat neovim firefox tmux yazi zoxide qt6-5compat chromium npm plymouth rclone lazygit github-cli networkmanager power-profiles-daemon
+  - Default apps (was module 17 — **no longer optional**, installed unconditionally): alacritty tldr obs-studio vlc luacheck luarocks hyprpicker obsidian noto-fonts-emoji tuned ttf-noto-nerd noto-fonts
+  - AUR pkgs (was 03/16/17): awww-git mpvpaper waybar-git visual-studio-code-bin 64gram-desktop-bin vesktop foliate localsend-bin tuxedo-bin claude-code opencode-bin openai-codex-bin
+- Modules deleted: `03-packages.sh`, `16-ai-tools.sh`, `17-optional-packages.sh`
+- Modules renumbered 01–16 (no gaps): backup, dotfiles, neovim, themes, waybar, sddm, gtk, grub, plymouth, tmux, zsh, wallpapers, webapps, bibata, monitors, hardware-detect
+- Chroot wrapper: removed 17-optional skip + AI_TOOLS env var
+- Every install step now completes ONCE and is never repeated
+
+## GRUB + Plymouth theme hardening (2026-08-26)
+
+Both boot-theme modules rewritten to install fully and handle every edge case:
+
+**modules/08-grub.sh (HyprFlux GRUB theme):**
+- GRUB absent (no grub-install/grub-mkconfig) → clean skip
+- Archive validated before extraction (tar -tJf, corrupt → skip)
+- Fresh extraction every run (rm -rf temp dir first — no stale dirs)
+- **Removes any existing HyprFlux theme first** (idempotent re-runs)
+- Runs bundled install.sh as root; on failure → **manual fallback** (copies theme files directly)
+- **Verifies installation** (theme.txt present in /usr/share/grub/themes/HyprFlux) — not just "script ran"
+- **Wires/verifies GRUB_THEME=** in /etc/default/grub (replaces old value, no duplicates)
+- Regenerates grub.cfg explicitly; non-fatal if grub-mkconfig missing/fails
+- Never aborts install (cosmetic step — always returns 0); temp cleanup
+
+**modules/09-plymouth.sh (HyprFlux Plymouth theme):**
+- plymouth package installed if missing (non-fatal)
+- Archive validated; fresh extraction; **theme validated** (requires .plymouth + .script)
+- **Removes previous hyprflux theme before install**; verifies copy landed
+- **mkinitcpio HOOKS duplicate-safe**: only adds `plymouth` if not already in the HOOKS=( ) list (word-in-comment doesn't count)
+- **Sets theme via plymouth-set-default-theme AND verifies plymouthd.conf Theme= line**; direct plymouthd.conf fallback write
+- **GRUB_CMDLINE_LINUX_DEFAULT token-safe**: adds `quiet`/`splash` individually (all 4 combinations tested, no duplicate tokens)
+- mkinitcpio -P rebuild; all steps non-fatal
+
+Tested: corrupt archive, missing archive, no-GRUB, no-sudo-terminal (graceful), full happy path with mocks, idempotent re-runs on real machine (themes re-verified present), HOOKS 3-case logic, GRUB token 4-case logic.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

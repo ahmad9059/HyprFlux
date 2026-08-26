@@ -195,40 +195,40 @@ Step 4  Reboot prompt (ask_yes_no)
 - Copies `$REPO_DIR/.config/*` → `~/.config/`, plus `~/.zshrc`, `~/.tmux.conf`
 - This is why the repo's `.config` must stay complete and self-consistent
 
-## 3.3 modules/03-packages.sh
+## 3.3 module 03 removed — packages merged into base installer
 
-Required pacman packages:
+All package installation now happens ONCE in `base-installer/install-scripts/01-hypr-pkgs.sh`:
+- `hypr_package` + `hypr_package_2` (base ecosystem, from upstream)
+- Merged HyprFlux-required pacman packages (was module 03): foot, lsd, bat, neovim, firefox, tmux, yazi, zoxide, qt6-5compat, chromium, npm, plymouth, rclone, lazygit, github-cli, networkmanager, power-profiles-daemon
+- Merged default apps (was module 17 optional — now installed unconditionally): alacritty, tldr, obs-studio, vlc, luacheck, luarocks, hyprpicker, obsidian, noto-fonts-emoji, tuned, ttf-noto-nerd, noto-fonts
+- Merged AUR packages (was modules 03/16/17): awww-git, mpvpaper, waybar-git, visual-studio-code-bin, 64gram-desktop-bin, vesktop, foliate, localsend-bin, tuxedo-bin, claude-code, opencode-bin, openai-codex-bin
 
-```
-foot lsd bat neovim firefox tmux yazi zoxide qt6-5compat chromium npm plymouth rclone lazygit github-cli
-```
+All go through `install_package` (yay — handles pacman + AUR in one pass).
 
-Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR array is intentionally empty (placeholder; the empty-array guard in `install_yay` prevents a useless retry loop).
-
-## 3.4 modules/04-neovim.sh
+## 3.4 modules/03-neovim.sh
 
 - `rm -rf ~/.config/nvim`, `git clone $REPO_URL_NVIM ~/.config/nvim`
 - If `nvim` binary exists: `nvim --headless -c 'qa'` (first-run Lazy bootstrap) then `nvim --headless -c 'Lazy sync' -c 'qa'` (installs plugins + Mason tools)
 
-## 3.5 modules/05-themes.sh
+## 3.5 modules/04-themes.sh
 
 - Copies `.themes/*` → `~/.themes/` (HyprFlux-Compact, Material-DeepOcean-BL)
 - Papirus: `pacman -S papirus-icon-theme papirus-folders`, then `papirus-folders -C cyan --theme Papirus-Dark`
 - Cursors: extracts `utilities/Future-black-cursors.tar.gz` → `~/.icons/`
 
-## 3.6 modules/06-waybar.sh
+## 3.6 modules/05-waybar.sh
 
 - **Bugfix note in file:** checks BOTH style and layout exist before symlinking
 - `ln -sf CUSTOM_WAYBAR_LAYOUT WAYBAR_LAYOUT_TARGET` and `ln -sf CUSTOM_WAYBAR_STYLE WAYBAR_STYLE_TARGET`
 - If waybar running: `pkill -SIGUSR2 waybar` (reload)
 
-## 3.7 modules/07-sddm.sh
+## 3.7 modules/06-sddm.sh
 
 - `sudo cp -r utilities/HyprFlux-sddm-theme → /usr/share/sddm/themes/`
 - Ensures `/etc/sddm.conf` exists; sets `[Theme] Current=HyprFlux-sddm-theme` (inserts if missing)
 - Non-fatal if theme folder missing
 
-## 3.8 modules/08-gtk.sh (most defensive module)
+## 3.8 modules/07-gtk.sh (most defensive module)
 
 1. Verifies theme dir exists (else falls back to `adwaita` with warning)
 2. Installs GTK2 engines: `gtk-engines gtk-engine-murrine`
@@ -238,12 +238,12 @@ Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR 
 6. `nwg-look -x` export if available
 7. Non-fatal on every step
 
-## 3.9 modules/09-grub.sh
+## 3.9 modules/08-grub.sh
 
 - Detects GRUB (`grub-install`/`grub-mkconfig`); skips silently if absent
 - Extracts `HyprFlux-1080p.tar.xz` → `/tmp/hyprflux-grub`, finds inner `install.sh`, runs it with `sudo` (output silenced)
 
-## 3.10 modules/10-plymouth.sh
+## 3.10 modules/09-plymouth.sh
 
 - **Bugfix:** plymouth failure no longer kills the install (cosmetic boot screen)
 - Installs `plymouth` if missing; extracts `hyprflux-plymouth.tar.xz` (strip-components=1) → `/usr/share/plymouth/themes/hyprflux`
@@ -252,46 +252,45 @@ Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR 
 - Ensures `quiet splash` in `/etc/default/grub` + `grub-mkconfig`
 - `mkinitcpio -P` rebuild (non-fatal)
 
-## 3.11 modules/11-tmux.sh
+## 3.11 modules/10-tmux.sh
 
 - Clones `tmuxifier` fresh (removes existing), copies repo's `.tmuxifier/layouts/.` into it
 - Clones TPM (`tmux-plugins/tpm`), runs `tpm/bin/install_plugins`
 
-## 3.12 modules/12-zsh.sh
+## 3.12 modules/11-zsh.sh
 
 - Single purpose: remove leading `\n` from `print -P` line in `~/.oh-my-zsh/themes/refined.zsh-theme`
 - Guarded; non-fatal if file missing
 
-## 3.13 modules/13-wallpapers.sh
+## 3.13 modules/12-wallpapers.sh
 
 - Removes `~/Pictures/wallpapers`, then `clone_with_retry wallpapers-bank 5 --depth=1`
 - Non-fatal after 5 attempts
 
-## 3.14 modules/14-webapps.sh
+## 3.14 modules/13-webapps.sh
 
 - Reads `config/webapps.conf` lines: `Name|URL|IconName`
 - `_download_icon()`: tries Homarr CDN (`cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/<name>[-light|-dark].png`), then Google S2 favicon API, then direct `favicon.ico`; validates with `file --mime-type`
 - `_make_desktop_entry()`: writes `~/.local/share/applications/<icon>.desktop` with `Exec=chromium --new-window --ozone-platform=wayland --app=<url>`
 - Default webapps: Netflix, WhatsApp, ChatGPT, YouTube, GitHub
 
-## 3.15 modules/15-bibata.sh
+## 3.15 modules/14-bibata.sh
 
 - Extracts bundled `Bibata-Modern-Classic.tar.xz` → `~/.icons/Bibata-Modern-Classic`
 - **Defensive normalization:** if `.hlc` files extracted flat, moves them under `hyprcursors/`; validates `manifest.hl` + `hyprcursors/` exist
-- Updates `~/.config/hypr/UserConfigs/ENVariables.conf`: `env = HYPRCURSOR_THEME,Bibata-Modern-Classic` + `HYPRCURSOR_SIZE,24` (creates file if missing)
-- NOTE: in the Lua migration this file became `UserConfigs/env-variables.lua` — the module still writes the legacy conf path (kept for compatibility; the live Lua config sets the same values via `hl.env`)
+- Updates `~/.config/hypr/UserConfigs/env-variables.lua` (Lua): `hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Classic")` + `HYPRCURSOR_SIZE`
 
-## 3.16 modules/16-ai-tools.sh
+## 3.16 removed — AI tools merged into base installer AUR list
 
 - `install_yay 5 claude-code opencode-bin openai-codex-bin` (configurable via `AI_TOOLS_AUR_PACKAGES`)
 
-## 3.17 modules/17-optional-packages.sh (interactive)
+## 3.17 removed — optional packages merged into base installer (installed unconditionally)
 
 - `install_optional_pacman`: foot, alacritty, lsd, bat, tmux, neovim, tldr, obs-studio, vlc, yazi, luacheck, luarocks, hyprpicker, obsidian, github-cli, noto-fonts-emoji, ttf-noto-nerd, noto-fonts
 - `install_optional_yay`: visual-studio-code-bin, 64gram-desktop-bin, vesktop, foliate, localsend-bin, tuxedo-bin
 - Both ask `ask_yes_no` before installing
 
-## 3.18 modules/18-monitors.sh (hardware-aware)
+## 3.18 modules/15-monitors.sh (hardware-aware)
 
 **Detection chain** (first success wins):
 1. `hyprctl -j monitors` (parsed via python3 → `NAME W H RR OX OY SCALE`)
@@ -303,9 +302,9 @@ Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR 
 - `~/.config/hypr/monitors.conf` — legacy hyprlang format (`monitor=NAME,WxH@RR,OXxOY,SCALE`) + commented examples (mirror, bitdepth 10, QEMU Virtual-1)
 - `~/.config/hypr/monitors.lua` — Lua format (`hl.monitor({...})`) with same comments; **this is the file nwg-displays ≥ 2.4 also writes**, so it's the live one for Hyprland ≥ 0.55
 - `~/.config/hypr/Monitor_Profiles/default.conf` + `default.lua` — saved as restorable profile
-## 3.19 modules/19-hardware-detect.sh (machine-specific setup)
+## 3.19 modules/16-hardware-detect.sh (machine-specific setup)
 
-Runs after 18; handles everything that varies machine-to-machine:
+Runs after 15 (monitors); handles everything that varies machine-to-machine:
 
 1. **GPU detection** (`lspci` VGA/3D/Display) → rewrites the GPU block in `UserConfigs/env-variables.lua` between `-- >>> GPU_CONFIG_START >>>` / `-- >>> GPU_CONFIG_END <<<` markers (idempotent):
    - `nvidia` → LIBVA_DRIVER_NAME=nvidia, __GLX_VENDOR_LIBRARY_NAME=nvidia, NVD_BACKEND=direct, GSK_RENDERER=ngl, GBM_BACKEND=nvidia-drm
@@ -1131,7 +1130,7 @@ A1 00-base → A2 pacman → A3 yay (with Global_functions.sh ISAUR patch + `/us
 ### Phase B — HyprFlux modules
 
 - Writes `/tmp/hyprflux-module-env.sh` (HYPRFLUX_ISO_MODE=1, SDDM_THEME, GRUB_THEME_DIR, GTK_THEME, ICON_THEME, CURSOR_THEME, FONT_NAME, WAYBAR_STYLE, TERMINAL, BROWSER…)
-- Sourced per-module as target user; `08-gtk.sh` deferred (gsettings needs dbus), `17-optional-packages.sh` skipped (interactive)
+- Sourced per-module as target user; `07-gtk.sh` deferred (gsettings needs dbus)
 
 ### Phase C — Services
 
@@ -1232,7 +1231,7 @@ Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` remain
 6. install.sh: pacman -Syu → clone/run base-installer (patched, automated:
    base-devel, pacman spices, yay, Chaotic-AUR via initial.sh, Hyprland pkgs,
    pipewire, fonts, hyprland, sddm, zsh, thunar, xdph, base-dots verify
-   pre-patched, HyprFlux zsh.sh) → dotsSetup.sh (19 modules:
+   pre-patched, HyprFlux zsh.sh) → dotsSetup.sh (16 modules:
    backup, dotfiles, packages, nvim, themes, waybar, sddm, gtk, grub, plymouth,
    tmux, zsh patch, wallpapers, webapps, bibata, ai-tools, optional, monitors)
 7. Second reboot → SDDM (HyprFlux theme, sugar-candy fallback) → graphical.target
@@ -1249,12 +1248,12 @@ Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` remain
 4. Clone base-installer (~/base-installer)
 5. Run merged base-installer install.sh (pre-patched, no whiptail prompts); run
    (cd base-installer && bash install.sh)  → same automated base install as above
-6. dotsSetup.sh  → 19 modules (as above; optional packages prompt interactively)
+6. dotsSetup.sh  → 16 modules (all non-interactive; packages already installed by step 4)
 7. Reboot prompt → SDDM → HyprFlux desktop (first-boot initial-boot.sh applies
    wallpaper/GTK/kvantum one-shot on live machines)
 ```
 
-**Both paths converge at `HyprFlux/install.sh` → `dotsSetup.sh` → 19 modules.** The ISO only adds: base OS installation + repo pre-cloning + auto-trigger.
+**Both paths converge at `HyprFlux/install.sh` → `dotsSetup.sh` → 16 modules.** The ISO only adds: base OS installation + repo pre-cloning + auto-trigger.
 
 ## 9.3 What a finished system has
 

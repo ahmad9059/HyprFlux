@@ -195,7 +195,7 @@ HyprFlux/
 
 - `install.sh` - top-level install entrypoint
 - `dotsSetup.sh` - orchestrates the modular setup flow
-- `modules/` - feature-specific setup units such as GTK, SDDM, Plymouth, cursors, AI tools, and monitors
+- `modules/` - feature-specific setup units such as GTK, SDDM, Plymouth, cursors, and monitors (all packages installed once by the base installer)
 - `base-installer/` - merged base installer (formerly the separate Arch-Hyprland repo — no longer cloned at install time)
 - `base-dots/` - merged base dotfiles (formerly the separate Hyprland-Dots repo — no longer cloned at install time)
 - `references/Hyprflux-ISO/` - companion ISO project reference built on `archiso`

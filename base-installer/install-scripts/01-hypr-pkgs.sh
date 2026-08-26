@@ -43,7 +43,7 @@ hypr_package=(
   swww
   unzip # needed later
   # NOTE: waybar removed here — HyprFlux requires waybar-git (chaotic-aur)
-  # for workspace-click Lua dispatch (hl.dsp); installed by module 03.
+  # for workspace-click Lua dispatch (hl.dsp); installed in hypr_aur_package.
   wget
   wl-clipboard
   wlogout
@@ -69,6 +69,19 @@ hypr_package_2=(
   pacman-contrib
   qalculate-gtk
   yt-dlp
+
+  # ── HyprFlux required (was modules/03-packages.sh — merged here so the
+  #    base installer is the SINGLE package step) ──
+  foot lsd bat neovim firefox tmux yazi zoxide
+  qt6-5compat chromium npm plymouth rclone lazygit github-cli
+  networkmanager power-profiles-daemon
+
+  # ── HyprFlux default apps (was modules/17-optional-packages.sh — no
+  #    longer optional; everything installs in this one pass) ──
+  alacritty tldr
+  obs-studio vlc luacheck luarocks hyprpicker
+  obsidian noto-fonts-emoji tuned
+  ttf-noto-nerd noto-fonts
 )
 
 # List of packages to uninstall as it conflicts some packages
@@ -116,11 +129,28 @@ fi
 
 printf "\n%.0s" {1..1}
 
+# ── AUR packages (was modules/03, 16, 17 — merged into one step) ──
+# awww-git:      animated wallpaper daemon (awww-daemon, Wallpaper*.sh)
+# mpvpaper:      video wallpaper support (WallpaperSelect.sh)
+# waybar-git:    REQUIRED for workspace-click Lua dispatch (hl.dsp)
+hypr_aur_package=(
+  awww-git mpvpaper waybar-git
+  visual-studio-code-bin 64gram-desktop-bin vesktop
+  foliate localsend-bin tuxedo-bin
+  claude-code opencode-bin openai-codex-bin
+)
+
 # Installation of main components
 printf "\n%s - Installing ${SKY_BLUE}HyprFlux necessary packages${RESET} .... \n" "${NOTE}"
 
 for PKG1 in "${hypr_package[@]}" "${hypr_package_2[@]}" "${Extra[@]}"; do
   install_package "$PKG1" "$LOG"
+done
+
+printf "\n%s - Installing ${SKY_BLUE}HyprFlux AUR packages${RESET} .... \n" "${NOTE}"
+
+for PKG2 in "${hypr_aur_package[@]}"; do
+  install_package "$PKG2" "$LOG"
 done
 
 printf "\n%.0s" {1..2}
