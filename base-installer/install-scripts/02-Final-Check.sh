@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/ahmad9059/HyprFlux 💫 #
+# https://github.com/ahmad9059/HyprFlux #
 # Final checking if packages are installed
 # NOTE: These package check are only the essentials
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/ahmad9059/HyprFlux 💫 ---- */  #
+# /* ----  https://github.com/ahmad9059/HyprFlux  ---- */  #
 
 # uninstalling hyprland packages
 OK="$(tput setaf 2)[OK]$(tput sgr0)"

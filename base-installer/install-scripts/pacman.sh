@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/ahmad9059/HyprFlux 💫 #
+# https://github.com/ahmad9059/HyprFlux #
 # pacman adding up extra-spices #
 
 ## WARNING: DO NOT EDIT BEYOND THIS LINE IF YOU DON'T KNOW WHAT YOU ARE DOING! ##

@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/ahmad9059/HyprFlux 💫 #
+# https://github.com/ahmad9059/HyprFlux #
 # Fonts #
 
 # These fonts are minimun required for pre-configured dots to work. You can add here as required

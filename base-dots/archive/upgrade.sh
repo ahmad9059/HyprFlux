@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# /* ---- 💫 https://github.com/ahmad9059/HyprFlux 💫 ---- */  #
+# /* ----  https://github.com/ahmad9059/HyprFlux  ---- */  #
 # for Semi-Manual upgrading your system.
 # NOTE: requires rsync 
 

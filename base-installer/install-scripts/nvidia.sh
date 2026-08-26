@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/ahmad9059/HyprFlux 💫 #
+# https://github.com/ahmad9059/HyprFlux #
 # Nvidia Stuffs #
 
 nvidia_pkg=(

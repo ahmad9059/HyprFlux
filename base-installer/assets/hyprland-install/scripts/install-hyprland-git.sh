@@ -1,5 +1,5 @@
 #!/bin/bash
-# /* ---- 💫 https://github.com/ahmad9059/HyprFlux 💫 ---- */  #
+# /* ----  https://github.com/ahmad9059/HyprFlux  ---- */  #
 
 # Set some colors for output messages
 OK="$(tput setaf 2)[OK]$(tput sgr0)"

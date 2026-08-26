@@ -1,5 +1,5 @@
 #!/bin/bash
-# 💫 https://github.com/ahmad9059/HyprFlux 💫 #
+# https://github.com/ahmad9059/HyprFlux #
 # Paru AUR Helper #
 # NOTE: If yay is already installed, paru will not be installed #
 
