@@ -219,6 +219,16 @@ Edge-case audit + fixes for `modules/19-hardware-detect.sh` so it can NEVER brea
 - `luac` missing → validation skipped gracefully; unreadable files → skipped with warn
 - All failures return 0 (never abort dotsSetup); verified exit 0 across: AMD, NVIDIA-mock, hybrid-mock, virtio-mock, no-tools, corrupted env file, read-only file, missing kb_layout line, no-luac, idempotent reruns
 
+## Double-copy eliminated (2026-08-26)
+
+**Found:** config was deployed TWICE — base-installer's `dotfiles-main.sh` ran `base-dots/copy.sh` (copying `base-dots/config/` → `~/.config/`), then dotsSetup module 02 deleted those dirs and copied `.config/` again. Since `base-dots/config` ≡ `.config/` (CI parity gate), the first copy was pure waste, and copy.sh's waybar/rofi/sddm side-effects referenced dead JaKooLit paths.
+
+**Fix:**
+- `dotfiles-main.sh` now only VERIFIES the merged base-dots checkout (presence + drift warning) and hands off to module 02 — **module 02 is the single config deployer**
+- module 02 gained explicit `chmod +x` for scripts/UserScripts/initial-boot.sh/tmuxifier layouts (belt-and-suspenders, since copy.sh's chmod no longer runs)
+- `base-dots/copy.sh` kept as a standalone manual tool only
+- Docs updated (ARCHITECTURE, ISO wrapper A15 comment)
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

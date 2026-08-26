@@ -856,7 +856,7 @@ base-installer/
 | `thunar_default.sh` | thunar as default file manager (mimeapps) |
 | `xdph.sh` | xdg-desktop-portal-hyprland + gtk + umockdev |
 | `gtk_themes.sh` | gtk themes |
-| `dotfiles-main.sh` | runs merged `base-dots/copy.sh` (pre-patched, no clone) |
+| `dotfiles-main.sh` | verifies merged base-dots checkout — config deployed once by dotsSetup module 02 (single source; copy.sh NOT run — would be a redundant second copy) |
 | `02-Final-Check.sh` | post-install verification |
 | `rog.sh`, `disk-monitor.sh`, `temp-monitor.sh`, `battery-monitor.sh` | ROG laptop extras + monitor scripts |
 | `ags.launcher.com.github.Aylur.ags` | ags desktop file |
@@ -1126,7 +1126,7 @@ The documented target integration (implemented but the live installer currently 
 ### Phase A — base-installer scripts (A1–A16)
 
 `run_as_user()` runs each via `su - $USER -s /bin/bash -c` with HOME/PATH exported; failures are warned-not-fatal.
-A1 00-base → A2 pacman → A3 yay (with Global_functions.sh ISAUR patch + `/usr/local/bin/yay-iso` wrapper + PATH symlink fallback) → A4 01-hypr-pkgs → A5 pipewire → A6 fonts → A7 hyprland → A8 bluetooth → A9 sddm → A10 nvidia (conditional on detection) → A11 zsh → A12 thunar → A13 xdph → A14 *(removed)* → A15 dotfiles-main (merged base-dots + copy.sh) → A16 02-Final-Check.
+A1 00-base → A2 pacman → A3 yay (with Global_functions.sh ISAUR patch + `/usr/local/bin/yay-iso` wrapper + PATH symlink fallback) → A4 01-hypr-pkgs → A5 pipewire → A6 fonts → A7 hyprland → A8 bluetooth → A9 sddm → A10 nvidia (conditional on detection) → A11 zsh → A12 thunar → A13 xdph → A14 *(removed)* → A15 dotfiles-main (verifies base-dots; config deploy = module 02 only) → A16 02-Final-Check.
 
 ### Phase B — HyprFlux modules
 
@@ -1196,7 +1196,7 @@ Wallpaper collection cloned by module 13 to `~/Pictures/wallpapers`. Consumed by
 
 ## 8.3 base-dots (merged)
 
-Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` is run by the merged `dotfiles-main.sh` and is **pre-patched for non-interactive install**: copy_menu.sh auto-selects Install, lib_prompts.sh auto-accepts keyboard/12H-clock/express, lib_apps.sh auto-selects the editor, copy.sh auto-selects resolution and skips wallpapers. ags/quickshell/wallust configs removed (apps removed from HyprFlux); wallpapers trimmed to 2 (~3.7MB). This is what actually places the base Hyprland configs before HyprFlux's `.config` copy (module 02) overwrites them with the HyprFlux version.
+Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` remains as a standalone manual tool, but **the install flow no longer runs it**: `base-dots/config` is byte-identical to `.config/` (CI parity gate), so config deployment is done exactly ONCE by dotsSetup module 02 (`.config/` → `~/.config/`). `dotfiles-main.sh` only verifies the merged checkout and warns on drift. ags/quickshell/wallust configs removed (apps removed from HyprFlux); bundled wallpapers removed (module 13 wallpapers-bank is the single source).
 
 ---
 
@@ -1231,7 +1231,7 @@ Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` is run
    → bash ~/HyprFlux/install.sh
 6. install.sh: pacman -Syu → clone/run base-installer (patched, automated:
    base-devel, pacman spices, yay, Chaotic-AUR via initial.sh, Hyprland pkgs,
-   pipewire, fonts, hyprland, sddm, zsh, thunar, xdph, base-dots copy.sh
+   pipewire, fonts, hyprland, sddm, zsh, thunar, xdph, base-dots verify
    pre-patched, HyprFlux zsh.sh) → dotsSetup.sh (19 modules:
    backup, dotfiles, packages, nvim, themes, waybar, sddm, gtk, grub, plymouth,
    tmux, zsh patch, wallpapers, webapps, bibata, ai-tools, optional, monitors)

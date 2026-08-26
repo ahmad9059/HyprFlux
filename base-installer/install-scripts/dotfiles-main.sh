@@ -1,7 +1,16 @@
 #!/bin/bash
 # 💫 https://github.com/ahmad9059/HyprFlux 💫 #
-# Hyprland-Dots to download from main #
+# base-dots deployment — single-source note #
 
+# ============================================================
+# HyprFlux: base-dots/config is byte-identical to the HyprFlux
+# repo's .config/ (parity enforced by CI). Config deployment is
+# done ONCE by dotsSetup module 02-dotfiles (copies .config/ to
+# ~/.config/). Running base-dots/copy.sh here would be a second,
+# redundant copy of the same files — so it is intentionally NOT
+# executed. This script only verifies the merged checkout is
+# complete, then hands off to module 02.
+# ============================================================
 
 ## WARNING: DO NOT EDIT BEYOND THIS LINE IF YOU DON'T KNOW WHAT YOU ARE DOING! ##
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -16,17 +25,27 @@ if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
   exit 1
 fi
 
-# HyprFlux: Hyprland-Dots is merged into the HyprFlux repo (no clone needed)
-printf "${NOTE} Installing ${SKY_BLUE}HyprFlux Dots${RESET} (merged, pre-patched)....\n"
+printf "${NOTE} Verifying merged base-dots checkout...${RESET}\n"
 
 DOTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../base-dots" && pwd)"
+HYPRFLUX_CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.config" && pwd)"
 
-if [ -d "$DOTS_DIR" ]; then
-  cd "$DOTS_DIR" || { echo -e "$ERROR Hyprland-Dots directory not found at $DOTS_DIR"; exit 1; }
-  chmod +x copy.sh
-  ./copy.sh
-else
-  echo -e "$ERROR Hyprland-Dots not found at $DOTS_DIR. Check your HyprFlux checkout."
+if [ ! -d "$DOTS_DIR" ]; then
+  echo -e "$ERROR base-dots not found at $DOTS_DIR. Check your HyprFlux checkout."
+  exit 1
 fi
+
+if [ ! -d "$HYPRFLUX_CONFIG_DIR" ]; then
+  echo -e "$ERROR .config not found at $HYPRFLUX_CONFIG_DIR. Check your HyprFlux checkout."
+  exit 1
+fi
+
+# Guard against accidental divergence: if base-dots/config ever drifts from
+# .config/, warn loudly (CI also enforces this).
+if ! diff -rq "$HYPRFLUX_CONFIG_DIR" "$DOTS_DIR/config" >/dev/null 2>&1; then
+  echo -e "$WARN base-dots/config differs from .config/ — .config/ is the source of truth." 2>&1 | tee -a "$LOG"
+fi
+
+echo "${OK} base-dots verified — config will be deployed by dotsSetup module 02 (single source)." 2>&1 | tee -a "$LOG"
 
 printf "\n%.0s" {1..2}
