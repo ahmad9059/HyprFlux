@@ -303,6 +303,19 @@ Installed via `install_pacman 5 "${REQUIRED_PACKAGES[@]}"` (5 retries). The AUR 
 - `~/.config/hypr/monitors.conf` — legacy hyprlang format (`monitor=NAME,WxH@RR,OXxOY,SCALE`) + commented examples (mirror, bitdepth 10, QEMU Virtual-1)
 - `~/.config/hypr/monitors.lua` — Lua format (`hl.monitor({...})`) with same comments; **this is the file nwg-displays ≥ 2.4 also writes**, so it's the live one for Hyprland ≥ 0.55
 - `~/.config/hypr/Monitor_Profiles/default.conf` + `default.lua` — saved as restorable profile
+## 3.19 modules/19-hardware-detect.sh (machine-specific setup)
+
+Runs after 18; handles everything that varies machine-to-machine:
+
+1. **GPU detection** (`lspci` VGA/3D/Display) → rewrites the GPU block in `UserConfigs/env-variables.lua` between `-- >>> GPU_CONFIG_START >>>` / `-- >>> GPU_CONFIG_END <<<` markers (idempotent):
+   - `nvidia` → LIBVA_DRIVER_NAME=nvidia, __GLX_VENDOR_LIBRARY_NAME=nvidia, NVD_BACKEND=direct, GSK_RENDERER=ngl, GBM_BACKEND=nvidia-drm
+   - `amd` → radeonsi + Mesa EGL vendor (50_mesa.json)
+   - `intel` → iHD + Mesa EGL
+   - `hybrid-amd-nvidia` / `hybrid-intel-nvidia` / `hybrid-amd-intel` → `AQ_DRM_DEVICES` built from real `/sys/class/drm/card*/device/vendor` order (preferred vendor first) + Mesa EGL
+   - `none` (VM) → empty block, defaults apply
+2. **Native monitor resolution** (same hyprctl → wlr-randr → xrandr → 1080p chain, self-contained if 18 skipped) → writes `monitors.lua` + `monitors.conf` + `Monitor_Profiles/default.*`
+3. **Keyboard layout** (`localectl` → `setxkbmap` → `us`) → writes `kb_layout` in `UserConfigs/user-settings.lua`
+
 
 **Lib helper detail:** `lib/packages.sh` — `install_pacman N pkgs...` runs `script -qfc "sudo pacman -Sy --noconfirm --needed ..."` in a loop, then re-verifies each package with `pacman -Qi` and retries only the missing ones. `install_yay` mirrors this with yay. Optional variants ask first.
 
@@ -1219,7 +1232,7 @@ Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` is run
 6. install.sh: pacman -Syu → clone/run base-installer (patched, automated:
    base-devel, pacman spices, yay, Chaotic-AUR via initial.sh, Hyprland pkgs,
    pipewire, fonts, hyprland, sddm, zsh, thunar, xdph, base-dots copy.sh
-   pre-patched, HyprFlux zsh.sh) → dotsSetup.sh (18 modules:
+   pre-patched, HyprFlux zsh.sh) → dotsSetup.sh (19 modules:
    backup, dotfiles, packages, nvim, themes, waybar, sddm, gtk, grub, plymouth,
    tmux, zsh patch, wallpapers, webapps, bibata, ai-tools, optional, monitors)
 7. Second reboot → SDDM (HyprFlux theme, sugar-candy fallback) → graphical.target
@@ -1236,12 +1249,12 @@ Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` is run
 4. Clone base-installer (~/base-installer)
 5. Run merged base-installer install.sh (pre-patched, no whiptail prompts); run
    (cd base-installer && bash install.sh)  → same automated base install as above
-6. dotsSetup.sh  → 18 modules (as above; optional packages prompt interactively)
+6. dotsSetup.sh  → 19 modules (as above; optional packages prompt interactively)
 7. Reboot prompt → SDDM → HyprFlux desktop (first-boot initial-boot.sh applies
    wallpaper/GTK/kvantum one-shot on live machines)
 ```
 
-**Both paths converge at `HyprFlux/install.sh` → `dotsSetup.sh` → 18 modules.** The ISO only adds: base OS installation + repo pre-cloning + auto-trigger.
+**Both paths converge at `HyprFlux/install.sh` → `dotsSetup.sh` → 19 modules.** The ISO only adds: base OS installation + repo pre-cloning + auto-trigger.
 
 ## 9.3 What a finished system has
 

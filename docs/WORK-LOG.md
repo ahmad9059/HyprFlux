@@ -179,6 +179,46 @@ Test on KVM/QEMU with the merged script landed users in **bash** with **fzf miss
 - All code refs updated: install.sh, base-installer/install.sh, dotfiles-main.sh (DOTS_DIR), CI workflow paths, parity gate, docs
 - Internal self-names updated (lib_update.sh expected_name, archive scripts, uninstall.sh title)
 
+## New module: 19-hardware-detect.sh (2026-08-26)
+
+New `modules/19-hardware-detect.sh` handles all machine-to-machine setup at install time:
+
+1. **GPU detection** (`lspci` VGA/3D/Display) → rewrites the GPU block in `UserConfigs/env-variables.lua` between `-- >>> GPU_CONFIG_START >>>` / `-- >>> GPU_CONFIG_END <<<` markers (idempotent):
+   - `nvidia` → LIBVA_DRIVER_NAME=nvidia, __GLX_VENDOR_LIBRARY_NAME=nvidia, NVD_BACKEND=direct, GSK_RENDERER=ngl, GBM_BACKEND=nvidia-drm
+   - `amd` → radeonsi + Mesa EGL vendor (50_mesa.json)
+   - `intel` → iHD + Mesa EGL
+   - hybrids (`hybrid-amd-nvidia`, `hybrid-intel-nvidia`, `hybrid-amd-intel`) → `AQ_DRM_DEVICES` built from real `/sys/class/drm/card*/device/vendor` order (preferred vendor first) + Mesa EGL
+   - `none` (VM) → empty block (defaults apply)
+2. **Native monitor resolution** (hyprctl → wlr-randr → xrandr → 1080p fallback, self-contained) → writes `monitors.lua` + `monitors.conf` + `Monitor_Profiles/default.*`
+3. **Keyboard layout** (`localectl` → `setxkbmap` → `us`) → `kb_layout` in `UserConfigs/user-settings.lua`
+
+- env-variables.lua (repo + base-dots) GPU section now uses markers; the old "LIVE-MACHINE ONLY" block replaced.
+- Verified: sandbox tests (AMD detection, hybrid card ordering card1→card2→card0), idempotent reruns, valid Lua after generation.
+- Live machine: stale hybrid block removed (only AMD card1 exists now), regenerated AMD config + monitors at native 2560x1440@165.
+
+## Module 19 deep-hardening (2026-08-26)
+
+Edge-case audit + fixes for `modules/19-hardware-detect.sh` so it can NEVER break an install:
+
+**Bug fixed (critical):** hybrid `AQ_DRM_DEVICES` path builder produced `/dev/dri/card1:card2:card0` (missing prefixes) — now emits `/dev/dri/card1:/dev/dri/card2:/dev/dri/card0`.
+
+**Bug fixed:** empty-name monitor from hyprctl (`"name":""`) shifted the field parse (mangled `output="1024"`). Now converted to FALLBACK sentinel; nameless rows are skipped (trailing wildcard fallback covers them).
+
+**Bug fixed:** raw `"FALLBACK"` inside the `python3 -c "..."` double-quoted heredoc broke bash quoting → nameless monitors were dropped. Escaped as `\"FALLBACK\"`.
+
+**Hardened:**
+- `set -e` safety: dotsSetup sources modules inside `if source` (suspends errexit — verified) + every sub-step individually guarded with early-return 0
+- No python3 dependency in file writes — awk-based marker replacement + kb_layout edit
+- Atomic writes everywhere (mktemp + mv, never half-written files); cleanup trap
+- Every external tool checked (`command -v`) before use: lspci, hyprctl, wlr-randr, xrandr, localectl, setxkbmap, awk, luac
+- GPU detection: virtio/qxl/vmware/bochs → none (VM safe); no PCI → none; only real `/dev/dri/cardN` nodes used for AQ_DRM_DEVICES (sysfs alone not trusted)
+- GPU block sanity check (only `hl.env`/comments allowed inside markers)
+- Post-write Lua validation, but only self-heals if the file was valid BEFORE the write (never clobbers pre-existing user errors)
+- Monitors: width/height must be positive ints; refresh clamped 30–240 else 60; scale numeric default 1.0; offsets must be signed ints; monitor names sanitized to `[a-zA-Z0-9_-]`; xrandr negative offsets (`-1920+0`) parsed; empty scale/rr/offset fields normalized
+- Keyboard: layout validated `[a-zA-Z0-9_,-]` (rejects `n/a`, injection chars); awk edit safe for special chars
+- `luac` missing → validation skipped gracefully; unreadable files → skipped with warn
+- All failures return 0 (never abort dotsSetup); verified exit 0 across: AMD, NVIDIA-mock, hybrid-mock, virtio-mock, no-tools, corrupted env file, read-only file, missing kb_layout line, no-luac, idempotent reruns
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
