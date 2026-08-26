@@ -20,10 +20,7 @@ BLUE="$(tput setaf 4)"
 SKY_BLUE="$(tput setaf 6)"
 RESET="$(tput sgr0)"
 
-# Create Directory for Install Logs
-if [ ! -d Install-Logs ]; then
-    mkdir Install-Logs
-fi
+# Legacy Install-Logs dir removed — see HYPRFLUX_LOGS_DIR below.
 
 # Show progress function
 show_progress() {
@@ -69,6 +66,14 @@ install_package_pacman() {
     fi
   fi
 }
+
+# Unified logging: all logs under $HOME/HyprFlux/logs/installer/
+HYPRFLUX_LOGS_DIR="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}"
+
+# Legacy "Install-Logs/" dir now points into the unified log tree.
+if [ ! -d "$HYPRFLUX_LOGS_DIR/installer" ]; then
+    mkdir -p "$HYPRFLUX_LOGS_DIR/installer"
+fi
 
 ISAUR=$(command -v yay || command -v paru)
 # If no AUR helper exists, fall back to plain pacman (official repo packages

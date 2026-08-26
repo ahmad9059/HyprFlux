@@ -26,7 +26,7 @@ source "$SCRIPT_DIR/lib/git.sh"
 # BUG FIX: removed dead mkdir + LOG_FILE assignment that wrote to
 # $HOME/installer_log. Single tee via setup_logging — no more
 # double tee (exec tee + per-command tee).
-setup_logging "$HOME/hyprflux_log/dotsSetup.log"
+setup_logging "$HYPRFLUX_LOGS_DIR/dotsSetup.log"
 
 # ====== Sudo ======
 setup_sudo

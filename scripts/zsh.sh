@@ -57,7 +57,7 @@ if ! source "$SCRIPT_DIR/Global_functions.sh"; then
 fi
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/install-$(date +%d-%H%M%S)_zsh.log"
+LOG="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/installer/install-$(date +%d-%H%M%S)_zsh.log"
 
 # Installing core zsh packages. All are in the extra repo, so fall back to
 # pacman if the AUR helper (yay/paru) is unavailable — the shell setup must

@@ -26,9 +26,7 @@ SKY_BLUE="$(tput setaf 6)"
 RESET="$(tput sgr0)"
 
 # Create Directory for Install Logs
-if [ ! -d Install-Logs ]; then
-    mkdir Install-Logs
-fi
+mkdir -p "${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/installer"
 
 # Check for AUR helper and install if not found
 ISAUR=$(command -v yay || command -v paru)
@@ -45,8 +43,8 @@ fi
   cd $pkg || { printf "%s - Failed to enter $pkg directory\n" "${ERROR}"; exit 1; }
   makepkg -si --noconfirm 2>&1 | tee -a "$LOG" || { printf "%s - Failed to install ${YELLOW}$pkg${RESET} from AUR\n" "${ERROR}"; exit 1; }
 
-  # moving install logs in to Install-Logs directory
-  mv install*.log ../Install-Logs/ || true   
+  # moving build logs into the unified log tree
+  mv install*.log "${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/installer/" || true
   cd ..
 fi
 

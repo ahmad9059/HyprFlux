@@ -19,13 +19,12 @@ BLUE="$(tput setaf 4)"
 SKY_BLUE="$(tput setaf 6)"
 RESET="$(tput sgr0)"
 
-# Create Directory for Install Logs
-if [ ! -d Install-Logs ]; then
-  mkdir Install-Logs
-fi
+# Unified logging: all installer logs under $HOME/HyprFlux/logs/installer/
+HYPRFLUX_LOGS_DIR="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}"
+mkdir -p "$HYPRFLUX_LOGS_DIR/installer"
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/01-Hyprland-Install-Scripts-$(date +%d-%H%M%S).log"
+LOG="$HYPRFLUX_LOGS_DIR/installer/01-Hyprland-Install-Scripts-$(date +%d-%H%M%S).log"
 
 # Check if running as root. If root, script will exit
 if [[ $EUID -eq 0 ]]; then
@@ -374,7 +373,7 @@ if pacman -Q hyprland &>/dev/null || pacman -Q hyprland-git &>/dev/null; then
   done
 else
   # Print error message if neither package is installed
-  printf "\n${WARN} Hyprland is NOT installed. Please check 00_CHECK-time_installed.log and other files in the Install-Logs/ directory..."
+  printf "\n${WARN} Hyprland is NOT installed. Please check 00_CHECK-time_installed.log and other files in the logs/installer/ directory..."
   printf "\n%.0s" {1..3}
   exit 1
 fi

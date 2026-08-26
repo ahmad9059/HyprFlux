@@ -22,7 +22,7 @@ if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
 fi
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/install-$(date +%d-%H%M%S)_temp-monitor.log"
+LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_temp-monitor.log"
 
 # Temperature Monitor
 printf "${NOTE} Installing ${SKY_BLUE}Temperature Monitor${RESET} Packages...\n"

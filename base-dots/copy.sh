@@ -275,13 +275,12 @@ echo "${WARNING}A T T E N T I O N !${RESET}"
 echo "${MAGENTA}Kindly visit HyprFlux Wiki for changelogs${RESET}"
 printf "\n%.0s" {1..1}
 
-# Create Directory for Copy Logs
-if [ ! -d Copy-Logs ]; then
-  mkdir Copy-Logs
-fi
+# Unified logging: copy logs under $HOME/HyprFlux/logs/copy/
+HYPRFLUX_LOGS_DIR="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}"
+mkdir -p "$HYPRFLUX_LOGS_DIR/copy"
 
 # Set the name of the log file to include the current date and time
-LOG="Copy-Logs/install-$(date +%d-%H%M%S)_dotfiles.log"
+LOG="$HYPRFLUX_LOGS_DIR/copy/install-$(date +%d-%H%M%S)_dotfiles.log"
 
 # update home directories
 xdg-user-dirs-update 2>&1 | tee -a "$LOG" || true

@@ -18,7 +18,7 @@ fi
 
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/install-$(date +%d-%H%M%S)_input.log"
+LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_input.log"
 
 # Check if the 'input' group exists
 if grep -q '^input:' /etc/group; then

@@ -11,7 +11,7 @@
 run_repo_update() {
   local repo_dir="${1:-$(pwd)}"
   local expected_name="base-dots"
-  local log_dir="$repo_dir/Copy-Logs"
+  local log_dir="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/copy"
   local log_file="$log_dir/update-$(date +%d-%H%M%S)_git.log"
 
   mkdir -p "$log_dir"

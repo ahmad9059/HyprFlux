@@ -22,7 +22,7 @@ if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
 fi
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/install-$(date +%d-%H%M%S)_battery-monitor.log"
+LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_battery-monitor.log"
 
 # Battery Monitor
 printf "${NOTE} Installing ${SKY_BLUE}Battery Monitor${RESET} Packages...\n"

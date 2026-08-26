@@ -26,7 +26,7 @@ fi
 
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/install-$(date +%d-%H%M%S)_thunar.log"
+LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_thunar.log"
 
 # Thunar
 printf "${INFO} Installing ${SKY_BLUE}Thunar${RESET} Packages...\n"  

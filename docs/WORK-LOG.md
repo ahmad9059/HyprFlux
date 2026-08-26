@@ -289,6 +289,35 @@ Deep audit to make the install work smoothly on ANY hardware, not just the maint
 
 **Verified machine-agnostic:** ISO installer (TTY width auto, keyring init, both microcodes, virtio/qxl detection), SDDM session dir, initial-boot.sh ($HOME-based), Volume/Brightness/Battery scripts (default devices), startup execs, window-rules classes (no-op when app absent).
 
+## awww: prebuilt binary replaces source build (2026-08-26)
+
+User hit: `awww-git` (AUR) failed to install — it's a Rust source build needing cargo+dav1d+scdoc; slow (~3min) and fragile on machines without the toolchain. No prebuilt awww exists upstream (codeberg, source-only releases).
+
+**Fix:**
+- Built awww 0.12.1 + awww-daemon once (verified compiles, 8.4MB+451KB binaries) → packaged as **`utilities/awww-prebuilt.tar.xz`** (2.1MB)
+- `modules/12-wallpapers.sh`: new step installs the prebuilt binaries to `/usr/local/bin` (install -Dm755); falls back to `yay awww-git` only if the archive is missing/unusable
+- `base-installer/install-scripts/01-hypr-pkgs.sh`: awww-git **removed** from the AUR build array (only comments reference it); added AUR **build-tools pre-install** (cmake meson ninja scdoc rust dav1d catch2) so remaining source-built AUR pkgs (waybar-git, mpvpaper) compile reliably
+- Verified: archive integrity, sandbox module run (prebuilt path works), live install pending sudo
+
+## Unified logging system (2026-08-26)
+
+All logs now live in ONE place: **`~/HyprFlux/logs/`**
+
+| Path | Contents |
+|------|----------|
+| `logs/install.log` | main installer (install.sh) output |
+| `logs/dotsSetup.log` | dotsSetup module output |
+| `logs/installer/*.log` | base-installer script logs (00-base, yay, 01-hypr-pkgs, pipewire, fonts, sddm, zsh, …) |
+| `logs/copy/*.log` | base-dots copy logs |
+
+**Changes:**
+- `lib/common.sh`: new `HYPRFLUX_LOGS_DIR` (default `$HOME/HyprFlux/logs`, overridable) — single source for all log paths
+- `install.sh` + `dotsSetup.sh`: `hyprflux_log/` → `$HYPRFLUX_LOGS_DIR/{install,dotsSetup}.log`
+- `base-installer/install.sh` + all 21 install-scripts + `scripts/zsh.sh`: `Install-Logs/` → `$HYPRFLUX_LOGS_DIR/installer/` (yay/paru build logs too)
+- `base-dots/copy.sh` + `lib_update.sh`: `Copy-Logs/` → `$HYPRFLUX_LOGS_DIR/copy/`
+- ISO chroot wrapper: `Install-Logs` → `${TARGET_HOME}/HyprFlux/logs/installer` (+ chown)
+- Old `hyprflux_log/` and per-repo `Install-Logs/`/`Copy-Logs/` folders eliminated
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

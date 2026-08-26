@@ -29,7 +29,7 @@ fi
 
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/install-$(date +%d-%H%M%S)_zsh.log"
+LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_zsh.log"
 
 # Installing core zsh packages
 printf "\n%s - Installing ${SKY_BLUE}zsh packages${RESET} .... \n" "${NOTE}"

@@ -65,7 +65,7 @@ source "$SCRIPT_DIR/lib/common.sh"
 source "$SCRIPT_DIR/lib/git.sh"
 
 # ====== Logging ======
-setup_logging "$HOME/hyprflux_log/install.log"
+setup_logging "$HYPRFLUX_LOGS_DIR/install.log"
 
 # ====== Banner ======
 clear

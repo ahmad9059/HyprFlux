@@ -112,7 +112,7 @@ fi
 
 
 # Set the name of the log file to include the current date and time
-LOG="Install-Logs/install-$(date +%d-%H%M%S)_hypr-pkgs.log"
+LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_hypr-pkgs.log"
 
 # conflicting packages removal
 overall_failed=0
@@ -135,7 +135,10 @@ printf "\n%.0s" {1..1}
 # mpvpaper:      video wallpaper support (WallpaperSelect.sh)
 # waybar-git:    REQUIRED for workspace-click Lua dispatch (hl.dsp)
 hypr_aur_package=(
-  awww-git mpvpaper waybar-git
+  # NOTE: awww is NOT here — shipped as a prebuilt binary (utilities/awww-prebuilt.tar.xz),
+  # installed by module 12-wallpapers. Building awww-git from source requires
+  # the full rust toolchain + dav1d + scdoc and is slow/fragile on some machines.
+  mpvpaper waybar-git
   visual-studio-code-bin 64gram-desktop-bin vesktop
   foliate localsend-bin tuxedo-bin
   claude-code opencode-bin openai-codex-bin
@@ -148,6 +151,15 @@ printf "\n%s - Installing ${SKY_BLUE}HyprFlux necessary packages${RESET} .... \n
 for PKG1 in "${hypr_package[@]}" "${hypr_package_2[@]}" "${Extra[@]}"; do
   install_package "$PKG1" "$LOG"
 done
+
+# ── Build tools for source-built AUR packages (awww-git, waybar-git, mpvpaper) ──
+# These are makedepends that makepkg needs; installing them up-front avoids
+# slow/failed source builds on machines without a full toolchain.
+printf "\n%s - Installing ${SKY_BLUE}AUR build tools${RESET} .... \n" "${NOTE}"
+for _bt in cmake meson ninja scdoc rust dav1d catch2; do
+  install_package "$_bt" "$LOG"
+done
+unset _bt
 
 printf "\n%s - Installing ${SKY_BLUE}HyprFlux AUR packages${RESET} .... \n" "${NOTE}"
 

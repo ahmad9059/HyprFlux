@@ -119,7 +119,7 @@ This makes the one-liner `sh <(curl -fsSL https://hyprflux.dev/install)` fully s
 ### Mode B — local run
 
 1. Sources `lib/common.sh` + `lib/git.sh`
-2. `setup_logging "$HOME/hyprflux_log/install.log"` — all output teed to log
+2. `setup_logging "$HYPRFLUX_LOGS_DIR/install.log"` (default `~/HyprFlux/logs/`) — all output teed to log
 3. Prints the ASCII "HYPRFLUX" banner + "ahmad9059 ✻" separator
 4. `setup_sudo` — asks once, keeps alive every 30s, traps cleanup
 5. `sudo pacman -Syu --noconfirm git vim` — full system update
@@ -152,7 +152,7 @@ Step 4  Reboot prompt (ask_yes_no)
 **Flow:**
 1. Resolve `SCRIPT_DIR`
 2. Source `lib/common.sh`, `lib/packages.sh`, `lib/git.sh`
-3. `setup_logging "$HOME/hyprflux_log/dotsSetup.log"` (single tee — a previous double-tee bug was fixed)
+3. `setup_logging "$HYPRFLUX_LOGS_DIR/dotsSetup.log"` (single tee — a previous double-tee bug was fixed)
 4. `setup_sudo`
 5. Define ~30 config variables, **all overridable via environment**:
 
@@ -809,7 +809,7 @@ base-installer/
 
 ## 6.2 install.sh flow
 
-1. Colors, log dir `Install-Logs/`, refuse root (must run as user)
+1. Colors, unified log dir `$HYPRFLUX_LOGS_DIR/installer/`, refuse root (must run as user)
 2. PulseAudio conflict check (refuses if pulseaudio installed)
 3. Ensure `base-devel` + `libnewt` (whiptail)
 4. ASCII "base-installer" banner
@@ -1244,7 +1244,7 @@ Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` remain
 ```
 1. sh <(curl -fsSL https://hyprflux.dev/install)        [or git clone + bash install.sh]
 2. Bootstrap: git → clone HyprFlux to ~/HyprFlux → exec real install.sh
-3. Logging ~/hyprflux_log/, sudo keep-alive, banner, pacman -Syu
+3. Logging ~/HyprFlux/logs/, sudo keep-alive, banner, pacman -Syu
 4. Clone base-installer (~/base-installer)
 5. Run merged base-installer install.sh (pre-patched, no whiptail prompts); run
    (cd base-installer && bash install.sh)  → same automated base install as above
@@ -1264,7 +1264,7 @@ Merged into the HyprFlux repo (2026-08-25) at `base-dots/`. Its `copy.sh` remain
 - Neovim (Lazy/Mason), tmux+tmuxifier, zsh+oh-my-zsh (refined theme)
 - Chromium PWAs (Netflix/WhatsApp/ChatGPT/YouTube/GitHub), wallpapers-bank
 - Auto-detected monitor config (monitors.lua + profiles)
-- Backup of prior dotfiles in ~/dotfiles_backup; install logs in ~/hyprflux_log/
+- Backup of prior dotfiles in ~/dotfiles_backup; all logs in ~/HyprFlux/logs/
 
 ---
 
