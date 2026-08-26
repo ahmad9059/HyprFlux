@@ -20,7 +20,7 @@ SKY_BLUE="$(tput setaf 6)"
 RESET="$(tput sgr0)"
 
 # Unified logging: all installer logs under $HOME/HyprFlux/logs/installer/
-HYPRFLUX_LOGS_DIR="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}"
+export HYPRFLUX_LOGS_DIR="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}"
 mkdir -p "$HYPRFLUX_LOGS_DIR/installer"
 
 # Set the name of the log file to include the current date and time

@@ -17,7 +17,7 @@ fi
 
 
 # Set the name of the log file to include the current date and time
-LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_pacman.log"
+LOG="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/installer/install-$(date +%d-%H%M%S)_pacman.log"
 
 echo -e "${NOTE} Adding ${MAGENTA}Extra Spice${RESET} in pacman.conf ... ${RESET}" 2>&1 | tee -a "$LOG"
 pacman_conf="/etc/pacman.conf"

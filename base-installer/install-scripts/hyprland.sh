@@ -25,7 +25,7 @@ if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
 fi
 
 # Set the name of the log file to include the current date and time
-LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_hyprland.log"
+LOG="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/installer/install-$(date +%d-%H%M%S)_hyprland.log"
 
 # Check if Hyprland is installed
 if command -v Hyprland >/dev/null 2>&1; then

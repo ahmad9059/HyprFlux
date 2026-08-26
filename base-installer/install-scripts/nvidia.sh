@@ -27,7 +27,7 @@ fi
 
 
 # Set the name of the log file to include the current date and time
-LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_nvidia.log"
+LOG="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/installer/install-$(date +%d-%H%M%S)_nvidia.log"
 
 
 # nvidia stuff

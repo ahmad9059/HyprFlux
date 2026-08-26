@@ -351,6 +351,17 @@ All logs now live in ONE place: **`~/HyprFlux/logs/`**
 
 **Final install experience:** single clean flow — keyring init → one `-Syu` → batched package install (fast, progress spinner) → AUR packages (prebuilt awww + per-pkg builds with deps) → single config deploy → 16 modules → unified logs. Clean `[OK]/[NOTE]/[WARN]/[ERROR]` messages throughout, no emojis, consistent colors.
 
+## VM test review (2026-08-26) — /home/ahmad/test.md
+
+**Verdict: install completed end-to-end.** All 16 modules ran, 73-package batch install worked (one transaction + 6 build tools), all 12 AUR packages installed, prebuilt awww installed (no source build), GPU detected Intel (VM) → Mesa env, monitor fallback worked (headless → 1920x1080), reboot prompt reached.
+
+**3 bugs found & fixed:**
+1. **`tee: /installer/install-..._yay.log: No such file or directory`** — `HYPRFLUX_LOGS_DIR` was set in install.sh but NOT exported; child scripts run via `env` got empty var → path `/installer/`. Fixed: `export` in install.sh + `${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}` fallback in ALL 17 install-scripts + ISO `run_as_user` now exports it explicitly. This was the ONLY real failure in the log.
+2. **rofi self-conflict** — `rofi` was in BOTH the install list and the uninstall list in 01-hypr-pkgs.sh. Fresh installs worked (uninstall skipped), but re-runs would remove+reinstall. Dots actively use rofi (MOD+D launcher, KeyBinds.sh, RofiBeats.sh, window rule) → removed from uninstall list (kept rofi-lbonn-wayland* variants).
+3. **WARN color red→yellow** in 6 remaining files (yay.sh, paru.sh, uninstall.sh, assets/hyprland-install/*) — now uniform yellow everywhere.
+
+**Non-issues observed:** transient mirror 404 on debugedit (pacman retried, succeeded); kulala.nvim submodule fmt warning (plugin-side, non-fatal); papirus-folders hook warning (then set cyan OK); GRUB cmdline preserved VM's nomodeset/console params while adding quiet+splash (correct token-safe append); monitor fallback warning expected on headless VM.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

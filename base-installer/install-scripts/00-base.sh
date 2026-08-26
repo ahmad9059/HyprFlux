@@ -22,7 +22,7 @@ if ! source "$(dirname "$(readlink -f "$0")")/Global_functions.sh"; then
 fi
 
 # Set the name of the log file to include the current date and time
-LOG="$HYPRFLUX_LOGS_DIR/installer/install-$(date +%d-%H%M%S)_base.log"
+LOG="${HYPRFLUX_LOGS_DIR:-$HOME/HyprFlux/logs}/installer/install-$(date +%d-%H%M%S)_base.log"
 
 # Installation of main components with pacman
 echo -e "\nInstalling ${SKY_BLUE}base-devel${RESET} and ${SKY_BLUE}archlinux-keyring${RESET}..."
