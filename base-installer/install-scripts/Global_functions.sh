@@ -92,6 +92,11 @@ install_package() {
     ) >> "$LOG" 2>&1 &
     PID=$!
     show_progress $PID "$1"
+    # CRITICAL: wait for the install to actually finish before verifying.
+    # Without this, a spinner that exits early (any reason) makes us check
+    # while yay is still running -> false failure + next package hits a
+    # locked pacman DB.
+    wait $PID 2>/dev/null
 
     # Double check if package is installed
     if $ISAUR -Q "$1" &>> /dev/null ; then

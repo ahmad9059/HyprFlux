@@ -482,6 +482,15 @@ Built an execution sandbox: a fake chroot (stub binaries log every command; stat
 3. **Failure diagnostics** — per-package install failures now print the last 15 lines of the install log so the failing package/reason is visible in the TUI instead of a bare error.
 4. **Root-cause candidates pending user log:** (a) sudo auth failing in chroot → every install fails; (b) one conflicting package killing the whole transaction; (c) mirror/network flake. Chunking + timeouts + diagnostics now cover (b)/(c) and expose (a) clearly.
 
+## test-qemu.sh UX: clipboard + hidden menubar (2026-08-26)
+
+1. **Host→guest copy/paste** (two mechanisms, mock-verified in the assembled command):
+   - `--serial` flag (new): attaches the guest console to the terminal (`-serial stdio -monitor none` in GTK modes) — paste in your terminal goes straight into the guest; the installer auto-launches on ttyS0 so the TUI is fully drivable this way. Works with any display mode.
+   - **SPICE vdagent channel** (always on): `virtio-serial-pci` + `qemu-vdagent,clipboard=on` + `com.redhat.spice.0` port — real clipboard sharing for graphical sessions inside the guest.
+   - Live ISO now ships `spice-vdagent` + `spice-vdagentd.service` enabled (packages.x86_64 + multi-user.target.wants) so the guest agent runs after install.
+2. **Menubar hidden**: GTK modes use `-display gtk,gl=on,show-menubar=off,show-tabs=off` (and `gtk,show-menubar=off` for software mode).
+3. `--help` documents `--serial`.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
