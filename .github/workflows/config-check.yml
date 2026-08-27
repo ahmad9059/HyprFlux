@@ -55,7 +55,10 @@ jobs:
           export XDG_RUNTIME_DIR="/tmp/hypr-runtime"
           mkdir -p "$XDG_RUNTIME_DIR"
           chmod 700 "$XDG_RUNTIME_DIR"
-          Hyprland --config .config/hypr/hyprland.lua --verify-config
+          # --i-am-really-stupid: CI runs inside the container as root and
+          # Hyprland refuses superuser launches without it (verify-config
+          # only parses the config — it does not start a compositor).
+          Hyprland --config .config/hypr/hyprland.lua --verify-config --i-am-really-stupid
           echo "Hyprland verify-config OK"
 
       - name: Shell syntax check (merged installers + scripts)
