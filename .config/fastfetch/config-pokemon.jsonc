@@ -3,8 +3,8 @@
  "logo": {
  "source": "~/.config/fastfetch/hyprflux-logo.png",
  "type": "kitty",
-  "height": 5,
-  "width": 10,
+  "height": 9,
+  "width": 18,
   "padding": {
     "top": 1
     }
