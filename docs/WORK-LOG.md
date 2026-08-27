@@ -472,6 +472,16 @@ Built an execution sandbox: a fake chroot (stub binaries log every command; stat
 - AUR build-tools batch "failures" = stdbuf-on-script-stub artifact (real yay is a binary — proven working in the real VM install earlier)
 - module warnings (TPM missing, gsettings schema, refined theme) = stub-created dirs, not real repos
 
+## Batch-install hardening (2026-08-26) — QEMU test reported batch failure + broken state after
+
+**Reported:** the 73-package one-transaction step fails in the chroot, and everything after it is broken (subsequent installs fail). The exact error is pending from the user's iso-wrapper.log.
+
+**Shipped hardening (all syntax-verified):**
+1. **Chunked transactions** — `install_package_batch` now installs in chunks of ~15 packages per yay transaction instead of all-73-in-one. A single bad/conflicting package aborts an entire yay transaction, so the blast radius is now one chunk; the existing per-package fallback retries the rest. Each chunk reports its number and failure exit.
+2. **Hang-guard timeouts** — `timeout 3600` on every yay install (batch chunks + per-package). Prevents a hung yay (e.g., sudo waiting for a password on the TTY-less chroot, or a stalled mirror) from freezing the install forever. 1h is hang-only — safe for slow source builds (waybar-git etc.).
+3. **Failure diagnostics** — per-package install failures now print the last 15 lines of the install log so the failing package/reason is visible in the TUI instead of a bare error.
+4. **Root-cause candidates pending user log:** (a) sudo auth failing in chroot → every install fails; (b) one conflicting package killing the whole transaction; (c) mirror/network flake. Chunking + timeouts + diagnostics now cover (b)/(c) and expose (a) clearly.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
