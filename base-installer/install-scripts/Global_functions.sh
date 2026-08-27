@@ -88,17 +88,19 @@ install_package() {
     echo -e "${INFO} ${MAGENTA}$1${RESET} is already installed. Skipping..."
   else
     (
-      stdbuf -oL $ISAUR -S --noconfirm "$1" 2>&1
+      stdbuf -oL timeout 3600 $ISAUR -S --noconfirm "$1" 2>&1
     ) >> "$LOG" 2>&1 &
     PID=$!
-    show_progress $PID "$1"  
-    
+    show_progress $PID "$1"
+
     # Double check if package is installed
     if $ISAUR -Q "$1" &>> /dev/null ; then
       echo -e "${OK} Package ${YELLOW}$1${RESET} has been successfully installed!"
     else
       # Something is missing, exiting to review log
       echo -e "\n${ERROR} ${YELLOW}$1${RESET} failed to install :( , please check the install.log. You may need to install manually! Sorry I have tried :("
+      echo -e "${INFO} Last 15 lines of the install log:" 
+      tail -15 "$LOG" 2>/dev/null | sed 's/^/    /'
     fi
   fi
 }
@@ -118,16 +120,39 @@ install_package_batch() {
     echo -e "${OK} All packages already installed."
     return 0
   fi
-  echo -e "${INFO} Installing ${#todo[@]} packages in one transaction (batched)..."
-  (
-    stdbuf -oL $ISAUR -S --noconfirm --needed "${todo[@]}" 2>&1
-  ) >> "$log" 2>&1 &
-  PID=$!
-  show_progress $PID "${#todo[@]} packages"
-  wait $PID 2>/dev/null
-  local rc=$?
 
-  # Verify the batch result
+  # Chunked transactions: a single failing package aborts a whole yay -S
+  # transaction, so split the list (~15 per chunk) — a bad package can only
+  # take down its own chunk, and the per-package fallback retries the rest.
+  local chunk_size=15
+  local chunk=()
+  local chunk_no=0
+  local any_failed=0
+  local i=0
+
+  for pkg in "${todo[@]}"; do
+    chunk+=("$pkg")
+    i=$((i + 1))
+    if [ ${#chunk[@]} -ge $chunk_size ] || [ "$i" -eq "${#todo[@]}" ]; then
+      chunk_no=$((chunk_no + 1))
+      echo -e "${INFO} Installing chunk ${chunk_no} (${#chunk[@]} packages, transaction ${chunk_no}/$(( (${#todo[@]} + chunk_size - 1) / chunk_size )))..."
+
+      (
+        stdbuf -oL timeout 3600 $ISAUR -S --noconfirm --needed "${chunk[@]}" 2>&1
+      ) >> "$log" 2>&1 &
+      PID=$!
+      show_progress $PID "packages (chunk ${chunk_no})"
+      wait $PID 2>/dev/null
+      local rc=$?
+      if [ $rc -ne 0 ]; then
+        any_failed=1
+        echo -e "\n${ERROR} Chunk ${chunk_no} failed (exit ${rc}) — the per-package fallback will retry each one."
+      fi
+      chunk=()
+    fi
+  done
+
+  # Verify the whole batch result
   local still_missing=()
   for pkg in "$@"; do
     $ISAUR -Q "$pkg" &>> /dev/null || still_missing+=("$pkg")
