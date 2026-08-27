@@ -521,6 +521,19 @@ ASCII-previewed the logo (crest + HYPRFLUX wordmark + tagline) — content is co
 
 **Net effect:** chroot AUR step fails → desktop still gets every package at first login. No single step can leave a broken install.
 
+## First-boot emergency-mode fix (2026-08-26)
+
+**Symptom:** install completes → reboot → `[FAILED] Failed to start Cleaning Up and Shutting Down Daemons` + "You are in emergency mode" + "root account is locked".
+
+**Root causes (2 real bugs):**
+1. **Initramfs missing disk modules**: mkinitcpio's `autodetect` hook can omit virtio/NVMe/SATA modules when the initramfs is rebuilt inside the chroot → kernel can't find the root device at boot → systemd drops to emergency mode (the "Cleaning Up" message is the failed-root-mount shutdown transition).
+2. **Silent root chpasswd failure**: the whole step-9 config subshell runs with `set +e`, so a failed `chpasswd` left pacstrap's LOCKED root shadow (`root:!...`) with no error — the user was locked out of the emergency console too.
+
+**Fixes:**
+1. `MODULES=(virtio_blk virtio_pci virtio_scsi nvme ahci)` written into the target's /etc/mkinitcpio.conf + an immediate `mkinitcpio -P` rebuild in step 9 (module 09 also rebuilds later — belt & braces).
+2. Root + user `chpasswd` now VERIFIED with hard `exit 1` on failure (no more silent swallow), plus `passwd -u root` unlock.
+3. **Bootability verification before reboot**: after the wrapper completes, the installer greps the target's `/boot/grub/grub.cfg` for `root=UUID=` and reports OK or a clear warning — the user is told BEFORE rebooting whether the system will boot.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
