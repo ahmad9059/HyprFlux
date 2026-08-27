@@ -491,6 +491,19 @@ Built an execution sandbox: a fake chroot (stub binaries log every command; stat
 2. **Menubar hidden**: GTK modes use `-display gtk,gl=on,show-menubar=off,show-tabs=off` (and `gtk,show-menubar=off` for software mode).
 3. `--help` documents `--serial`.
 
+## fastfetch logo fix (2026-08-26)
+
+**Problem:** logo rendered HUGE/messed up — the source was 3622x3688px and `type: kitty-direct` renders at native pixel size (ignores cell height/width); the default config.jsonc had no dimensions at all.
+
+**Fixes:**
+1. **Pre-scaled logo**: `utilities/logos/hyprflux-logo-new.png` (3622x3688) → `~/.config/fastfetch/hyprflux-logo.png` at **220x224** (Lanczos, 8-bit, 67KB) — sane for terminal rendering.
+2. **`type: kitty-direct` → `type: kitty`** in all 4 configs — fastfetch now scales the image to the configured cell box instead of pixel-native.
+3. **Dimensions set everywhere**: config.jsonc got height 10 / width 22 (was missing entirely — the main culprit); compact 10x20, v2 15x30, pokemon 5x10.
+4. **config-v2.jsonc bug found**: source/type lines were still COMMENTED (`//` prefix from the original file — the regex replaced inside the comment). Uncommented.
+5. All 4 configs re-validated (full JSONC stripper with block comments); parity synced.
+
+ASCII-previewed the logo (crest + HYPRFLUX wordmark + tagline) — content is correct; rendering was the issue.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
