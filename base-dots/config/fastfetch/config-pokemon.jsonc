@@ -1,8 +1,10 @@
 {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
  "logo": {
-  "height": 5,
-  "width": 10,
+ "source": "~/.config/fastfetch/hyprflux-logo.png",
+ "type": "kitty",
+  "height": 9,
+  "width": 18,
   "padding": {
     "top": 1
     }
