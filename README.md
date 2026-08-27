@@ -249,6 +249,6 @@ This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
 
 **Built and maintained by [ahmad9059](https://github.com/ahmad9059)**
 
-**If HyprFlux helped you, consider starring the repository.**
+**If HyprFlux helped you, consider starring the repository. **
 
 </div>
