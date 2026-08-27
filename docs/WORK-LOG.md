@@ -504,6 +504,23 @@ Built an execution sandbox: a fake chroot (stub binaries log every command; stat
 
 ASCII-previewed the logo (crest + HYPRFLUX wordmark + tagline) — content is correct; rendering was the issue.
 
+## AUR-failure layered fix (2026-08-26) — definitive recovery architecture
+
+**Symptom (recurring):** in the ISO chroot, official-repo packages install fine, but EVERY chaotic-aur + AUR package fails instantly ("everything broken after"). Exact error never captured from the VM (log-tail lines were cut in paste).
+
+**Root-cause investigation (rootless sandbox reproductions — bwrap + fresh keyring + real chaotic + real yay + real network):**
+- Fresh keyring + chaotic key + chaotic packages + `pacman -Sy` + mpvpaper/vscode-bin visible in the DB: **all WORK** in a chroot-like environment
+- yay resolves mpvpaper + vscode-bin from the sync DBs (both in chaotic-aur) and reaches the install step — the failure is at the final `sudo pacman` stage, which bwrap's NO_NEW_PRIVS blocks (sandbox artifact — cannot be the real chroot's failure since NOPASSWD is in place there)
+- Key reproduction finding: **chaotic-aur DB URL is `https://geo-mirror.chaotic.cx/$repo/$arch` (NO doubled repo path)** — a mis-written mirrorlist produces exactly the observed instant 404 failures
+
+**Shipped (definitive recovery architecture — the install can no longer be broken by the AUR step):**
+1. **Chroot AUR attempt kept** but non-fatal; wrapper A4b post-check prints the real yay error from the install log into the TUI.
+2. **Permanent narrow sudoers rule** `/etc/sudoers.d/hyprflux-pacman`: `USER ALL=(ALL) NOPASSWD: /usr/bin/pacman` (the standard AUR-helper pattern, same as CachyOS) — survives cleanup, so yay works in the desktop session.
+3. **First-boot AUR install is now the PRIMARY path**: the autostart fixup installs ALL 12 AUR packages in the desktop session (full network, real user session, passwordless pacman). Any that succeeded in the chroot are skipped. Previously the retry sourced 01-hypr-pkgs.sh (re-running the whole script) — rewritten to an explicit list.
+4. Clock-forcing fix (step 9) stays — PGP validity windows fail on wrong clocks.
+
+**Net effect:** chroot AUR step fails → desktop still gets every package at first login. No single step can leave a broken install.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
