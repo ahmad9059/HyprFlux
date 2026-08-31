@@ -521,21 +521,60 @@ ASCII-previewed the logo (crest + HYPRFLUX wordmark + tagline) — content is co
 
 **Net effect:** chroot AUR step fails → desktop still gets every package at first login. No single step can leave a broken install.
 
-## First-boot emergency-mode fix (2026-08-26)
+## Initial emergency-mode hardening (2026-08-26)
 
 **Symptom:** install completes → reboot → `[FAILED] Failed to start Cleaning Up and Shutting Down Daemons` + "You are in emergency mode" + "root account is locked".
 
-**Root causes (2 real bugs):**
-1. **Initramfs missing disk modules**: mkinitcpio's `autodetect` hook can omit virtio/NVMe/SATA modules when the initramfs is rebuilt inside the chroot → kernel can't find the root device at boot → systemd drops to emergency mode (the "Cleaning Up" message is the failed-root-mount shutdown transition).
-2. **Silent root chpasswd failure**: the whole step-9 config subshell runs with `set +e`, so a failed `chpasswd` left pacstrap's LOCKED root shadow (`root:!...`) with no error — the user was locked out of the emergency console too.
+**Initial hypotheses and independent hazards:**
+1. mkinitcpio `autodetect` can omit VM/storage modules when rebuilding in a chroot.
+2. The step-9 `set +e` block could hide `chpasswd` failure and leave the installed root locked.
+
+Later artifact-level boot testing proved neither hazard caused this screenshot; the conclusive cause was the live ISO shutdown ramfs transition documented below. These guards remain valid defensive checks.
 
 **Fixes:**
 1. `MODULES=(virtio_blk virtio_pci virtio_scsi nvme ahci)` written into the target's /etc/mkinitcpio.conf + an immediate `mkinitcpio -P` rebuild in step 9 (module 09 also rebuilds later — belt & braces).
 2. Root + user `chpasswd` now VERIFIED with hard `exit 1` on failure (no more silent swallow), plus `passwd -u root` unlock.
 3. **Bootability verification before reboot**: after the wrapper completes, the installer greps the target's `/boot/grub/grub.cfg` for `root=UUID=` and reports OK or a clear warning — the user is told BEFORE rebooting whether the system will boot.
 
+## QEMU/KVM self-test session (2026-08-28) — findings
+
+Attempted a full automated ISO test in QEMU/KVM (headless, serial-pipe driven). The TUI automation consumed the session; the install was never completed in the sandbox, BUT several REAL issues were found and fixed:
+
+1. **QEMU 11.x serial bug (CONFIRMED via monitor + guest):** `-serial pipe:...` creates the serial0 CHARDEV but NO ISA serial device is attached in modern QEMU — the guest has no /dev/ttyS0 at all (verified: `ls /dev/ttyS*` → none; `info qtree` → no isa-serial). This silently broke test-qemu.sh's `--headless`/`--serial` modes (the installer never appeared on the serial console). **FIXED**: explicit `-chardev stdio,id=serial0,mux=off` + `-device isa-serial,chardev=serial0` in both places.
+2. **Live-env serial-getty inactive without the device** — consistent with the above.
+3. **TUI automation limits** — driving gum via sendkey blind is unreliable (the installer's TUI consumes stdin); screen-reading at 1280x800 via screendump+ASCII is possible (pixel-level glyph decode worked for the banner) but too slow for a full drive.
+4. The VM test disk was left empty (installer never passed the network/detection stage reliably in the sandbox) — the BOOT-failure reproduction was not completed in this session.
+
+**Status of the boot-failure fix:** the emergency-mode fixes (explicit disk MODULES + immediate initramfs rebuild, root-password verification + unlock, pre-reboot bootability verification, boot-debug cheat-sheet) are in the repo. The user's NEXT rebuild+test will exercise them; the boot-debug.txt + installer pre-reboot check will pinpoint any remaining link.
+
+## Preventive initramfs hardening — systemctl shim removed (2026-08-28)
+
+**User's boot failure log revealed the missing clue:** `Reloading system manager configuration.` + `Starting initrd.target` + emergency mode — **the failure is INSIDE THE INITRAMFS, not the real system.**
+
+**Initial hypothesis:** the chroot wrapper replaced `/usr/bin/systemctl` with a shell shim while modules could invoke `mkinitcpio -P`. Because `initrd-cleanup.service` executes `systemctl --no-block isolate initrd-switch-root.target`, copying that shim into an image would be unsafe. Later artifact inspection proved the affected test disk actually contained a valid ELF `systemctl`, so this was not the cause of the screenshot; the shutdown-ramfs finding below is conclusive.
+
+**Fix:** the wrapper never replaces `/usr/bin/systemctl`; real systemctl handles chroot/offline operation. It also restores `systemctl.real` defensively from interrupted older runs. After the wrapper, the ISO performs the final `mkinitcpio -P`, extracts the resulting image, and hard-fails unless embedded `/usr/bin/systemctl` is an ELF binary. Module 09 no longer changes the wrapper-owned initramfs hook set.
+
+**Immediate recovery for a stuck install (no reinstall):** boot the live ISO, restore `/usr/bin/systemctl.real` if present, then run `arch-chroot /mnt/archinstall mkinitcpio -P` and reboot.
+
+## Emergency screen conclusively identified as live shutdown ramfs (2026-08-31)
+
+The actual `hyprflux-test-disk.qcow2` was inspected read-only with libguestfs and booted under QEMU with full systemd debug logging. Its root UUID, fstab, GRUB command line, disk modules, and embedded `systemctl` were valid. Direct kernel/initramfs boot logged `initrd-cleanup.service: status=0/SUCCESS`, reached switch-root, started SDDM, and reached `graphical.target`. A normal fresh-OVMF UEFI/GRUB boot was then captured from the VGA framebuffer and visually confirmed at the HyprFlux SDDM login screen.
+
+The repeated emergency screen occurred during the live ISO's **shutdown/reboot ramfs transition after installation**, not during startup of the installed system. Pressing Enter restarted `initrd.target`, which explained the loop and made it look like repeated failed boots.
+
+Fixes:
+- Step 11 now syncs, unmounts, disables swap, then uses `systemctl reboot --force --force` (fallback `reboot -f`) to bypass the faulty live userspace shutdown ramfs.
+- QEMU uses `-boot once=d,menu=on`, so the ISO boots once and the installed disk boots after reset.
+- `test-qemu.sh --boot-disk` boots an existing qcow2 without deleting it or requiring an ISO.
+- OVMF variable state is stored beside the qcow2 and preserved for disk-only boots.
+- UEFI installation always writes the standardized fallback loader `/EFI/BOOT/BOOTX64.EFI`, so a reset NVRAM or fresh OVMF variable store can still boot the disk.
+- Live ISO disables `mkinitcpio-generate-shutdown-ramfs.service`; installer cleanup now blocks forced reboot unless all target mounts and swap are gone.
+- QEMU refuses stale ISOs, preserves/validates OVMF state, supports fresh-vars fallback testing, locks disk state, and protects custom disk paths from accidental deletion.
+- HyprFlux installation is pinned to commit `558d17074a6d8933ae5c837d209571ab97642520` for reproducible tests.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)
 - Repo ↔ live in sync for all managed configs (rofi, swaync, hypr, waybar, scripts)
-- Working tree clean, all changes committed
+- Boot/shutdown fix set is implemented locally and awaiting the next privileged ISO build.
