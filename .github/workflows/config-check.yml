@@ -89,10 +89,18 @@ jobs:
 
       - name: sync-colors up-to-date check
         run: |
+          COLOR_OUTPUTS=".config/hypr/hyprflux-colors.lua
+          .config/rofi/hyprflux-colors.rasi
+          .config/waybar/hyprflux-colors.css
+          .config/kitty/kitty-colors.conf
+          .config/foot/colors.ini
+          .config/swaync/style.css
+          .config/wlogout/style.css"
+          BEFORE=$(sha256sum $COLOR_OUTPUTS)
           bash utilities/sync-colors.sh >/dev/null
-          if ! git diff --exit-code --quiet; then
+          AFTER=$(sha256sum $COLOR_OUTPUTS)
+          if [ "$BEFORE" != "$AFTER" ]; then
             echo "::error::Generated color files are out of date — run utilities/sync-colors.sh and commit the changes."
-            git diff --stat
             exit 1
           fi
           echo "Color files up to date"
