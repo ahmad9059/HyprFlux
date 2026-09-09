@@ -3,6 +3,7 @@ name: Config check
 on:
   push:
     paths:
+      - ".github/workflows/config-check.yml"
       - ".config/hypr/**"
       - "utilities/sync-colors.sh"
       - ".config/waybar/**"
@@ -15,6 +16,7 @@ on:
 
   pull_request:
     paths:
+      - ".github/workflows/config-check.yml"
       - ".config/hypr/**"
       - "utilities/sync-colors.sh"
       - ".config/waybar/**"
@@ -35,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed hyprland lua
+          pacman -S --noconfirm --needed diffutils hyprland lua
 
       - name: Checkout
         uses: actions/checkout@v4
