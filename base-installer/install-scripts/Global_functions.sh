@@ -96,18 +96,57 @@ install_package() {
     # Without this, a spinner that exits early (any reason) makes us check
     # while yay is still running -> false failure + next package hits a
     # locked pacman DB.
-    wait $PID 2>/dev/null
+    local install_rc=0
+    wait $PID 2>/dev/null || install_rc=$?
 
     # Double check if package is installed
     if $ISAUR -Q "$1" &>> /dev/null ; then
       echo -e "${OK} Package ${YELLOW}$1${RESET} has been successfully installed!"
+      return 0
     else
       # Something is missing, exiting to review log
       echo -e "\n${ERROR} ${YELLOW}$1${RESET} failed to install :( , please check the install.log. You may need to install manually! Sorry I have tried :("
       echo -e "${INFO} Last 15 lines of the install log:" 
       tail -15 "$LOG" 2>/dev/null | sed 's/^/    /'
+      [ "$install_rc" -ne 0 ] && return "$install_rc"
+      return 1
     fi
   fi
+}
+
+# Prefer repository binaries, then force an AUR PKGBUILD build if a mirror
+# package exists but cannot be downloaded (for example, from Chaotic-AUR).
+install_aur_package() {
+  local pkg="$1"
+  local log="${2:-$LOG}"
+  local aur_helper=""
+  local install_rc=0
+
+  install_package "$pkg" && return 0
+
+  aur_helper=$(command -v yay || command -v paru || true)
+  if [ -z "$aur_helper" ]; then
+    echo -e "${ERROR} No AUR helper is available for the source fallback of ${YELLOW}${pkg}${RESET}."
+    return 1
+  fi
+
+  echo -e "${WARN} Repository install failed for ${YELLOW}${pkg}${RESET}; retrying from the AUR PKGBUILD."
+  (
+    stdbuf -oL timeout 3600 "$aur_helper" -S --aur --needed --noconfirm "$pkg" 2>&1
+  ) >> "$log" 2>&1 &
+  PID=$!
+  show_progress "$PID" "$pkg (AUR fallback)"
+  wait "$PID" 2>/dev/null || install_rc=$?
+
+  if pacman -Q "$pkg" &>/dev/null; then
+    echo -e "${OK} Package ${YELLOW}${pkg}${RESET} has been installed from AUR!"
+    return 0
+  fi
+
+  echo -e "${ERROR} ${YELLOW}${pkg}${RESET} also failed through the AUR fallback."
+  tail -15 "$log" 2>/dev/null | sed 's/^/    /'
+  [ "$install_rc" -ne 0 ] && return "$install_rc"
+  return 1
 }
 
 # Batch-install many packages in ONE transaction (official repo packages).

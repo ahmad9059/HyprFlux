@@ -162,8 +162,14 @@ unset _bt
 
 printf "\n%s - Installing ${SKY_BLUE}HyprFlux AUR packages${RESET} .... \n" "${NOTE}"
 
+aur_install_failed=0
 for PKG2 in "${hypr_aur_package[@]}"; do
-  install_package "$PKG2" "$LOG"
+  install_aur_package "$PKG2" "$LOG" || aur_install_failed=1
 done
 
 printf "\n%.0s" {1..2}
+
+if [ "$aur_install_failed" -ne 0 ]; then
+  echo -e "${WARN} Some AUR packages remain missing after repository and AUR fallback attempts."
+  exit 1
+fi
