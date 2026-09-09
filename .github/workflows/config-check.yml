@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed diffutils hyprland lua python
+          pacman -S --noconfirm --needed diffutils git hyprland lua python
 
       - name: Checkout
         uses: actions/checkout@v4
