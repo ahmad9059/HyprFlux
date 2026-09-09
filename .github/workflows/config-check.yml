@@ -80,7 +80,7 @@ jobs:
       - name: base-dots config parity check
         run: |
           # base-dots/config must mirror .config/ (merged-repo contract)
-          if ! diff -rq .config base-dots/config >/tmp/parity.diff; then
+          if ! diff -rq --no-dereference .config base-dots/config >/tmp/parity.diff; then
             echo "::error::base-dots/config is out of sync with .config/ — copy .config/ over it and commit."
             cat /tmp/parity.diff
             exit 1
