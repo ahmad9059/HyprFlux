@@ -9,6 +9,7 @@
 [![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?style=flat-square&logo=arch-linux&logoColor=fff)](https://archlinux.org/)
 [![Hyprland](https://img.shields.io/badge/Hyprland-00D9FF?style=flat-square&logo=wayland&logoColor=fff)](https://hyprland.org/)
 [![Shell Script](https://img.shields.io/badge/Shell_Script-121011?style=flat-square&logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![Latest Release](https://img.shields.io/github/v/release/ahmad9059/HyprFlux?style=flat-square)](https://github.com/ahmad9059/HyprFlux/releases/latest)
 [![GitHub stars](https://img.shields.io/github/stars/ahmad9059/HyprFlux?style=flat-square&logo=github)](https://github.com/ahmad9059/HyprFlux/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/ahmad9059/HyprFlux?style=flat-square&logo=github)](https://github.com/ahmad9059/HyprFlux/network/members)
 
@@ -64,6 +65,15 @@ Current ISO capabilities include:
 - automatic and manual partitioning modes
 - online installation flow with target-system provisioning
 - QEMU test tooling and CI-based ISO builds
+
+Download the latest production ISO and its SHA256 checksum from the
+[HyprFlux releases page](https://github.com/ahmad9059/HyprFlux/releases/latest).
+
+Verify the download before writing it to USB:
+
+```bash
+sha256sum -c hyprflux-*.iso.sha256
+```
 
 In this repository, the ISO work currently lives under `references/Hyprflux-ISO/` as a companion project reference while the main HyprFlux repository continues to own the desktop stack, assets, modules, and platform layer.
 
