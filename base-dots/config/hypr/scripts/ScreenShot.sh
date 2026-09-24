@@ -37,18 +37,6 @@ notify_view() {
             "${sDIR}/Sounds.sh" --error
         fi
 
-    elif [[ "$1" == "swappy" ]]; then
-		"${sDIR}/Sounds.sh" --screenshot
-		resp=$(${notify_cmd_shot} " Screenshot:" " Captured by Swappy")
-		case "$resp" in
-			action1)
-				swappy -f - <"$tmpfile"
-				;;
-			action2)
-				rm "$tmpfile"
-				;;
-		esac
-
     else
         local check_file="${dir}/${file}"
         if [[ -e "$check_file" ]]; then
@@ -126,15 +114,24 @@ shotactive() {
     notify_view "active"
 }
 
-shotswappy() {
-	tmpfile=$(mktemp)
-	grim -g "$(slurp)" - >"$tmpfile" 
+shotsavearea() {
+	local geometry screenshot_path
 
-  # Copy without saving
-  if [[ -s "$tmpfile" ]]; then
-		wl-copy <"$tmpfile"
-    notify_view "swappy"
-  fi
+	# Cancelling slurp is a normal action; do not create an empty screenshot.
+	geometry=$(slurp) || return 0
+	[[ -n "$geometry" ]] || return 0
+
+	screenshot_path="${dir}/${file}"
+
+	# Save the selected area immediately and copy the saved image to the clipboard.
+	if ! grim -g "$geometry" "$screenshot_path" || [[ ! -s "$screenshot_path" ]]; then
+		rm -f "$screenshot_path"
+		${notify_cmd_NOT} " Screenshot" " Capture failed"
+		return 1
+	fi
+	wl-copy <"$screenshot_path"
+
+	notify-send -u low -i image-x-generic " Screenshot saved" "$screenshot_path"
 }
 
 if [[ ! -d "$dir" ]]; then
@@ -153,10 +150,10 @@ elif [[ "$1" == "--area" ]]; then
 	shotarea
 elif [[ "$1" == "--active" ]]; then
 	shotactive
-elif [[ "$1" == "--swappy" ]]; then
-	shotswappy
+elif [[ "$1" == "--save-area" ]]; then
+	shotsavearea
 else
-	echo -e "Available Options : --now --in5 --in10 --win --area --active --swappy"
+	echo -e "Available Options : --now --in5 --in10 --win --area --active --save-area"
 fi
 
 exit 0

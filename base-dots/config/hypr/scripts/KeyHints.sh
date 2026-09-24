@@ -77,7 +77,7 @@ GDK_BACKEND=$BACKEND yad \
   "SUPER + CTRL + Print"   "Screenshot (5s delay)" \
   "SUPER + CTRL + SHIFT + Print" "Screenshot (10s delay)" \
   "ALT + Print"            "Screenshot (active window)" \
-  "SUPER + SHIFT + S"      "Screenshot (swappy)" \
+  "SUPER + SHIFT + S"      "Screenshot (select area and save)" \
   "SUPER + F6"             "Screenshot (laptop, now)" \
   "SUPER + SHIFT + F6"     "Screenshot (laptop, area)" \
   "" "" \
