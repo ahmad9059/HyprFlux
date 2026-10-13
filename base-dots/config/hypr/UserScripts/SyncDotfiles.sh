@@ -49,20 +49,7 @@ echo -e "Local changes synced to repo..."
 
 # === Apply custom modifications before commit/push ===
 
-# 1. Modify kb_options in user-settings.lua (Hyprland >= 0.55)
-USERS_CONF="$REPO_DIR/.config/hypr/UserConfigs/user-settings.lua"
-if [ -f "$USERS_CONF" ]; then
-  sed -i 's/kb_options = "ctrl:nocaps"/kb_options = ""/' "$USERS_CONF"
-fi
-
-# 2. Update hyprlock.conf label block (LC_TIME and font_family)
-HYPR_CONF="$REPO_DIR/.config/hypr/hyprlock.conf"
-if [ -f "$HYPR_CONF" ]; then
-  sed -i 's/LC_TIME=ur_PK.UTF-8/LC_TIME=en_US.UTF-8/' "$HYPR_CONF"
-  sed -i 's/Noto Nastaliq Urdu/SF Pro Display Semibold/' "$HYPR_CONF"
-fi
-
-# 3. Break the Waybar symlinks so they can be recreated later
+# 1. Break the Waybar symlinks so they can be recreated later
 WAYBAR_CONFIG="$REPO_DIR/.config/waybar/config"
 WAYBAR_STYLE="$REPO_DIR/.config/waybar/style.css"
 if [ -L "$WAYBAR_CONFIG" ]; then

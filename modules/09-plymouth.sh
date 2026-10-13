@@ -27,6 +27,63 @@ _plymouth_dest="/usr/share/plymouth/themes"
 _plymouth_theme_dest="$_plymouth_dest/$_plymouth_theme_name"
 _mkinitcpio_conf="/etc/mkinitcpio.conf"
 _grub_conf="/etc/default/grub"
+_grub_cmdline=""
+
+# Insert "plymouth" into the HOOKS array at the correct position: after udev
+# (else systemd, else base). Plymouth MUST come after those — placing it first
+# makes mkinitcpio warn that the hook cannot find the shell it runs with and
+# the theme never appears. Idempotent: re-places it if already present.
+_plymouth_ensure_hook() {
+  local conf="$1"
+  [[ -f "$conf" ]] || { log_warn "$conf not found — cannot enable plymouth hook."; return 0; }
+
+  local hooks
+  hooks="$(grep -E '^[[:space:]]*HOOKS=\(' "$conf" | head -n1 \
+           | sed -E 's/^[[:space:]]*HOOKS=\(//; s/\).*$//')"
+  if [[ -z "$hooks" ]]; then
+    log_warn "Could not parse HOOKS= in $conf — cannot enable plymouth hook."
+    return 0
+  fi
+
+  # Drop any existing plymouth token so it can be re-placed correctly.
+  local cleaned="" h
+  for h in $hooks; do
+    [[ "$h" == "plymouth" ]] && continue
+    cleaned+="$h "
+  done
+  cleaned="${cleaned% }"
+
+  # Anchor: after udev, else systemd, else base.
+  local anchor="" cand
+  for cand in udev systemd base; do
+    for h in $cleaned; do
+      [[ "$h" == "$cand" ]] && { anchor="$cand"; break; }
+    done
+    [[ -n "$anchor" ]] && break
+  done
+
+  local new="" placed=0
+  for h in $cleaned; do
+    new+="$h "
+    if [[ "$placed" -eq 0 && -n "$anchor" && "$h" == "$anchor" ]]; then
+      new+="plymouth "
+      placed=1
+    fi
+  done
+  [[ "$placed" -eq 1 ]] || new="plymouth $new"
+  new="${new% }"
+
+  if [[ "$new" == "$hooks" ]]; then
+    log_info "Plymouth hook already correctly placed in HOOKS."
+    return 0
+  fi
+
+  if sudo sed -i -E "s|^[[:space:]]*HOOKS=\(.*|HOOKS=($new)|" "$conf"; then
+    log_ok "Plymouth hook placed after ${anchor:-the first hook} in HOOKS."
+  else
+    log_warn "Failed to update HOOKS in $conf — add 'plymouth' manually."
+  fi
+}
 
 # 2. Archive present + valid?
 if [[ ! -f "$_plymouth_theme_archive" ]]; then
@@ -74,22 +131,9 @@ if [[ ! -f "$_plymouth_theme_dest/$_plymouth_theme_name.plymouth" ]]; then
 fi
 log_ok "Theme '$_plymouth_theme_name' installed."
 
-# 6. Enable Plymouth in mkinitcpio (duplicate-safe: only add once)
+# 6. Enable Plymouth in mkinitcpio at the correct position (after base/udev).
 if [[ -f "$_mkinitcpio_conf" ]]; then
-  if grep -q 'plymouth' "$_mkinitcpio_conf"; then
-    # Ensure it's an actual HOOKS entry, not just a comment/mention
-    if grep -qE '^HOOKS=\([^)]*plymouth' "$_mkinitcpio_conf"; then
-      log_info "Plymouth hook already present in HOOKS."
-    else
-      log_action "Adding plymouth hook to HOOKS..."
-      sudo sed -i 's/^HOOKS=(/HOOKS=(plymouth /' "$_mkinitcpio_conf"
-      log_ok "Plymouth hook added."
-    fi
-  else
-    log_action "Adding plymouth hook to HOOKS..."
-    sudo sed -i 's/^HOOKS=(/HOOKS=(plymouth /' "$_mkinitcpio_conf"
-    log_ok "Plymouth hook added."
-  fi
+  _plymouth_ensure_hook "$_mkinitcpio_conf"
 else
   log_warn "$_mkinitcpio_conf not found — cannot enable plymouth hook."
 fi
@@ -146,7 +190,63 @@ else
   log_warn "$_grub_conf not found — skipping GRUB config update."
 fi
 
-# 9. Rebuild initramfs (so the plymouth hook + theme take effect)
+# 8b. Unified kernel images (UKIs) ignore GRUB_CMDLINE_LINUX_DEFAULT.
+#     GRUB's 10_linux prefers a UKI in /boot/EFI/Linux/ and boots it with the
+#     cmdline embedded at build time, so kernel options must live in
+#     /etc/kernel/cmdline (read by mkinitcpio's uki presets). Detect a UKI
+#     setup and merge the GRUB cmdline (plus quiet/splash and the cursor
+#     setting) into /etc/kernel/cmdline so the Plymouth theme actually shows.
+_kernel_cmdline="/etc/kernel/cmdline"
+_has_uki=0
+if compgen -G "/boot/EFI/Linux/*.efi" >/dev/null 2>&1; then _has_uki=1; fi
+if grep -qE '^[[:space:]]*(default_uki|fallback_uki)=' /etc/mkinitcpio.d/*.preset 2>/dev/null; then
+  _has_uki=1
+fi
+
+if [[ "$_has_uki" -eq 1 ]]; then
+  log_action "Unified kernel image detected — configuring /etc/kernel/cmdline..."
+
+  # Neutralize any baked-in Arch logo splash in the mkinitcpio preset so the
+  # HyprFlux Plymouth theme is the only boot splash.
+  for _preset in /etc/mkinitcpio.d/*.preset; do
+    [[ -f "$_preset" ]] || continue
+    if grep -qE '^[^#]*--splash([= ])' "$_preset" 2>/dev/null; then
+      sudo sed -i -E 's|^([^#]*--splash.*)$|# &   # hyprflux: disabled (plymouth theme is used)|' "$_preset" \
+        && log_ok "Disabled preset boot-splash in $_preset."
+    fi
+  done
+
+  if [[ ! -e "$_kernel_cmdline" ]]; then
+    log_warn "$_kernel_cmdline not found — skipping (cannot safely create it)."
+  else
+    # Preserve everything already there (e.g. root=UUID=...), then add the
+    # missing tokens. Never drops existing tokens.
+    _kc_current="$(tr '\n' ' ' < "$_kernel_cmdline" 2>/dev/null || true)"
+    _new_kc=""
+    for _tok in $_kc_current quiet splash vt.global_cursor_default=0 $_grub_cmdline; do
+      [[ -z "$_tok" ]] && continue
+      case " $_new_kc " in
+        *" $_tok "*) ;;
+        *) _new_kc+="$_tok " ;;
+      esac
+    done
+    _new_kc="${_new_kc% }"
+
+    if [[ "$_new_kc" != "$_kc_current" && -n "$_new_kc" ]]; then
+      if printf '%s\n' "$_new_kc" | sudo tee "$_kernel_cmdline" >/dev/null; then
+        log_ok "/etc/kernel/cmdline updated: '$_new_kc'"
+      else
+        log_warn "Failed to update $_kernel_cmdline."
+      fi
+    else
+      log_info "/etc/kernel/cmdline already has the required options."
+    fi
+  fi
+else
+  log_info "Classic initramfs (no UKI) — /etc/default/grub controls boot options."
+fi
+
+
 log_action "Rebuilding initramfs..."
 if sudo mkinitcpio -P >/dev/null 2>&1; then
   log_ok "Initramfs rebuilt successfully."
@@ -158,4 +258,6 @@ log_ok "Plymouth with theme '$_plymouth_theme_name' is ready! Reboot to see it."
 
 unset _plymouth_theme_archive _plymouth_theme_dir _plymouth_theme_name _plymouth_dest
 unset _plymouth_theme_dest _mkinitcpio_conf _grub_conf _grub_cmdline
+unset _kernel_cmdline _has_uki _preset _kc_current _new_kc _tok
+unset -f _plymouth_ensure_hook 2>/dev/null || true
 return 0

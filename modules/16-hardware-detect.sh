@@ -511,19 +511,33 @@ _hd_write_temperature() {
   #   "hwmon-path": [                    <- this line + following entries
   #       "/sys/...",                    <- old entries
   #   ]                                   <- array close
-  # becomes a single-line array. Sed range replace is used.
-  _HD_TMP="$(mktemp)"
-  # 1. If the new path is ALREADY present, nothing to do.
-  if grep -q "hwmon-path.*$sensor" "$wb_file" 2>/dev/null; then
-    rm -f "$_HD_TMP"
+  # becomes a single-line array.
+  #
+  # IMPORTANT: the replacement MUST end with a comma. The array is collapsed
+  # to one line and the property that follows it in the temperature object
+  # requires that comma — omitting it makes waybar fail to start with
+  # "Error parsing JSON ... Missing ',' or '}'".
+  #
+  # Always (re)write, even if the sensor is already present: this repairs any
+  # earlier malformed write. The rewrite is idempotent.
+  if ! grep -q '"hwmon-path"' "$wb_file" 2>/dev/null; then
+    log_warn "No hwmon-path block found in $wb_file — leaving temperature config unchanged."
     return 0
   fi
-  # 2. Replace from the "hwmon-path": [ line through its closing ] line.
-  sed -i '/"hwmon-path": \[/,/\]/c\
-\t"hwmon-path": [ "'"$sensor"'" ]' "$wb_file" 2>/dev/null \
-    || { rm -f "$_HD_TMP"; log_warn "temperature path write failed (sed). Skipping."; return 0; }
-  rm -f "$_HD_TMP"
-  _HD_TMP=""
+
+  if ! sed -i '/"hwmon-path": \[/,/\]/c\
+\t"hwmon-path": [ "'"$sensor"'" ],' "$wb_file" 2>/dev/null; then
+    log_warn "temperature path write failed (sed). Skipping."
+    return 0
+  fi
+
+  # Sanity-check the result: exactly the canonical single-line array with a
+  # trailing comma. Warn (never fatal) if it looks wrong.
+  if grep -qE '^[[:space:]]*"hwmon-path":[[:space:]]*\[[^]]*\],[[:space:]]*$' "$wb_file"; then
+    log_ok "Waybar temperature sensor set to $sensor."
+  else
+    log_warn "temperature hwmon-path rewrite looks malformed — check $wb_file."
+  fi
 }
 
 # ------------------------------------------------------------------

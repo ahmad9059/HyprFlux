@@ -573,6 +573,34 @@ Fixes:
 - QEMU refuses stale ISOs, preserves/validates OVMF state, supports fresh-vars fallback testing, locks disk state, and protects custom disk paths from accidental deletion.
 - HyprFlux installation is pinned to commit `558d17074a6d8933ae5c837d209571ab97642520` for reproducible tests.
 
+## Post-install bug batch — fresh-install fallout (2026-10-13)
+
+Issues found on a freshly installed HyprFlux system and fixed in the repo so they
+no longer occur on install (the live tree already had manual workarounds; the
+repo is now the source of truth again):
+
+| # | Symptom | Root cause | Repo fix |
+|---|---|---|---|
+| 1 | Waybar would not start: `Error parsing JSON: Line 10, Column 2 – Missing ',' or '}'` | `modules/16-hardware-detect.sh` collapsed the multi-line `hwmon-path` array to a single line **without the trailing comma** | rewrite now emits `"hwmon-path": [ "<sensor>" ],`; always rewrites (repairs an earlier malformed write) and sanity-checks the result |
+| 2 | Waybar warned the `disk` `path` option is outdated | `path` (string) is deprecated in favour of `paths` (array) | `.config/waybar/Modules`: `"paths": ["/"]` |
+| 3 | Waybar clock disabled when the bar is started from a terminal | `.zshrc` force-exported `LC_TIME` to a machine-specific (Pakistani/Urdu) locale that is not installed | removed the `LC_TIME` line entirely — regional time now comes from `/etc/locale.conf` (set by the installer); also added `EDITOR`/`VISUAL` defaults |
+| 4 | Caps Lock was remapped to Ctrl on the live machine only | `user-settings.lua` shipped `kb_options = "ctrl:nocaps"` (a personal preference), and `SyncDotfiles.sh` also rewrote it plus an `ur_PK`/`Noto Nastaliq Urdu` hyprlock transform | `user-settings.lua` → `kb_options = ""`; removed those personal rewrite steps from `SyncDotfiles.sh` (no more Pakistan/Urdu/`ctrl:nocaps` references anywhere in the repo) |
+| 4 | Cursor showed Hyprland's default instead of the bundled Bibata | `HYPRCURSOR_THEME` env alone was not applied by the running compositor | `UserConfigs/startup-apps.lua` now runs `hyprctl setcursor Bibata-Modern-Classic 24` at start |
+| 5 | Yazi ran plain `nvim`/`xdg-open` with no file | `yazi.toml` used the removed `"$@"`/`"$1"` placeholders (yazi 26 uses `%s`/`%sN`/`%dN`) | `.config/yazi/yazi.toml` openers migrated to the yazi 26 placeholders |
+| 6 | `SUPER+SHIFT+S` (save-area) had no Open/Delete buttons; Open opened Loupe, not swappy | `--save-area` used a plain `notify-send`; `notify_view` used `xdg-open` | `ScreenShot.sh`: `--save-area` now calls the shared `notify_view`, and Open launches `swappy -f <file>` for **all** screenshot shortcuts |
+| 7 | Boot showed the Arch logo instead of the HyprFlux Plymouth theme (UKI system) | `modules/09-plymouth.sh` **prepended** `plymouth` to `HOOKS` (before `base`); `/etc/default/grub` is ignored because GRUB boots the UKI `/boot/EFI/Linux/arch-linux.efi` and reads `/etc/kernel/cmdline`; the preset baked in `--splash …/splash-arch.bmp` | module 09 now inserts `plymouth` **after** `udev`/`systemd`/`base`, detects UKIs, merges `quiet splash` + `vt.global_cursor_default=0` + the GRUB cmdline into `/etc/kernel/cmdline` (preserving existing tokens), and disables any preset `--splash` boot image |
+
+Validated: `bash -n` (modules 09/16, ScreenShot.sh), `luac -p`
+(startup-apps.lua), `tomllib` (yazi.toml), JSONC parse of waybar `Modules`,
+sandbox run of module 16 (writes the comma-terminated line, exit 0), unit tests
+of the hook-placement and cmdline-merge logic under **bash** (matching how
+`dotsSetup.sh` sources modules), and `.config` ↔ `base-dots/config` parity.
+
+**Not fixable from this repo (ISO/firmware level):** UEFI boot order
+(`efibootmgr -o`, GRUB first), stale GRUB menu entries, and the `UEFI OS (EFI
+BootNext)` self-referential entry. These live in `HyprFlux-ISO` (grub-install +
+`efibootmgr`) and the firmware NVRAM.
+
 ## Current state
 
 - **Live session runs the Lua config** (verified `dispatcher: __lua`)

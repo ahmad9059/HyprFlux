@@ -27,7 +27,7 @@ hl.config({
         kb_layout = "us",
         kb_variant = "",
         kb_model = "",
-        kb_options = "ctrl:nocaps", -- live machine value (repo default: unset)
+        kb_options = "",
         kb_rules = "",
         repeat_rate = 50,
         repeat_delay = 300,

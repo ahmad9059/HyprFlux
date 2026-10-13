@@ -26,7 +26,7 @@ notify_view() {
             resp=$(timeout 5 ${notify_cmd_shot_win} " Screenshot of:" " ${active_window_class} Saved.")
             case "$resp" in
 				action1)
-					xdg-open "${active_window_path}" &
+					swappy -f "${active_window_path}" &
 					;;
 				action2)
 					rm "${active_window_path}" &
@@ -44,7 +44,7 @@ notify_view() {
             resp=$(timeout 5 ${notify_cmd_shot} " Screenshot" " Saved")
 			case "$resp" in
 				action1)
-					xdg-open "${check_file}" &
+					swappy -f "${check_file}" &
 					;;
 				action2)
 					rm "${check_file}" &
@@ -131,7 +131,9 @@ shotsavearea() {
 	fi
 	wl-copy <"$screenshot_path"
 
-	notify-send -u low -i image-x-generic " Screenshot saved" "$screenshot_path"
+	# Same "Screenshot saved" notification with Open/Delete buttons (and the
+	# screenshot sound) as the other screenshot shortcuts. Open launches swappy.
+	notify_view
 }
 
 if [[ ! -d "$dir" ]]; then

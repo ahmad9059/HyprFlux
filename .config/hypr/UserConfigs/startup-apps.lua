@@ -39,6 +39,11 @@ hl.on("hyprland.start", function()
     -- hl.exec_cmd("rog-control-center")
     hl.exec_cmd("waybar")
 
+    -- Cursor theme: HYPRCURSOR_THEME in env-variables.lua is not always picked
+    -- up by a running compositor, so set the bundled Bibata hyprcursor
+    -- explicitly at every start (no-op if the theme/command is unavailable).
+    hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 24")
+
     -- clipboard manager
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")

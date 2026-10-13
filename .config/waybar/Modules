@@ -164,7 +164,7 @@
 "disk": {
 	"interval": 30,
 	//"format": "󰋊",
-	"path": "/",
+	"paths": ["/"],
 	//"format-alt-click": "click",
 	"format": "{percentage_used}% 󰋊",
 	//"tooltip": true,

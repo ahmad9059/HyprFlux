@@ -30,31 +30,31 @@ ueberzug_offset = [ 0, 0, 0, 0 ]
 
 [opener]
 edit = [
-	{ run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
-	{ run = 'code %*',    orphan = true, desc = "code",           for = "windows" },
-	{ run = 'code -w %*', block = true,  desc = "code (block)",   for = "windows" },
+	{ run = '${EDITOR:-nvim} %s', desc = "$EDITOR", block = true, for = "unix" },
+	{ run = 'code %s',    orphan = true, desc = "code",           for = "windows" },
+	{ run = 'code -w %s', block = true,  desc = "code (block)",   for = "windows" },
 ]
 open = [
-	{ run = 'xdg-open "$1"',                desc = "Open", for = "linux" },
-	{ run = 'open "$@"',                    desc = "Open", for = "macos" },
-	{ run = 'start "" "%1"', orphan = true, desc = "Open", for = "windows" },
-	{ run = 'termux-open "$1"',             desc = "Open", for = "android" },
+	{ run = 'xdg-open %s1',                 desc = "Open", for = "linux" },
+	{ run = 'open %s',                      desc = "Open", for = "macos" },
+	{ run = 'start "" "%s1"', orphan = true, desc = "Open", for = "windows" },
+	{ run = 'termux-open %s1',              desc = "Open", for = "android" },
 ]
 reveal = [
-	{ run = 'xdg-open "$(dirname "$1")"',           desc = "Reveal", for = "linux" },
-	{ run = 'open -R "$1"',                         desc = "Reveal", for = "macos" },
-	{ run = 'explorer /select,"%1"', orphan = true, desc = "Reveal", for = "windows" },
-	{ run = 'termux-open "$(dirname "$1")"',        desc = "Reveal", for = "android" },
-	{ run = '''clear; exiftool "$1"; echo "Press enter to exit"; read _''', block = true, desc = "Show EXIF", for = "unix" },
+	{ run = 'xdg-open %d1',                         desc = "Reveal", for = "linux" },
+	{ run = 'open -R %s1',                          desc = "Reveal", for = "macos" },
+	{ run = 'explorer /select,"%s1"', orphan = true, desc = "Reveal", for = "windows" },
+	{ run = 'termux-open %d1',                      desc = "Reveal", for = "android" },
+	{ run = '''clear; exiftool %s1; echo "Press enter to exit"; read _''', block = true, desc = "Show EXIF", for = "unix" },
 ]
 extract = [
-	{ run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix" },
-	{ run = 'ya pub extract --list %*',   desc = "Extract here", for = "windows" },
+	{ run = 'ya pub extract --list %s', desc = "Extract here", for = "unix" },
+	{ run = 'ya pub extract --list %s', desc = "Extract here", for = "windows" },
 ]
 play = [
-	{ run = 'vlc --play-and-exit "$@"', orphan = true, for = "unix" },
-	{ run = 'vlc --play-and-exit %*', orphan = true, for = "windows" },
-	{ run = '''mediainfo "$1"; echo "Press enter to exit"; read _''', block = true, desc = "Show media info", for = "unix" },
+	{ run = 'vlc --play-and-exit %s', orphan = true, for = "unix" },
+	{ run = 'vlc --play-and-exit %s', orphan = true, for = "windows" },
+	{ run = '''mediainfo %s1; echo "Press enter to exit"; read _''', block = true, desc = "Show media info", for = "unix" },
 ]
 [open]
 rules = [

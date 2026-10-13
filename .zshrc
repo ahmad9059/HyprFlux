@@ -89,7 +89,10 @@ setopt appendhistory
 
 
 # exports
-export LC_TIME=ur_PK.UTF-8
+# Default terminal editor (used by yazi and other tools); never clobbers a
+# value you already exported yourself.
+export EDITOR="${EDITOR:-nvim}"
+export VISUAL="${VISUAL:-$EDITOR}"
 export PATH="$HOME/.tmuxifier/bin:$PATH"
 export LIBVIRT_DEFAULT_URI='qemu:///system'
 eval "$(zoxide init zsh)"
