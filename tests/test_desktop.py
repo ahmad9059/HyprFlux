@@ -11,6 +11,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DesktopTests(unittest.TestCase):
+    def test_redundant_deprecated_scale_is_absent_from_both_sources(self):
+        primary = ROOT / '.config/hypr/UserConfigs/user-settings.lua'
+        mirror = ROOT / 'base-dots/config/hypr/UserConfigs/user-settings.lua'
+        self.assertEqual(primary.read_bytes(), mirror.read_bytes())
+        self.assertNotIn('special_scale_factor =', primary.read_text())
+
     def test_foot_config_and_base_dots_match(self):
         for name in ('foot.ini', 'colors.ini'):
             self.assertEqual((ROOT / '.config/foot' / name).read_bytes(),

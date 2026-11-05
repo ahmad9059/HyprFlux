@@ -10,7 +10,6 @@ hl.config({
         -- pseudotile was removed in Hyprland 0.55 (did nothing)
         preserve_split = true,
         -- smart_split = true,
-        special_scale_factor = 1,
     },
     master = {
         new_status = "master",

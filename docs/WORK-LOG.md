@@ -23,6 +23,10 @@ Complete log of all work done on this repository. See `docs/plan/` for the migra
   parity, virtual versus physical GPU behavior, cyan links/hook installation,
   dependency failures and repeated SDDM theme installation. Config-check CI runs
   them for normal and ISO-consumed source changes.
+- Removed the redundant/deprecated `special_scale_factor = 1` from both source
+  trees rather than having the ISO strip it. A source-parity regression covers
+  this too (eight tests total). The hardware module already preserves Waybar's
+  hwmon comma, so the ISO only needs to validate JSONC, not repair it.
 
 The ISO should pin this published revision, run the modules unchanged, and keep
 validation/chroot adaptations only. Existing ISO/VM passes are historical
