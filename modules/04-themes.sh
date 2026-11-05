@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# modules/05-themes.sh — GTK themes, icons, and cursors
+# modules/04-themes.sh — GTK themes, icons, and cursors
 # ============================================================
 should_skip "themes" && return 0
 
@@ -18,17 +18,20 @@ fi
 # ====== Icons (Papirus) ======
 # Installed via pacman directly (official repo) — no AUR helper needed.
 log_action "Installing 'papirus-icon-theme' via pacman..."
-if sudo pacman -S --needed --noconfirm papirus-icon-theme papirus-folders; then
+if sudo pacman -S --needed --noconfirm papirus-icon-theme; then
   log_ok "'papirus-icon-theme' installed successfully."
 
   # Set folder color to cyan for Papirus-Dark
   log_action "Setting Papirus folders to cyan (Papirus-Dark)."
-  if command -v papirus-folders &>/dev/null; then
-    papirus-folders -C cyan --theme Papirus-Dark
-    log_ok "Papirus folders set to cyan (Papirus-Dark)."
-  fi
+  sudo install -Dm755 "$REPO_DIR/utilities/papirus-cyan.sh" \
+    /usr/local/libexec/hyprflux-papirus-cyan || return 1
+  sudo install -Dm644 "$REPO_DIR/config/pacman-hooks/hyprflux-papirus-cyan.hook" \
+    /etc/pacman.d/hooks/hyprflux-papirus-cyan.hook || return 1
+  sudo /usr/local/libexec/hyprflux-papirus-cyan || return 1
+  log_ok "Papirus folders set to cyan (Papirus-Dark); upgrade hook installed."
 else
   log_error "Failed to install 'papirus-icon-theme'."
+  return 1
 fi
 
 # ====== Cursor theme (Future Black) ======

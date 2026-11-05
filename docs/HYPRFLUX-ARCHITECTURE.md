@@ -213,7 +213,8 @@ All go through `install_package` (yay — handles pacman + AUR in one pass).
 ## 3.5 modules/04-themes.sh
 
 - Copies `.themes/*` → `~/.themes/` (HyprFlux-Compact, Material-DeepOcean-BL)
-- Papirus: `pacman -S papirus-icon-theme papirus-folders`, then `papirus-folders -C cyan --theme Papirus-Dark`
+- Papirus: official `papirus-icon-theme`; module 04 installs the shared
+  `utilities/papirus-cyan.sh` helper and upgrade hook, then verifies cyan links.
 - Cursors: extracts `utilities/Future-black-cursors.tar.gz` → `~/.icons/`
 
 ## 3.6 modules/05-waybar.sh

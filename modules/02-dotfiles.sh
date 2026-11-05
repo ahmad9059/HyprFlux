@@ -44,6 +44,10 @@ if [[ -d "$REPO_DIR/.config" ]]; then
   chmod +x "$HOME/.config/hypr/UserScripts/"* 2>/dev/null || true
   chmod +x "$HOME/.config/hypr/initial-boot.sh" 2>/dev/null || true
   chmod +x "$HOME/.tmuxifier/layouts/"* 2>/dev/null || true
+
+  # Shared by normal and ISO installs. Never replace the packaged Kitty binary.
+  sudo install -Dm755 "$REPO_DIR/utilities/kitty-launcher.sh" /usr/local/bin/kitty || return 1
+  foot --check-config || { log_error 'Invalid HyprFlux Foot configuration.'; return 1; }
 else
   log_error "'$REPO_DIR/.config' does not exist. Dotfiles not copied."
   return 1

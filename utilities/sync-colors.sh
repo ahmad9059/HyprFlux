@@ -180,18 +180,18 @@ FOOT="$REPO_DIR/.config/foot/colors.ini"
   echo "# Single source: hyprflux-colors.conf (\$term_* section)"
   echo "# Included from foot.ini — do not edit by hand."
   echo ""
-  echo "[colors]"
-  echo "background=#$(hex "${COLORS[term_background]}")"
-  echo "foreground=#$(hex "${COLORS[term_foreground]}")"
+  echo "[colors-dark]"
+  echo "background=$(hex "${COLORS[term_background]}")"
+  echo "foreground=$(hex "${COLORS[term_foreground]}")"
   echo ""
   echo "## Normal/regular colors (color palette 0-7)"
   for i in 0 1 2 3 4 5 6 7; do
-    echo "regular$i=#$(hex "${COLORS[term_color$i]}")"
+    echo "regular$i=$(hex "${COLORS[term_color$i]}")"
   done
   echo ""
   echo "## Bright colors (color palette 8-15)"
   for i in 8 9 10 11 12 13 14 15; do
-    echo "bright$i=#$(hex "${COLORS[term_color$i]}")"
+    echo "bright$((i - 8))=$(hex "${COLORS[term_color$i]}")"
   done
 } > "$FOOT"
 echo "generated: foot/colors.ini"

@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = papirus-icon-theme
+
+[Action]
+Description = Restoring HyprFlux cyan Papirus folders...
+When = PostTransaction
+Exec = /usr/local/libexec/hyprflux-papirus-cyan

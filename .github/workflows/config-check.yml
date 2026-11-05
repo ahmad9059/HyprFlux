@@ -13,6 +13,11 @@ on:
       - ".config/foot/**"
       - "base-installer/**"
       - "base-dots/**"
+      - "modules/**"
+      - "utilities/kitty-launcher.sh"
+      - "utilities/papirus-cyan.sh"
+      - "config/pacman-hooks/**"
+      - "tests/**"
 
   pull_request:
     paths:
@@ -26,6 +31,11 @@ on:
       - ".config/foot/**"
       - "base-installer/**"
       - "base-dots/**"
+      - "modules/**"
+      - "utilities/kitty-launcher.sh"
+      - "utilities/papirus-cyan.sh"
+      - "config/pacman-hooks/**"
+      - "tests/**"
   workflow_dispatch:
 
 jobs:
@@ -37,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed diffutils git hyprland lua python
+          pacman -S --noconfirm --needed diffutils git hyprland lua python foot
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,6 +60,9 @@ jobs:
           done < <(find .config/hypr -name '*.lua' -print0)
           [ $FAIL -eq 0 ] || exit 1
           echo "All Lua configs parse OK"
+
+      - name: Shared desktop regression checks
+        run: python -m unittest discover -s tests -v
 
       - name: Hyprland config verification
         run: |

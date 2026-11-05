@@ -4,6 +4,30 @@ Complete log of all work done on this repository. See `docs/plan/` for the migra
 
 ---
 
+## 2026-11-06 — Desktop fixes owned by HyprFlux, not the ISO
+
+- Foot's main include now uses `~/.config/foot/colors.ini`; its palette and
+  generator use `colors-dark`, unprefixed hex colors and bright0..7. Both config
+  trees match. Preserve alpha 0.80 and request blur explicitly (`blur=yes`).
+- Module 02 installs the shared Kitty launcher to `/usr/local/bin/kitty` and
+  validates Foot. Kitty alone uses software rendering on VirtIO DRM devices;
+  the packaged binary is intact, user overrides are honored, and child shells
+  do not inherit the automatic rendering override.
+- Module 04 installs official `papirus-icon-theme`, applies its existing cyan
+  folder variants as root, and installs a pacman hook to restore cyan on upgrade.
+  No unavailable `papirus-folders` package or ISO sed adaptation is required.
+- Module 06 owns the SDDM theme's Qt dependencies, including qt6-5compat for
+  Qt5Compat.GraphicalEffects. Theme copying is repeatable rather than nesting
+  another theme directory on each run; package failures propagate.
+- Seven regression tests cover real Foot parsing, generator freshness, config
+  parity, virtual versus physical GPU behavior, cyan links/hook installation,
+  dependency failures and repeated SDDM theme installation. Config-check CI runs
+  them for normal and ISO-consumed source changes.
+
+The ISO should pin this published revision, run the modules unchanged, and keep
+validation/chroot adaptations only. Existing ISO/VM passes are historical
+evidence, not fresh-image certification after changing the upstream pin.
+
 ## 1. Migration: hyprlang (.conf) → Lua (Hyprland ≥ 0.55)
 
 **Why:** Hyprland 0.56.2 (installed) dropped hyprlang — a Lua config is mandatory; the old `.conf` shows a deprecation notice and is ignored.
