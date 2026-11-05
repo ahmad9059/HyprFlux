@@ -18,6 +18,7 @@ on:
       - "utilities/papirus-cyan.sh"
       - "config/pacman-hooks/**"
       - "tests/**"
+      - "scripts/verify-hyprland-config.sh"
 
   pull_request:
     paths:
@@ -36,6 +37,7 @@ on:
       - "utilities/papirus-cyan.sh"
       - "config/pacman-hooks/**"
       - "tests/**"
+      - "scripts/verify-hyprland-config.sh"
   workflow_dispatch:
 
 jobs:
@@ -65,16 +67,7 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Hyprland config verification
-        run: |
-          export HOME="${HOME:-/root}"
-          export XDG_RUNTIME_DIR="/tmp/hypr-runtime"
-          mkdir -p "$XDG_RUNTIME_DIR"
-          chmod 700 "$XDG_RUNTIME_DIR"
-          # --i-am-really-stupid: CI runs inside the container as root and
-          # Hyprland refuses superuser launches without it (verify-config
-          # only parses the config — it does not start a compositor).
-          Hyprland --config .config/hypr/hyprland.lua --verify-config --i-am-really-stupid
-          echo "Hyprland verify-config OK"
+        run: bash scripts/verify-hyprland-config.sh
 
       - name: Shell syntax check (merged installers + scripts)
         run: |

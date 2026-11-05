@@ -6,6 +6,14 @@ Complete log of all work done on this repository. See `docs/plan/` for the migra
 
 ## 2026-11-06 — Desktop fixes owned by HyprFlux, not the ISO
 
+Production-check follow-up: Hyprland 0.57.1 headless verification can segfault
+on the first root invocation, even with a minimal config. The CI verifier now
+uses an isolated unprivileged HOME and short private runtime, like the installed
+user, instead of `--i-am-really-stupid`. A real good/bad config test proves that
+parser errors still propagate and do not crash or get retried into success.
+All nine upstream tests pass in the isolated current-Arch container. This changes
+only headless validation, not the user's compositor startup.
+
 - Foot's main include now uses `~/.config/foot/colors.ini`; its palette and
   generator use `colors-dark`, unprefixed hex colors and bright0..7. Both config
   trees match. Preserve alpha 0.80 and request blur explicitly (`blur=yes`).
