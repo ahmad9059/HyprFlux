@@ -1,86 +1,107 @@
 {
   "$schema": "/etc/xdg/swaync/configSchema.json",
+  "ignore-gtk-theme": true,
   "positionX": "right",
   "positionY": "top",
   "layer": "overlay",
-  "control-center-layer": "top",
+  "control-center-layer": "overlay",
+  "control-center-exclusive-zone": true,
   "layer-shell": true,
   "cssPriority": "user",
-  "control-center-margin-top": 5,
-  "control-center-margin-bottom": 0,
-  "control-center-margin-right": 8,
-  "control-center-margin-left": 0,
-  "notification-2fa-action": true,
-  "notification-inline-replies": false,
-  "notification-icon-size": 34,
-  "notification-body-image-height": 300,
-  "notification-body-image-width": 300,
-  "notification-window-width": 350,
-  "timeout": 6,
-  "timeout-low": 3,
-  "timeout-critical": 3,
+  "control-center-margin-top": 10,
+  "control-center-margin-bottom": 12,
+  "control-center-margin-right": 12,
+  "control-center-margin-left": 12,
+  "control-center-width": 378,
+  "control-center-height": 1100,
   "fit-to-screen": false,
-  "control-center-width": 360,
+  "notification-window-width": 400,
+  "notification-window-height": -1,
+  "notification-body-image-height": 200,
+  "notification-body-image-width": 340,
+  "notification-2fa-action": true,
+  "notification-inline-replies": true,
+  "notification-grouping": true,
+  "relative-timestamps": true,
+  "timeout": 8,
+  "timeout-low": 4,
+  "timeout-critical": 0,
   "keyboard-shortcuts": true,
   "image-visibility": "when-available",
-  "transition-time": 200,
+  "transition-time": 180,
   "hide-on-clear": false,
   "hide-on-action": true,
+  "text-empty": "All caught up",
   "script-fail-notify": true,
   "widgets": [
+    "title",
     "dnd",
     "buttons-grid",
+    "volume",
     "mpris",
-    "title",
     "notifications"
   ],
   "widget-config": {
     "title": {
-      "text": "\uf0f3 Notifications",
+      "text": "Notifications",
       "clear-all-button": true,
-      "button-text": "\uede4 Clear"
+      "button-text": "Clear all"
     },
     "dnd": {
-      "text": "Do Not Disturb"
+      "text": "Do not disturb"
     },
-    "label": {
-      "max-lines": 1,
-      "text": "Notification"
+    "notifications": {
+      "vexpand": true
     },
     "mpris": {
-      "image-size": 60,
-      "image-radius": 0
+      "show-album-art": "when-available",
+      "autohide": true,
+      "loop-carousel": false
     },
     "volume": {
-      "label": "\udb81\udd7e"
-    },
-    "backlight": {
-      "label": "\udb80\udcdf"
+      "label": "󰕾",
+      "show-per-app": true,
+      "show-per-app-icon": true,
+      "show-per-app-label": true,
+      "expand-per-app": false,
+      "expand-button-label": "Apps",
+      "collapse-button-label": "Less",
+      "empty-list-label": "No apps playing audio"
     },
     "buttons-grid": {
+      "buttons-per-row": 3,
       "actions": [
         {
-          "label": "\udb81\udc25",
-          "command": "bash -c $HOME/.config/hypr/scripts/Wlogout.sh"
+          "label": "󰌾  Lock",
+          "command": "bash \"$HOME/.config/swaync/actions.sh\" lock"
         },
         {
-          "label": "\udb80\udf3e",
-          "command": "bash -c $HOME/.config/hypr/scripts/LockScreen.sh"
+          "label": "󰐥  Power",
+          "command": "bash \"$HOME/.config/swaync/actions.sh\" power"
         },
         {
-          "label": "\udb80\udf43",
-          "command": "hyprctl dispatch exit"
+          "label": "󰒓  Settings",
+          "command": "bash \"$HOME/.config/swaync/actions.sh\" settings"
         },
         {
-          "label": "\udb80\udc1d",
-          "command": "bash -c $HOME/.config/hypr/scripts/AirplaneMode.sh"
+          "label": "󰖩  Network",
+          "command": "bash \"$HOME/.config/swaync/actions.sh\" network"
         },
         {
-          "label": "\udb81\udf5f",
-          "command": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+          "label": "󰝟  Mute",
+          "type": "toggle",
+          "active": false,
+          "command": "bash \"$HOME/.config/swaync/actions.sh\" mute-output",
+          "update-command": "bash \"$HOME/.config/swaync/actions.sh\" status-output"
+        },
+        {
+          "label": "󰍭  Mic off",
+          "type": "toggle",
+          "active": false,
+          "command": "bash \"$HOME/.config/swaync/actions.sh\" mute-input",
+          "update-command": "bash \"$HOME/.config/swaync/actions.sh\" status-input"
         }
       ]
     }
-  },
-  "control-center-height": 1296
+  }
 }

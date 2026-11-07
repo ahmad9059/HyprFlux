@@ -54,7 +54,10 @@ def screenshot(args):
     finally:
         temporary.unlink(missing_ok=True)
     with final.open('rb') as image:
-        result = subprocess.run(['wl-copy', '--type', 'image/png'], stdin=image, capture_output=True, timeout=10)
+        # wl-copy forks a clipboard owner. Captured stdout/stderr pipes can stay
+        # open in that child, making communicate() wait until clipboard replacement.
+        result = subprocess.run(['wl-copy', '--type', 'image/png'], stdin=image,
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
     if result.returncode:
         raise RuntimeError('Screenshot saved to ' + str(final) + ', but copying to the clipboard failed')
     # Sound/notification failures must not invalidate an already-saved capture.

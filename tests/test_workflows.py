@@ -257,8 +257,11 @@ class WorkflowTests(unittest.TestCase):
                 Path(args[-1]).write_bytes(b'png data')
             return result()
         window = {'class': '../../unsafe/app', 'at': [-10, 20], 'size': [300, 200]}
-        with patch.object(screenshot, 'query', return_value=window), patch.object(screenshot, 'run', side_effect=run), patch.object(screenshot.subprocess, 'run', return_value=result()):
+        with patch.object(screenshot, 'query', return_value=window), patch.object(screenshot, 'run', side_effect=run), patch.object(screenshot.subprocess, 'run', return_value=result()) as copy:
             screenshot.screenshot(['--active'])
+        self.assertNotIn('capture_output', copy.call_args.kwargs)
+        self.assertEqual(copy.call_args.kwargs['stdout'], subprocess.DEVNULL)
+        self.assertEqual(copy.call_args.kwargs['stderr'], subprocess.DEVNULL)
         files = list((self.root / 'Pictures/Screenshots').iterdir())
         self.assertEqual(len(files), 1)
         self.assertEqual(files[0].read_bytes(), b'png data')

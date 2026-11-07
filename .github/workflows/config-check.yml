@@ -49,7 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed diffutils git hyprland lua python foot
+          pacman -S --noconfirm --needed diffutils git hyprland lua python foot swaync python-gobject python-jsonschema
 
       - name: Checkout
         uses: actions/checkout@v4

@@ -12,338 +12,229 @@
 @define-color noti-dnd-text #d20f39;
 @define-color noti-progress #00ffff;
 /* ==== END GENERATED ==== */
-/* SwayNC config  */
+/* GTK 4 / SwayNC 0.12+. Keep the original opaque background, not album-art glass. */
+:root {
+  --cc-bg: @noti-bg;
+  --text-color: @text-color;
+  --text-color-disabled: @noti-fg-dim;
+  --noti-bg-hover: mix(@noti-bg, @text-color, 0.06);
+  --noti-bg-focus: alpha(@color12, 0.14);
+  --noti-border-color: alpha(@text-color, 0.10);
+  --noti-close-bg: mix(@noti-bg, @text-color, 0.08);
+  --noti-close-bg-hover: @noti-close-bg;
+  --bg-selected: @color12;
+  --border-radius: 14px;
+  --notification-icon-size: 40px;
+  --notification-app-icon-size: 16px;
+  --notification-group-icon-size: 22px;
+  --font-size-summary: 14px;
+  --font-size-body: 13px;
+  --notification-shadow: none;
+  --mpris-album-art-icon-size: 64px;
+  --mpris-album-art-shadow: none;
+  --mpris-album-art-overlay: @noti-bg;
+  --mpris-button-hover: alpha(@color12, 0.16);
+  --widget-volume-row-icon-size: 20px;
+}
 
 * {
-  font-family: "JetBrains Mono Nerd Font";
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.control-center .notification-row:focus,
-.control-center .notification-row:hover {
-  opacity: 1;
-  background: @noti-bg;
-  border-radius: 10px;
-}
-
-.notification-row {
-  outline: none;
-}
-
-.notification {
-  /*color: @text-color;*/
-  background: @noti-bg;
-  padding: 7px 7px 7px 0px;
-  border-radius: 10px;
-  border: 1px solid @noti-bg;
-}
-
-.notification-group {
-  background-color: transparent;
-  border-radius: 10px;
-  /* border: 1px solid @noti-fg-dim; */
-}
-.image {
-  margin-right: 12px;
-  margin-left: 15px;
-  border-radius: 12px;
-  padding: 0;
-}
-
-.close-button {
-  background: @noti-close-bg;
-  color: @noti-bg;
-  text-shadow: none;
-  padding: 0;
-  border-radius: 10px;
-  margin-top: 5px;
-  margin-right: 5px;
-}
-
-.close-button:hover {
-  box-shadow: none;
-  background: @noti-close-bg;
-  transition: all 0.15s ease-in-out;
-  border: none;
-}
-
-.notification-action {
-  border-top: none;
-  border-radius: 10px;
-  background: @noti-bg;
-  color: @noti-accent;
-  padding: 0px; /* Reduce container padding */
-  min-height: 0px; /* Remove GTK min height */
-  min-width: 0px; /* Remove GTK min width */
-}
-
-.notification-action label {
-  padding: 0px;
-  margin: 0;
-  font-size: 0.8rem;
-  font-family: monospace;
-  color: @noti-accent;
-}
-
-.notification-default-action {
-  margin: 0;
-  padding: 0;
-  font-size: 0.1rem;
-  border-radius: 10px;
-  background: @noti-bg;
-}
-.notification-default-action:hover,
-.notification-action:hover {
-  color: @text-color;
-  background: @noti-bg;
-}
-
-.notification-default-action:not(:only-child) {
-  border-bottom-left-radius: 7px;
-  border-bottom-right-radius: 7px;
-}
-
-.notification-action:first-child {
-  border-bottom-left-radius: 10px;
-  background: @noti-bg;
-}
-
-.notification-action:last-child {
-  border-bottom-right-radius: 10px;
-  background: @noti-bg;
-}
-
-.inline-reply {
-  margin-top: 8px;
-}
-
-.inline-reply-entry {
-  background: @noti-bg;
-  color: @text-color;
-  caret-color: @text-color;
-  border: 1px solid @noti-bg;
-  border-radius: 10px;
-}
-
-.inline-reply-button {
-  font-size: 0.5rem;
-  margin-left: 4px;
-  background: @noti-bg;
-  border: 1px solid @noti-bg;
-  border-radius: 10px;
-  color: @text-color;
-}
-
-.inline-reply-button:disabled {
-  background: initial;
-  color: @text-color;
-  border: 1px solid transparent;
-}
-
-.inline-reply-button:hover {
-  background: @noti-bg;
-}
-
-.body-image {
-  margin-top: 6px;
-  color: @text-color;
-  border-radius: 10px;
-}
-
-.summary {
-  font-size: 0.9rem;
-  /* font-weight: bold; */
-  background: transparent;
-  color: @text-color;
-  text-shadow: none;
-}
-
-.time {
-  font-size: 0.8rem;
-  /* font-weight: bold; */
-  background: transparent;
-  color: @text-color;
-  text-shadow: none;
-  margin-right: 18px;
-}
-
-.body {
-  font-size: 0.8rem;
-  /* font-weight: bold; */
-  background: transparent;
-  color: @text-color;
+  font-family: "Adwaita Sans", "Noto Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
   text-shadow: none;
 }
 
 .control-center {
   background: @noti-bg;
-  border: 1px solid @noti-bg;
   color: @text-color;
-  border-radius: 10px;
+  border: 1px solid alpha(@color12, 0.30);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 8px 28px alpha(black, 0.30);
 }
 
-.control-center-list {
+.blank-window, .floating-notifications, .control-center-list {
   background: transparent;
 }
 
-.control-center-list-placeholder {
-  opacity: 0.5;
-}
-
-.floating-notifications {
+.widget {
+  margin: 0 0 8px;
+  padding: 10px;
+  border-radius: 12px;
   background: transparent;
 }
 
-.blank-window {
-  background: alpha(black, 0.1);
-}
-
-.widget-title {
-  color: @text-color;
-  background: @noti-bg;
-  padding: 3px 6px;
-  margin: 5px;
-  font-size: 1rem;
-  border-radius: 10px;
-}
-
+.widget-title { padding: 8px 6px 12px; }
+.widget-title > label { font-size: 21px; font-weight: 700; }
 .widget-title > button {
-  font-size: 0.75rem;
+  background: mix(@noti-bg, @text-color, 0.06);
   color: @text-color;
-  border-radius: 10px;
-  background: transparent;
-  border: 0.5px solid @noti-bg;
+  border: 1px solid alpha(@text-color, 0.10);
+  border-radius: 9px;
+  padding: 5px 12px;
+  min-height: 24px;
+  box-shadow: none;
+  font-size: 12px;
+  font-weight: 600;
 }
-
-/* clear button */
-.widget-title > button:hover {
-  background: @text-color;
-  color: @noti-dnd-text;
-}
+.widget-title > button:hover { background: alpha(@noti-close-bg, 0.16); color: @noti-close-bg; }
 
 .widget-dnd {
   background: @noti-bg;
-  padding: 3px 6px;
-  margin: 5px;
-  border-radius: 12px;
-  font-size: 0.5rem;
-  color: @noti-bg;
+  border: 1px solid alpha(@text-color, 0.10);
+  padding: 10px 12px;
 }
-
-.widget-dnd > switch {
-  border-radius: 12px;
-  /* border: 1px solid @noti-progress; */
-  background: @text-color;
-}
-
-.widget-dnd > switch:checked {
-  background: @noti-close-bg;
-}
-
-.widget-dnd > switch slider {
-  background: @noti-bg;
-  border-radius: 12px;
-}
-
-.widget-dnd > switch:checked slider {
-  background: @noti-bg;
-  border-radius: 12px;
-}
-
-.widget-label {
-  margin: 5px;
-}
-
-.widget-label > label {
-  font-size: 1rem;
-  color: @text-color;
-}
-
-.widget-mpris {
-  color: @text-color;
-  background: @noti-bg;
-  padding: 3px 6px;
-  margin: 5px;
-  border-radius: 10px;
-}
-
-.widget-mpris > box > button {
-  border-radius: 10px;
-}
-
-.widget-mpris-player {
-  margin: 5px;
-}
-
-.widget-mpris-title {
-  font-weight: 400;
-  font-size: 1rem;
-}
-
-.widget-mpris-subtitle {
-  font-size: 0.75rem;
-}
-
-.widget-buttons-grid {
-  font-size: large;
-  color: @noti-bg;
-  padding: 2px;
-  margin: 5px;
-  border-radius: 10px;
-  background: @noti-bg;
-}
-
-.widget-buttons-grid > flowbox > flowboxchild > button {
-  margin: 1px;
-  background: @noti-bg;
-  border-radius: 10px;
-  color: @text-color;
-}
-
-/* individual buttons */
-.widget-buttons-grid > flowbox > flowboxchild > button:hover {
-  background: @text-color;
-  color: @noti-bg;
-}
-
-.widget-menubar > box > .menu-button-bar > button {
+.widget-dnd label { color: @text-color; font-size: 14px; font-weight: 500; }
+.widget-dnd switch {
+  background: mix(@noti-bg, @text-color, 0.15);
   border: none;
-  background: transparent;
+  border-radius: 14px;
+  min-width: 40px;
+  min-height: 22px;
 }
-
-.topbar-buttons > button {
+.widget-dnd switch:checked { background: @color12; }
+.widget-dnd switch slider {
+  background: @text-color;
   border: none;
+  border-radius: 12px;
+  min-width: 18px;
+  min-height: 18px;
+  margin: 2px;
+  box-shadow: none;
+}
+
+.widget-buttons-grid { padding: 0; }
+.widget-buttons-grid flowboxchild { padding: 3px; }
+.widget-buttons-grid flowboxchild > button {
+  background: @noti-bg;
+  color: @text-color;
+  border: 1px solid alpha(@text-color, 0.10);
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 9px 4px;
+  min-height: 24px;
+}
+.widget-buttons-grid flowboxchild > button label { font-size: 12px; font-weight: 600; }
+.widget-buttons-grid flowboxchild > button:hover { background: alpha(@color12, 0.12); border-color: alpha(@color12, 0.50); }
+.widget-buttons-grid flowboxchild > button.toggle:checked {
+  background: alpha(@noti-close-bg, 0.12);
+  border-color: alpha(@noti-close-bg, 0.45);
+  color: @noti-close-bg;
+}
+
+.widget-volume { padding: 10px 12px; border: 1px solid alpha(@text-color, 0.10); }
+.widget-volume > box > label { color: @noti-accent; font-size: 18px; }
+.widget-volume button { background: transparent; color: @noti-fg-dim; border: none; box-shadow: none; padding: 4px 6px; }
+.widget-volume button:hover { color: @text-color; background: alpha(@color12, 0.12); }
+.per-app-volume { background: @noti-bg; padding: 4px; margin: 8px 0 0; }
+.per-app-volume label { font-size: 12px; }
+scale { margin: 0 8px; }
+scale trough { background: mix(@noti-bg, @text-color, 0.14); border: none; min-height: 4px; border-radius: 4px; }
+scale highlight { background: @color12; border: none; border-radius: 4px; }
+scale slider { background: @text-color; border: none; border-radius: 8px; min-width: 12px; min-height: 12px; box-shadow: none; }
+
+.widget-mpris { padding: 0; }
+.widget-mpris .widget-mpris-player {
+  margin: 0;
+  border: 1px solid alpha(@text-color, 0.10);
+  border-radius: 12px;
+  background: @noti-bg;
+  box-shadow: none;
+}
+.widget-mpris .widget-mpris-player .mpris-background { opacity: 0; filter: none; }
+.widget-mpris .widget-mpris-player .mpris-overlay { background: @noti-bg; padding: 12px; }
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-album-art { border-radius: 10px; margin-right: 8px; }
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-title { font-size: 14px; font-weight: 600; }
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-subtitle { color: @noti-fg-dim; font-size: 12px; }
+.widget-mpris button { background: transparent; border: none; color: @text-color; box-shadow: none; border-radius: 8px; padding: 6px; }
+.widget-mpris button:hover { background: alpha(@color12, 0.14); }
+.widget-mpris button:disabled { color: @noti-fg-dim; opacity: 0.45; }
+
+.control-center-list-placeholder { color: @noti-fg-dim; opacity: 1; padding: 28px 12px; }
+.control-center-list-placeholder image { -gtk-icon-size: 40px; opacity: 0.70; margin-bottom: 10px; }
+.notification-row { outline: none; background: transparent; }
+.control-center .notification-row .notification-background { padding: 4px 0; }
+.floating-notifications .notification-row .notification-background { padding: 8px 12px; }
+.notification {
+  background: @noti-bg;
+  color: @text-color;
+  border: 1px solid alpha(@text-color, 0.12);
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: none;
+}
+.floating-notifications .notification { border-color: alpha(@color12, 0.40); }
+.notification.critical { border-color: alpha(@noti-close-bg, 0.70); border-left: 3px solid @noti-close-bg; }
+.notification.low { border-color: alpha(@text-color, 0.08); }
+.notification-default-action { background: transparent; color: @text-color; border: none; padding: 12px; margin: 0; box-shadow: none; font-size: 14px; }
+.notification-default-action:hover { background: alpha(@color12, 0.08); }
+.notification-content { padding: 0; background: transparent; }
+.image { margin: 0 10px 0 0; border-radius: 10px; }
+.summary { color: @text-color; font-size: 14px; font-weight: 600; }
+.body { color: @text-color; font-size: 13px; font-weight: 400; }
+.time { color: @noti-fg-dim; font-size: 11px; font-weight: 400; margin-right: 20px; }
+.body-image { border-radius: 10px; margin-top: 10px; background: transparent; }
+.close-button { min-width: 22px; min-height: 22px; margin: 6px; border-radius: 12px; background: mix(@noti-bg, @text-color, 0.10); color: @text-color; box-shadow: none; border: none; }
+.close-button:hover { background: @noti-close-bg; color: @noti-bg; }
+.notification-alt-actions {
+  background: @noti-bg;
+  padding: 6px 8px;
+  border-top: 1px solid alpha(@text-color, 0.08);
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+}
+.notification-action {
   background: transparent;
+  color: @noti-accent;
+  border: none;
+  margin: 0 3px;
+  padding: 0;
+  box-shadow: none;
 }
-
-.notification.low progress,
-.notification.normal progress {
-  background-color: @noti-progress;
-  border-radius: 12.6px;
-}
-
-/* ─── Scrollbar: hidden entirely (wheel scrolling still works) ─── */
-scrollbar {
-  background-color: transparent;
+.notification-action > button {
+  background: @noti-bg;
   background-image: none;
-  border: none;
+  color: @noti-accent;
+  border: 1px solid alpha(@text-color, 0.12);
+  border-radius: 8px;
+  min-height: 28px;
+  padding: 5px 10px;
+  box-shadow: none;
 }
-
-scrollbar > range {
-  background-color: transparent;
-}
-
-scrollbar > range > trough {
-  background-color: transparent;
-  border: none;
-}
-
-scrollbar > range > trough > slider {
-  background-color: transparent;
+.notification-action label { color: @noti-accent; font-size: 12px; font-weight: 600; }
+.notification-action:hover { background: transparent; }
+.notification-action > button:hover { background: mix(@noti-bg, @text-color, 0.06); }
+.notification-action > button:active { background: mix(@noti-bg, @text-color, 0.10); }
+.notification-group { background: transparent; margin: 4px 0; outline: none; }
+.notification-group .notification-group-headers { color: @noti-fg-dim; padding: 4px; }
+.notification-group .notification-group-headers label { font-size: 12px; font-weight: 600; }
+.notification-group.collapsed.not-expanded { opacity: 0.75; }
+.notification-group.collapsed .notification-row .notification { background: @noti-bg; }
+.notification-group button { box-shadow: none; }
+.notification-group:focus .notification { border-color: @color12; }
+.notification-group:focus .notification.critical { border-color: alpha(@noti-close-bg, 0.70); }
+.inline-reply { margin-top: 10px; }
+.inline-reply-entry { background: @noti-bg; color: @text-color; caret-color: @text-color; border: 1px solid alpha(@color12, 0.45); border-radius: 8px; padding: 7px; }
+.inline-reply-button { color: @noti-accent; background: alpha(@color12, 0.10); border: none; border-radius: 8px; padding: 6px 10px; margin-left: 6px; }
+.inline-reply-button:disabled { color: @noti-fg-dim; background: transparent; }
+progressbar trough { background: mix(@noti-bg, @text-color, 0.12); min-height: 4px; border-radius: 4px; border: none; }
+progressbar progress { background: @noti-accent; min-height: 4px; border-radius: 4px; border: none; }
+scrollbar { background: transparent; }
+scrollbar trough { background: transparent; border: none; }
+scrollbar slider { background: alpha(@text-color, 0.15); border: none; border-radius: 4px; min-width: 4px; min-height: 24px; }
+scrollbar slider:hover { background: alpha(@text-color, 0.30); }
+/* Keep scrolling, but hide the panel's scrollbar and its reserved decoration. */
+.control-center scrollbar,
+.control-center scrollbar trough,
+.control-center scrollbar slider {
+  background: transparent;
   background-image: none;
   border: none;
   box-shadow: none;
   min-width: 0;
   min-height: 0;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
 }
+button:focus-visible { outline: 2px solid alpha(@color12, 0.70); outline-offset: -2px; }
