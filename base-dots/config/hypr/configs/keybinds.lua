@@ -26,7 +26,8 @@ hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(scriptsDir .. "/HyprFlux_Quic
 -- workspace uses that layout (avoids "Unknown ... layoutmsg" runtime errors)
 local function layoutMsgIf(layout, msg)
     return function()
-        if hl.get_active_workspace().tiled_layout == layout then
+        local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
+        if workspace and workspace.tiled_layout == layout then
             hl.dispatch(hl.dsp.layout(msg))
         end
     end
@@ -40,7 +41,7 @@ hl.bind(mainMod .. " + CTRL + RETURN", layoutMsgIf("master", "swapwithmaster"))
 hl.bind(mainMod .. " + O", layoutMsgIf("dwindle", "togglesplit")) -- dwindle: toggle split
 
 -- Dwindle Layout
-hl.bind(mainMod .. " + SHIFT + I", hl.dsp.layout("rotatesplit")) -- only works on dwindle layout
+hl.bind(mainMod .. " + SHIFT + I", layoutMsgIf("dwindle", "rotatesplit"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo({ action = "toggle" })) -- dwindle
 
 -- Works on either layout (Master or Dwindle)
@@ -62,10 +63,8 @@ hl.bind("XF86AudioMute", hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --toggle"), {
 hl.bind("XF86Sleep", hl.dsp.exec_cmd("systemctl suspend"), { locked = true }) -- sleep button
 hl.bind("XF86Rfkill", hl.dsp.exec_cmd(scriptsDir .. "/AirplaneMode.sh"), { locked = true }) -- Airplane mode
 
--- media controls using keyboards
--- NOTE: XF86AudioPlayPause is not a valid keysym in the Lua API (it was
--- accepted by hyprlang) — bound via keycode 164 (KEY_PLAYPAUSE) instead.
-hl.bind("code:164", hl.dsp.exec_cmd(scriptsDir .. "/MediaCtrl.sh --pause"), { locked = true })
+-- KEY_PLAYPAUSE maps to XF86AudioPlay in XKB (Linux evdev code + 8).
+-- Do not also bind its XKB keycode: both bindings would toggle playback.
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd(scriptsDir .. "/MediaCtrl.sh --pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd(scriptsDir .. "/MediaCtrl.sh --pause"), { locked = true })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd(scriptsDir .. "/MediaCtrl.sh --nxt"), { locked = true })
@@ -124,13 +123,13 @@ for i = 1, 10 do
     local key = "code:" .. tostring(code)
     hl.bind(mainMod .. " + " .. key,          hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key,  hl.dsp.window.move({ workspace = i }))
-    hl.bind(mainMod .. " + CTRL + " .. key,   hl.dsp.window.move({ workspace = tostring(i) .. " silent" }))
+    hl.bind(mainMod .. " + CTRL + " .. key,   hl.dsp.window.move({ workspace = i, follow = false }))
 end
 
 hl.bind(mainMod .. " + SHIFT + bracketleft",  hl.dsp.window.move({ workspace = "-1" }))   -- brackets [
 hl.bind(mainMod .. " + SHIFT + bracketright", hl.dsp.window.move({ workspace = "+1" }))   -- brackets ]
-hl.bind(mainMod .. " + CTRL + bracketleft",   hl.dsp.window.move({ workspace = "-1 silent" }))
-hl.bind(mainMod .. " + CTRL + bracketright",  hl.dsp.window.move({ workspace = "+1 silent" }))
+hl.bind(mainMod .. " + CTRL + bracketleft",   hl.dsp.window.move({ workspace = "-1", follow = false }))
+hl.bind(mainMod .. " + CTRL + bracketright",  hl.dsp.window.move({ workspace = "+1", follow = false }))
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))

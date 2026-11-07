@@ -1,10 +1,10 @@
 -- HyprFlux — https://github.com/ahmad9059/HyprFlux
 -- Workspace rules (Lua module, Hyprland >= 0.55)
 --
--- Replaces: UserConfigs/WorkSpaceRules (guide only — NOT sourced by hyprland)
--- The file you should edit is ~/.config/hypr/workspaces.lua
--- (managed by nwg-displays). This file exists only as a guide if you want to
--- manage workspace rules manually — require() it from hyprland.lua to enable.
+-- Loaded by hyprland.lua for manually maintained workspace rules.
+-- ~/.config/hypr/workspaces.lua is loaded AFTER this module and is managed
+-- by nwg-displays. For overlapping effects, its later rules take precedence.
+-- Keep generated placement in workspaces.lua; use this file for custom rules.
 --
 -- Wiki: https://wiki.hypr.land/Configuring/Workspace-Rules/
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
-# Wallpaper Effects using ImageMagick (SUPER SHIFT W)
+# Wallpaper Effects using ImageMagick (SUPER CTRL W)
 
 # Variables
 terminal=kitty

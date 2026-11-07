@@ -1,27 +1,14 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
-# Cycle Hyprland layout (Dwindle ↔ Master ↔ Scrolling) on the fly.
-# No runtime unbind/rebind — cycling binds live in the static config
-# (configs/keybinds.lua, layout-aware), so no other binds get clobbered.
+# Cycle only the visible workspace; respect workspace-specific layout rules.
+set -euo pipefail
 
-notif="dialog-information"
-
-LAYOUT=$(hyprctl -j getoption general:layout | jq '.str' | sed 's/"//g')
-
-case $LAYOUT in
-"master")
-    next="scrolling"
-    msg="Scrolling Layout"
-    ;;
-"scrolling")
-    next="dwindle"
-    msg="Dwindle Layout"
-    ;;
-"dwindle"|*)
-    next="master"
-    msg="Master Layout"
-    ;;
-esac
-
-hyprctl eval "hl.config({ general = { layout = \"$next\" } })"
-notify-send -e -u low -i "$notif" " $msg"
+hyprctl eval '
+local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
+if not workspace then return end
+local layouts = { dwindle = "master", master = "scrolling", scrolling = "dwindle" }
+local next_layout = layouts[workspace.tiled_layout] or "dwindle"
+local selector = workspace.special and workspace.name or ("name:" .. workspace.name)
+hl.workspace_rule({ workspace = selector, layout = next_layout })
+hl.exec_cmd("notify-send -e -u low -i dialog-information \"Workspace layout\" " .. next_layout)
+'

@@ -458,7 +458,7 @@ local function layoutMsgIf(layout, msg)
 end
 ```
 
-Master-guarded: SUPER+CTRL+D removemaster, SUPER+I addmaster, SUPER+K cycleprev, SUPER+CTRL+RETURN swapwithmaster. Dwindle-guarded: SUPER+O togglesplit. Plus SUPER+SHIFT+I rotatesplit, SUPER+P pseudo toggle.
+Master-guarded: SUPER+CTRL+D removemaster, SUPER+I addmaster, SUPER+K cycleprev, SUPER+CTRL+RETURN swapwithmaster. Dwindle-guarded: SUPER+O togglesplit, SUPER+SHIFT+I rotatesplit. Plus SUPER+P pseudo toggle.
 
 **Window ops:** SUPER+J cycle_next (any layout), resize SUPER+SHIFT+arrows (50px), move SUPER+CTRL+arrows, swap SUPER+ALT+arrows, focus SUPER+arrows.
 
@@ -475,12 +475,12 @@ Master-guarded: SUPER+CTRL+D removemaster, SUPER+I addmaster, SUPER+K cycleprev,
 | SUPER+D | rofi drun main menu |
 | SUPER+RETURN | terminal (defaults.term = kitty live) |
 | SUPER+F | file manager (thunar) |
-| SUPER+K | Kdenlive |
+| SUPER+ALT+K | Kdenlive |
 | SUPER+B | Firefox |
 | SUPER+R | Foliate ebook reader |
 | SUPER+V | clipboard manager |
 | SUPER+C | VS Code (`--ozone-platform=x11`) |
-| SUPER+O | Obsidian |
+| SUPER+ALT+O | Obsidian |
 | SUPER+S | Spotify PWA |
 | SUPER+X | Vesktop |
 | SUPER+T | Telegram (64gram) |
@@ -505,7 +505,8 @@ Master-guarded: SUPER+CTRL+D removemaster, SUPER+I addmaster, SUPER+K cycleprev,
 | SUPER+ALT+mouse | cursor zoom (Lua-native via `hl.get_config`/`hl.config`) |
 | SUPER+CTRL+ALT+B | waybar toggle (SIGUSR1) |
 | SUPER+SHIFT+M | RofiBeats online music |
-| SUPER+SHIFT+W ×2 | WallpaperSelect + WallpaperEffects (both fire) |
+| SUPER+SHIFT+W | WallpaperSelect |
+| SUPER+CTRL+W | WallpaperEffects |
 | CTRL+ALT+W | random wallpaper |
 | SUPER+CTRL+O | toggle window opacity |
 | SUPER+SHIFT+K | keybinds search |

@@ -79,7 +79,7 @@ jobs:
               *RofiEmoji.sh) continue ;;
             esac
             bash -n "$f" 2>/dev/null || { echo "BASH SYNTAX FAIL: $f"; FAIL=1; }
-          done < <(find base-installer base-dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
+          done < <(find .config/hypr base-installer base-dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
           [ $FAIL -eq 0 ] || exit 1
           echo "All shell scripts parse OK"
 

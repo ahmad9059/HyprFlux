@@ -25,7 +25,7 @@ for _prs in "${_ps[@]}"; do
 done
 
 # Wallust refresh
-${SCRIPTSDIR}/WallpaperSwww.sh &
+"${SCRIPTSDIR}/WallpaperAwww.sh" &
 
 # reload swaync
 swaync-client --reload-config

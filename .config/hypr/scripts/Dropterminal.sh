@@ -221,7 +221,7 @@ spawn_terminal() {
 
     # Now bring it back with the same animation as subsequent shows
     # Use movetoworkspacesilent to avoid affecting workspace history
-    hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$CURRENT_WS silent', window = 'address:$new_addr' }))"
+    hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$CURRENT_WS', follow = false, window = 'address:$new_addr' }))"
     hyprctl eval "hl.dispatch(hl.dsp.window.pin({ window = 'address:$new_addr' }))"
     animate_slide_down "$new_addr" "$target_x" "$target_y" "$width" "$height"
 
@@ -248,7 +248,7 @@ if terminal_exists; then
     height=$(echo $pos_info | cut -d' ' -f4)
 
     # Use movetoworkspacesilent to avoid affecting workspace history
-    hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$CURRENT_WS silent', window = 'address:$TERMINAL_ADDR' }))"
+    hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$CURRENT_WS', follow = false, window = 'address:$TERMINAL_ADDR' }))"
     hyprctl eval "hl.dispatch(hl.dsp.window.pin({ window = 'address:$TERMINAL_ADDR' }))"
 
     # Set size and animate slide down
@@ -275,11 +275,11 @@ if terminal_exists; then
       # Small delay then move to special workspace and unpin
       sleep 0.1
       hyprctl eval "hl.dispatch(hl.dsp.window.pin({ window = 'address:$TERMINAL_ADDR' }))" # Unpin (toggle)
-      hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$SPECIAL_WS silent', window = 'address:$TERMINAL_ADDR' }))"
+      hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$SPECIAL_WS', follow = false, window = 'address:$TERMINAL_ADDR' }))"
     else
       debug_echo "Could not get window geometry, moving to scratchpad without animation"
       hyprctl eval "hl.dispatch(hl.dsp.window.pin({ window = 'address:$TERMINAL_ADDR' }))"
-      hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$SPECIAL_WS silent', window = 'address:$TERMINAL_ADDR' }))"
+      hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = '$SPECIAL_WS', follow = false, window = 'address:$TERMINAL_ADDR' }))"
     fi
   fi
 else

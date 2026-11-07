@@ -33,11 +33,11 @@ GDK_BACKEND=$BACKEND yad \
   "SUPER + D"              "App launcher (rofi)" \
   "SUPER + F"              "File manager (thunar)" \
   "SUPER + B"              "Firefox" \
-  "SUPER + K"              "Kdenlive" \
+  "SUPER + ALT + K"        "Kdenlive" \
   "SUPER + R"              "Foliate (ebook reader)" \
   "SUPER + V"              "Clipboard manager" \
   "SUPER + C"              "Visual Studio Code" \
-  "SUPER + O"              "Obsidian" \
+  "SUPER + ALT + O"        "Obsidian" \
   "SUPER + S"              "Spotify" \
   "SUPER + X"              "Vesktop (Discord)" \
   "SUPER + T"              "Telegram" \
@@ -59,7 +59,9 @@ GDK_BACKEND=$BACKEND yad \
   "SUPER + I"              "Master: add to master" \
   "SUPER + CTRL + D"       "Master: remove master" \
   "SUPER + CTRL + RETURN"  "Master: swap with master" \
-  "SUPER + J / K"          "Cycle next / previous window" \
+  "SUPER + J"              "Cycle next window" \
+  "SUPER + K"              "Master: cycle previous window" \
+  "SUPER + O"              "Dwindle: toggle split" \
   "" "" \
   "═════ WORKSPACES ═════" "" \
   "SUPER + 1..0"           "Switch to workspace 1-10" \
@@ -102,7 +104,8 @@ GDK_BACKEND=$BACKEND yad \
   "SUPER + SHIFT + O"      "Toggle blur settings" \
   "SUPER + SHIFT + L"      "Cycle layout (Dwindle/Master/Scrolling)" \
   "SUPER + SHIFT + R"      "Refresh waybar, swaync, rofi" \
-  "SUPER + SHIFT + W"      "Wallpaper select / effects" \
+  "SUPER + SHIFT + W"      "Select wallpaper" \
+  "SUPER + CTRL + W"       "Wallpaper effects" \
   "CTRL + ALT + W"         "Random wallpaper" \
   "SUPER + SHIFT + K"      "Search keybinds (rofi)" \
   "SUPER + SHIFT + A"      "Animations menu" \
