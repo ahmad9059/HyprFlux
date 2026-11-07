@@ -23,4 +23,4 @@ entry {
   padding: 6px;
 }
 
-listview {enable: false;}
+listview {enabled: false;}

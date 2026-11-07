@@ -6,9 +6,9 @@
 # GDK BACKEND. Change to either wayland or x11 if having issues
 BACKEND=wayland
 
-# Kill rofi/yad if running
-if pidof rofi >/dev/null; then pkill rofi; fi
-if pidof yad >/dev/null; then pkill yad; fi
+# Do not terminate unrelated YAD dialogs or Rofi menus.
+exec 9>"${XDG_RUNTIME_DIR:?}/hyprflux-key-hints.lock"
+flock -n 9 || exit 0
 
 # Launch yad with the keybinds
 GDK_BACKEND=$BACKEND yad \

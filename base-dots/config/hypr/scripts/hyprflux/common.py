@@ -98,28 +98,13 @@ def write_json(path, value):
 
 def menu(labels, prompt, *, theme=None):
     """Return an index, never resolve a filename from an ambiguous basename."""
-    if not labels:
-        return None
-    args = ['rofi', '-dmenu', '-i', '-no-custom', '-format', 'i', '-p', prompt]
-    if theme and theme.is_file():
-        args += ['-config', str(theme)]
-    result = run(args, input='\n'.join(labels) + '\n', check=False, timeout=None)
-    if result.returncode == 1:  # Escape / normal cancellation
-        return None
-    if result.returncode:
-        raise RuntimeError(result.stderr.strip() or 'Rofi failed')
-    try:
-        index = int(result.stdout.strip())
-    except ValueError as error:
-        raise RuntimeError('Invalid menu selection') from error
-    if not 0 <= index < len(labels):
-        raise RuntimeError('Menu selection outside the list')
-    return index
+    from .rofi import pick
+    return pick(labels, prompt, theme=theme)
 
 
-def detached(args, name):
+def detached(args, name, *, env=None):
     with (runtime() / (name + '.log')).open('ab') as log:
-        return subprocess.Popen(args, stdout=log, stderr=log, start_new_session=True)
+        return subprocess.Popen(args, stdout=log, stderr=log, start_new_session=True, env=env)
 
 
 def process_identity(pid):

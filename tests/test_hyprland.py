@@ -82,7 +82,8 @@ class HyprlandTests(unittest.TestCase):
         for name in ('configs/keybinds.lua', 'scripts/Dropterminal.sh'):
             for line in (HYPR / name).read_text().splitlines():
                 if 'hl.dsp.window.move' in line:
-                    self.assertNotIn(' silent', line, name)
+                    # Binding descriptions are prose, not dispatcher arguments.
+                    self.assertNotIn(' silent', line.split(', { description =', 1)[0], name)
 
     def test_refresh_uses_existing_wallpaper_helper(self):
         text = (HYPR / 'scripts/RefreshNoWaybar.sh').read_text()

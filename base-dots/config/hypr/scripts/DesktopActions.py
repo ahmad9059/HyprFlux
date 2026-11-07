@@ -11,7 +11,10 @@ def main(arguments):
     if not arguments:
         raise ValueError('A desktop action is required')
     action, *args = arguments
-    if action in ('game-mode', 'dropdown') or action.startswith('music-'):
+    if action.startswith('rofi-'):
+        from hyprflux import rofi
+        rofi.main(action.removeprefix('rofi-'))
+    elif action in ('game-mode', 'dropdown') or action.startswith('music-'):
         from hyprflux import runtime
         if action == 'game-mode':
             runtime.game_mode()

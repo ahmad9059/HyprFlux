@@ -16,8 +16,7 @@ local UserScripts = Home .. "/.config/hypr/UserScripts"
 local UserConfigs = Home .. "/.config/hypr/UserConfigs"
 
 -- common shortcuts
--- hl.bind(mainMod .. " + " .. mainMod .. "_L", hl.dsp.exec_cmd("pkill rofi || rofi -show drun -modi drun,filebrowser,run,window"), { release = true }) -- Super Key to Launch rofi menu
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("pkill rofi || true && rofi -show drun -modi drun,filebrowser,run,window"), { description = "Main Menu (APP Launcher)" })
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(scriptsDir .. "/Launcher.sh"), { description = "Main Menu (APP Launcher)" })
 -- hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("xdg-open \"https://\""), { description = "Default browser" })
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(defaults.term), { description = "Terminal" })
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(defaults.files), { description = "File manager" })

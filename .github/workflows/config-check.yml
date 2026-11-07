@@ -49,7 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed diffutils git hyprland lua python foot swaync python-gobject python-jsonschema
+          pacman -S --noconfirm --needed diffutils git hyprland lua python foot swaync python-gobject python-jsonschema rofi
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -73,11 +73,6 @@ jobs:
         run: |
           FAIL=0
           while IFS= read -r -d '' f; do
-            # RofiEmoji.sh is a known false positive: self-extracting emoji
-            # data after `exit` makes bash -n fail while the script works.
-            case "$f" in
-              *RofiEmoji.sh) continue ;;
-            esac
             bash -n "$f" 2>/dev/null || { echo "BASH SYNTAX FAIL: $f"; FAIL=1; }
           done < <(find .config/hypr base-installer base-dots scripts modules lib -name '*.sh' -print0 2>/dev/null)
           [ $FAIL -eq 0 ] || exit 1

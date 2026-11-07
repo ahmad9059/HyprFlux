@@ -23,7 +23,8 @@ def preset(kind):
     files = sorted((HYPR / folder).glob('*.lua'))
     if not files:
         raise RuntimeError('No Lua presets available in ' + folder)
-    index = menu([p.stem for p in files], 'Animation' if kind == 'animation' else 'Monitor profile')
+    theme = HYPR.parent / 'rofi' / ('config-Animations.rasi' if kind == 'animation' else 'config-Monitors.rasi')
+    index = menu([p.stem for p in files], 'Animation' if kind == 'animation' else 'Monitor profile', theme=theme)
     if index is None:
         return
     source = files[index]

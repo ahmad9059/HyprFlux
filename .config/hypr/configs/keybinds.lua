@@ -121,9 +121,9 @@ hl.bind(mainMod .. " + SHIFT + U", hl.dsp.window.move({ workspace = "special:nyx
 for i = 1, 10 do
     local code = 9 + i -- code:10 = key 1 ... code:19 = key 0
     local key = "code:" .. tostring(code)
-    hl.bind(mainMod .. " + " .. key,          hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + SHIFT + " .. key,  hl.dsp.window.move({ workspace = i }))
-    hl.bind(mainMod .. " + CTRL + " .. key,   hl.dsp.window.move({ workspace = i, follow = false }))
+    hl.bind(mainMod .. " + " .. key,          hl.dsp.focus({ workspace = i }), { description = "Workspace " .. i })
+    hl.bind(mainMod .. " + SHIFT + " .. key,  hl.dsp.window.move({ workspace = i }), { description = "Move to workspace " .. i })
+    hl.bind(mainMod .. " + CTRL + " .. key,   hl.dsp.window.move({ workspace = i, follow = false }), { description = "Move silently to workspace " .. i })
 end
 
 hl.bind(mainMod .. " + SHIFT + bracketleft",  hl.dsp.window.move({ workspace = "-1" }))   -- brackets [

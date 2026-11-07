@@ -16,6 +16,6 @@ window {
 /* ---- Listview ---- */
 listview {
   fixed-columns: false;
-  colums: 1;
+  columns: 1;
   lines: 6;
 }
