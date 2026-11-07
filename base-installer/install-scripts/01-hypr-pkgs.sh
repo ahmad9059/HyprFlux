@@ -25,6 +25,7 @@ hypr_package=(
   jq
   kitty
   kvantum
+  kvantum-qt5 # Kvantum's Qt5 plugin is packaged separately from Qt6.
   libspng
   nano  
   network-manager-applet 

@@ -25,7 +25,8 @@ hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 hl.env("QT_QPA_PLATFORMTHEME", "qt5ct")
-hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
+-- qt6ct also provides the qt5ct plugin key; each Qt version loads its own
+-- compatible plugin. A second assignment would break Qt5 theme integration.
 
 -- hyprland-qt-support
 hl.env("QT_QUICK_CONTROLS_STYLE", "org.hyprland.style")
