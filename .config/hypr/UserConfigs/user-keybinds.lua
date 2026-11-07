@@ -40,7 +40,6 @@ hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd(scriptsDir .. "/Refresh.sh"),
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd(scriptsDir .. "/ChangeBlur.sh"), { description = "Toggle blur settings" })
 hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd(scriptsDir .. "/GameMode.sh"), { description = "Toggle animations ON/OFF" })
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd(UserScripts .. "/Toggle-tuned.sh"), { description = "Toggle tuned daemon" })
-hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(UserScripts .. "/SyncDotfiles.sh"), { description = "Sync dotfiles" })
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(UserScripts .. "/SyncBlog.sh"), { description = "Sync blog" })
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd(scriptsDir .. "/ChangeLayout.sh"), { description = "Toggle Master or Dwindle layout" })
 hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd(UserScripts .. "/ObsidianGenerate.sh"), { description = "Obsidian generator" })

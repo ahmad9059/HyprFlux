@@ -107,7 +107,6 @@ GDK_BACKEND=$BACKEND yad \
   "SUPER + SHIFT + K"      "Search keybinds (rofi)" \
   "SUPER + SHIFT + A"      "Animations menu" \
   "SUPER + SHIFT + M"      "Online music (rofi)" \
-  "SUPER + SHIFT + D"      "Sync dotfiles" \
   "SUPER + SHIFT + B"      "Sync blog" \
   "SUPER + SHIFT + N"      "Obsidian note generator" \
   "SUPER + SHIFT + P"      "Color picker (hyprpicker)" \

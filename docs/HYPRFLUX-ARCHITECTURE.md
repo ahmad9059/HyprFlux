@@ -492,7 +492,6 @@ Master-guarded: SUPER+CTRL+D removemaster, SUPER+I addmaster, SUPER+K cycleprev,
 | SUPER+SHIFT+O | toggle blur |
 | SUPER+SHIFT+G | GameMode toggle |
 | SUPER+SHIFT+T | toggle tuned daemon |
-| SUPER+SHIFT+D | SyncDotfiles |
 | SUPER+SHIFT+B | SyncBlog |
 | SUPER+SHIFT+L | ChangeLayout cycle |
 | SUPER+SHIFT+N | ObsidianGenerate |
@@ -744,7 +743,7 @@ Sub-configs (each for a script):
 | WaybarScripts.sh | shared defaults + handlers for waybar module clicks (nmtui, btop, nvtop…) |
 | Wlogout.sh | wlogout launcher |
 
-## 4.9 UserScripts (`.config/hypr/UserScripts/`, 16 files)
+## 4.9 UserScripts (`.config/hypr/UserScripts/`, 15 files)
 
 | Script | Purpose |
 |--------|---------|
@@ -753,7 +752,6 @@ Sub-configs (each for a script):
 | RofiBeats.sh | online music (beets/radio) via rofi menus |
 | RofiCalc.sh | qalculate-gtk calculator via rofi |
 | SyncBlog.sh | blog sync |
-| SyncDotfiles.sh | dotfiles sync |
 | TmuxifierProjects.sh | tmuxifier project picker |
 | Toggle-tuned.sh | toggle tuned daemon |
 | WallpaperAutoChange.sh | periodic wallpaper auto-change (awww) |
