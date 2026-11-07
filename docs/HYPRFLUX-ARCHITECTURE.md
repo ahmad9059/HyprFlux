@@ -492,9 +492,7 @@ Master-guarded: SUPER+CTRL+D removemaster, SUPER+I addmaster, SUPER+K cycleprev,
 | SUPER+SHIFT+O | toggle blur |
 | SUPER+SHIFT+G | GameMode toggle |
 | SUPER+SHIFT+T | toggle tuned daemon |
-| SUPER+SHIFT+B | SyncBlog |
 | SUPER+SHIFT+L | ChangeLayout cycle |
-| SUPER+SHIFT+N | ObsidianGenerate |
 | SUPER+SHIFT+P | hyprpicker autocopy |
 | SUPER+SHIFT+F | fullscreen |
 | SUPER+SHIFT+RETURN | dropdown terminal |
@@ -744,15 +742,13 @@ Sub-configs (each for a script):
 | WaybarScripts.sh | shared defaults + handlers for waybar module clicks (nmtui, btop, nvtop…) |
 | Wlogout.sh | wlogout launcher |
 
-## 4.9 UserScripts (`.config/hypr/UserScripts/`, 15 files)
+## 4.9 UserScripts (`.config/hypr/UserScripts/`)
 
 | Script | Purpose |
 |--------|---------|
 | GitRepoClone.sh | SUPER+G: rofi GitHub repo clone with start/success/failure(+reason) notifications |
-| ObsidianGenerate.sh | Obsidian note generator |
 | RofiBeats.sh | online music (beets/radio) via rofi menus |
 | RofiCalc.sh | qalculate-gtk calculator via rofi |
-| SyncBlog.sh | blog sync |
 | TmuxifierProjects.sh | tmuxifier project picker |
 | Toggle-tuned.sh | toggle tuned daemon |
 | WallpaperAutoChange.sh | periodic wallpaper auto-change (awww) |
@@ -760,7 +756,6 @@ Sub-configs (each for a script):
 | WallpaperRandom.sh | random wallpaper |
 | WallpaperSelect.sh | wallpaper picker (rofi grid, mpvpaper video support) |
 | Weather.py / Weather.sh | wttr.in weather (stdlib-only rewrite, JSON + hyprlock cache) |
-| notes-ai/ | AI notes helper |
 | __pycache__/ | python cache (Weather.py) |
 
 ---

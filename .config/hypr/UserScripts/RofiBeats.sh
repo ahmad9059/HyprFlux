@@ -2,7 +2,7 @@
 # For Rofi Beats to play online Music or Locally saved media files
 
 # Variables
-mDIR="$HOME/Music/"
+mDIR="${HYPRFLUX_MUSIC_DIR:-$HOME/Music}"
 rofi_theme="$HOME/.config/rofi/config-rofi-Beats.rasi"
 rofi_theme_1="$HOME/.config/rofi/config-rofi-Beats-menu.rasi"
 
@@ -52,7 +52,7 @@ play_local_music() {
   populate_local_music
 
   # Prompt the user to select a song
-  choice=$(printf "%s\n" "${filenames[@]}" | rofi -i -dmenu -config $rofi_theme)
+   choice=$(printf "%s\n" "${filenames[@]}" | rofi -i -dmenu -no-custom -format i -config "$rofi_theme")
 
   if [ -z "$choice" ]; then
     exit 1
@@ -60,13 +60,13 @@ play_local_music() {
 
   # Find the corresponding file path based on user's choice and set that to play the song then continue on the list
   for ((i = 0; i < "${#filenames[@]}"; ++i)); do
-    if [ "${filenames[$i]}" = "$choice" ]; then
+    if [[ "$choice" == "$i" ]]; then
 
       if music_playing; then
         stop_music
       fi
-      notification "$choice"
-      mpv --playlist-start="$i" --loop-playlist --vid=no "${local_music[@]}"
+      notification "${filenames[$i]}"
+      python3 "$(dirname -- "${BASH_SOURCE[0]}")/../scripts/DesktopActions.py" music-play --playlist-start="$i" --loop-playlist --vid=no "${local_music[@]}"
 
       break
     fi
@@ -81,14 +81,14 @@ shuffle_local_music() {
   notification "Shuffle Play local music"
 
   # Play music in $mDIR on shuffle
-  mpv --shuffle --loop-playlist --vid=no "$mDIR"
+  python3 "$(dirname -- "${BASH_SOURCE[0]}")/../scripts/DesktopActions.py" music-play --shuffle --loop-playlist --vid=no "$mDIR"
 }
 
 # Main function for playing online music
 play_online_music() {
   choice=$(for online in "${!online_music[@]}"; do
     echo "$online"
-  done | sort | rofi -i -dmenu -config "$rofi_theme")
+   done | sort | rofi -i -dmenu -no-custom -config "$rofi_theme")
 
   if [ -z "$choice" ]; then
     exit 1
@@ -102,29 +102,17 @@ play_online_music() {
   notification "$choice"
 
   # Play the selected online music using mpv
-  mpv --shuffle --vid=no "$link"
+  python3 "$(dirname -- "${BASH_SOURCE[0]}")/../scripts/DesktopActions.py" music-play --shuffle --vid=no "$link"
 }
 
 # Function to check if music is already playing
 music_playing() {
-  pgrep -x "mpv" >/dev/null
+  python3 "$(dirname -- "${BASH_SOURCE[0]}")/../scripts/DesktopActions.py" music-status
 }
 
 # Function to stop music and kill mpv processes
 stop_music() {
-  mpv_pids=$(pgrep -x mpv)
-
-  if [ -n "$mpv_pids" ]; then
-    # Get the PID of the mpv process used by mpvpaper (using the unique argument added)
-    mpvpaper_pid=$(ps aux | grep -- 'unique-wallpaper-process' | grep -v 'grep' | awk '{print $2}')
-
-    for pid in $mpv_pids; do
-      if ! echo "$mpvpaper_pid" | grep -q "$pid"; then
-        kill -9 $pid || true
-      fi
-    done
-    notify-send -u low -i "audio-x-generic" "Music stopped" || true
-  fi
+  python3 "$(dirname -- "${BASH_SOURCE[0]}")/../scripts/DesktopActions.py" music-stop
 }
 
 user_choice=$(printf "%s\n" \

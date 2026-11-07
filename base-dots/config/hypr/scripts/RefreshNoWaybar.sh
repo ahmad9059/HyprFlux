@@ -1,40 +1,11 @@
 #!/bin/bash
-# HyprFlux — https://github.com/ahmad9059/HyprFlux
-# Modified version of Refresh.sh but waybar wont refresh
-# Used by automatic wallpaper change
-# Modified inorder to refresh rofi background, Wallust, SwayNC only
-
-SCRIPTSDIR=$HOME/.config/hypr/scripts
-UserScripts=$HOME/.config/hypr/UserScripts
-
-# Define file_exists function
-file_exists() {
-    if [ -e "$1" ]; then
-        return 0  # File exists
-    else
-        return 1  # File does not exist
-    fi
-}
-
-# Kill already running processes
-_ps=(rofi)
-for _prs in "${_ps[@]}"; do
-    if pidof "${_prs}" >/dev/null; then
-        pkill "${_prs}"
-    fi
-done
-
-# Wallust refresh
-"${SCRIPTSDIR}/WallpaperAwww.sh" &
-
-# reload swaync
-swaync-client --reload-config
-
-# Relaunching rainbow borders if the script exists
-sleep 1
-if file_exists "${UserScripts}/RainbowBorders.sh"; then
-    ${UserScripts}/RainbowBorders.sh &
+# No global Rofi/process kills; video wallpapers need no image-preview refresh.
+set -euo pipefail
+scripts="$(dirname -- "${BASH_SOURCE[0]}")"
+if awww query >/dev/null 2>&1; then
+    bash "$scripts/WallpaperAwww.sh"
 fi
-
-
-exit 0
+if pgrep -u "$UID" -x swaync >/dev/null; then
+    swaync-client --reload-config
+    swaync-client --reload-css
+fi

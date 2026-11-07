@@ -51,7 +51,8 @@ element {
 
 element-icon {
     text-color:                  inherit;
-    size:                        10%;
+    /* Keep large previews in the theme; no launcher-side override required. */
+    size:                        25%;
     margin:                      -30px;
     cursor:                      inherit;
 }

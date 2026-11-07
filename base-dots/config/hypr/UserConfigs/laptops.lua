@@ -9,12 +9,8 @@ local mainMod = "SUPER"
 local scriptsDir = Home .. "/.config/hypr/scripts"
 local UserConfigs = Home .. "/.config/hypr/UserConfigs"
 
--- ASUS ROG specifics are guarded: on non-ASUS machines the device name
--- does not exist (hl.device is a documented no-op) and the tools below are
--- absent, so these binds simply never fire. Safe on any hardware.
-local Touchpad_Device = "asue1209:00-04f3:319f-touchpad" -- maintainer's ROG
-
-hl.device({ name = Touchpad_Device, enabled = true })
+-- TouchPad.sh discovers touchpads at runtime; no maintainer-specific device.
+-- ASUS tools below are bound only when the associated program is available.
 
 hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd(scriptsDir .. "/BrightnessKbd.sh --dec"), { repeating = true }) -- keyboard brightness down
 hl.bind("XF86KbdBrightnessUp",   hl.dsp.exec_cmd(scriptsDir .. "/BrightnessKbd.sh --inc"), { repeating = true }) -- keyboard brightness up

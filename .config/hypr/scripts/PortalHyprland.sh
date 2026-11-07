@@ -1,16 +1,9 @@
 #!/bin/bash
-# HyprFlux — https://github.com/ahmad9059/HyprFlux
-# For manually starting xdg-desktop-portal-hyprland
-
-sleep 1
-killall xdg-desktop-portal-hyprland
-killall xdg-desktop-portal-wlr
-killall xdg-desktop-portal-gnome
-killall xdg-desktop-portal
-sleep 1
-/usr/lib/xdg-desktop-portal-hyprland &
-/usr/libexec/xdg-desktop-portal-hyprland &
-sleep 2
-/usr/lib/xdg-desktop-portal &
-/usr/libexec/xdg-desktop-portal &
-
+# Explicit recovery only. Let D-Bus/systemd own portal lifetime and executable paths.
+set -euo pipefail
+if [[ "${1:-}" != --restart ]]; then
+    echo 'Portal recovery interrupts active screen-sharing. Run PortalHyprland.sh --restart explicitly.' >&2
+    exit 2
+fi
+systemctl --user restart xdg-desktop-portal-hyprland.service
+systemctl --user restart xdg-desktop-portal.service

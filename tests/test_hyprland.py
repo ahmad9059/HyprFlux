@@ -1,5 +1,6 @@
 """Hyprland runtime regressions without controlling the host compositor."""
 import os
+import hashlib
 from pathlib import Path
 import re
 import shutil
@@ -86,13 +87,13 @@ class HyprlandTests(unittest.TestCase):
     def test_refresh_uses_existing_wallpaper_helper(self):
         text = (HYPR / 'scripts/RefreshNoWaybar.sh').read_text()
         self.assertNotIn('WallpaperSwww.sh', text)
-        self.assertIn('"${SCRIPTSDIR}/WallpaperAwww.sh"', text)
+        self.assertIn('"$scripts/WallpaperAwww.sh"', text)
         self.assertTrue((HYPR / 'scripts/WallpaperAwww.sh').is_file())
 
     def test_hypr_mirror_matches_including_symlinks(self):
         mirror = ROOT / 'base-dots/config/hypr'
         def entries(root):
             return {str(p.relative_to(root)): ('link', str(p.readlink())) if p.is_symlink()
-                    else ('file', p.read_bytes())
+                    else ('file', hashlib.sha256(p.read_bytes()).hexdigest())
                     for p in root.rglob('*') if p.is_symlink() or p.is_file()}
         self.assertEqual(entries(HYPR), entries(mirror))

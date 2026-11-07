@@ -5,6 +5,12 @@ mirror, launch/refresh helpers, installer interactions, CI, and differences in
 `/home/ahmad/.config/hypr/`. This is a source and isolated-parser audit, not a
 claim that every application or hardware path was exercised interactively.
 
+**Follow-up:** the game-mode, dropdown, wallpaper/first-boot and touchpad helper
+findings were subsequently repaired and selectively deployed. See
+[Script workflow fixes](SCRIPT-WORKFLOW-FIXES-2026-11-08.md) for the current
+implementation, requested feature removals, 63-test results and live smoke
+checks. The batch-1 status table below records the historical first pass.
+
 ## Version baseline and method
 
 - Installed **and running**: Hyprland **0.56.2**, commit

@@ -1,6 +1,7 @@
 """The isolated checker must propagate invalid config, never retry into success."""
 from pathlib import Path
 import json
+import sys
 import shutil
 import subprocess
 import tempfile
@@ -11,6 +12,24 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @unittest.skipUnless(shutil.which('Hyprland'), 'Hyprland is installed in config-check CI')
 class ConfigVerifierTests(unittest.TestCase):
+    def test_generated_game_mode_config_uses_real_lua_types(self):
+        if not all(p.stat().st_mode & 0o005 == 0o005 for p in (ROOT, *ROOT.parents) if p != Path('/')):
+            self.skipTest('Source directory is private; isolated container test required')
+        sys.dont_write_bytecode = True
+        sys.path.insert(0, str(ROOT / '.config/hypr/scripts'))
+        from hyprflux.runtime import GAME, config as game_config
+        with tempfile.TemporaryDirectory() as temp:
+            directory = Path(temp)
+            directory.chmod(0o755)
+            config = directory / 'game.lua'
+            config.write_text(game_config(GAME) + '\n' + game_config({
+                'general.gaps_in': '1 2 3 4', 'general.gaps_out': '4 3 2 1',
+                'animations.enabled': True, 'decoration.rounding': 10}))
+            config.chmod(0o644)
+            result = subprocess.run(['bash', str(ROOT / 'scripts/verify-hyprland-config.sh'), str(config)],
+                                    text=True, capture_output=True, timeout=30)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_all_animation_and_monitor_presets(self):
         if not all(p.stat().st_mode & 0o005 == 0o005 for p in (ROOT, *ROOT.parents) if p != Path('/')):
             self.skipTest('Source directory is private; isolated container test required')

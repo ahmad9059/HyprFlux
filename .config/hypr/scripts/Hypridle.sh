@@ -1,23 +1,21 @@
 #!/bin/bash
-# HyprFlux — https://github.com/ahmad9059/HyprFlux
-# This is for custom version of waybar idle_inhibitor which activates / deactivates hypridle instead
-
-PROCESS="hypridle"
-
-if [[ "$1" == "status" ]]; then
-    sleep 1
-    if pgrep -x "$PROCESS" >/dev/null; then
-        echo '{"text": "RUNNING", "class": "active", "tooltip": "idle_inhibitor NOT ACTIVE\nLeft Click: Activate\nRight Click: Lock Screen"}'
-    else
-        echo '{"text": "NOT RUNNING", "class": "notactive", "tooltip": "idle_inhibitor is ACTIVE\nLeft Click: Deactivate\nRight Click: Lock Screen"}'
-    fi
-elif [[ "$1" == "toggle" ]]; then
-    if pgrep -x "$PROCESS" >/dev/null; then
-        pkill "$PROCESS"
-    else
-        "$PROCESS"
-    fi
-else
-    echo "Usage: $0 {status|toggle}"
-    exit 1
-fi
+# Keep one owner for hypridle. Manual legacy processes are stopped on migration.
+set -euo pipefail
+case "${1:-}" in
+    status)
+        if systemctl --user is-active --quiet hypridle.service || pgrep -u "$UID" -x hypridle >/dev/null; then
+            printf '%s\n' '{"text":"RUNNING","class":"active","tooltip":"Automatic lock enabled. Click to pause; right-click to lock."}'
+        else
+            printf '%s\n' '{"text":"PAUSED","class":"notactive","tooltip":"Automatic lock is paused. Click to re-enable; right-click to lock."}'
+        fi ;;
+    toggle)
+        if systemctl --user is-active --quiet hypridle.service; then
+            systemctl --user stop hypridle.service
+        elif pgrep -u "$UID" -x hypridle >/dev/null; then
+            pkill -u "$UID" -x hypridle
+        else
+            systemctl --user start hypridle.service
+            systemctl --user is-active --quiet hypridle.service
+        fi ;;
+    *) echo 'Usage: Hypridle.sh status|toggle' >&2; exit 2 ;;
+esac

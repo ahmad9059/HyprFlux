@@ -14,12 +14,11 @@ local UserScripts = Home .. "/.config/hypr/UserScripts"
 local wallDIR = Home .. "/Pictures/wallpapers"
 local lock = scriptsDir .. "/LockScreen.sh"
 local AwwwRandom = UserScripts .. "/WallpaperAutoChange.sh"
-local livewallpaper = "" -- set by WallpaperSelect.sh for video wallpapers (mpvpaper)
 
 hl.on("hyprland.start", function()
     -- wallpaper stuff
-    hl.exec_cmd("awww-daemon --format xrgb")
-    -- hl.exec_cmd("mpvpaper '*' -o \"load-scripts=no no-audio --loop\"" .. livewallpaper)
+    hl.exec_cmd(scriptsDir .. "/StartupWallpapers.sh")
+    -- Video/image persistence is stored in ~/.local/state/hyprflux/wallpapers.json.
 
     -- wallpaper random (every 30 minutes)
     -- hl.exec_cmd(AwwwRandom .. " " .. wallDIR)
@@ -52,7 +51,7 @@ hl.on("hyprland.start", function()
     -- hl.exec_cmd(UserScripts .. "/RainbowBorders.sh")
 
     -- Starting hypridle to start hyprlock
-    hl.exec_cmd("hypridle")
+    hl.exec_cmd("systemctl --user start hypridle.service")
 
     -- NOTE: machine-specific services (e.g. hypr-refresh-rate.service on the
     -- maintainer's laptop) are NOT part of the distro config. Add your own

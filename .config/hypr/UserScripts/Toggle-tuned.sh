@@ -3,6 +3,13 @@
 PROFILE_BALANCED="balanced"
 PROFILE_VIRTUAL="virtual-host"
 
+for command in systemctl tuned-adm pkexec; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    notify-send -u critical -i dialog-error "Tuned profile switch" "Missing command: $command. Install tuned/polkit before using this shortcut."
+    exit 1
+  fi
+done
+
 notify() {
   local message="$1"
   local urgency="${2:-normal}"
@@ -13,7 +20,7 @@ notify() {
 # Check tuned service
 if ! systemctl is-active --quiet tuned; then
   notify "Tuned service not running. Starting..." "low" "dialog-warning"
-  if sudo systemctl start tuned; then
+  if pkexec "$(command -v systemctl)" start tuned; then
     sleep 1
     if systemctl is-active --quiet tuned; then
       notify "Tuned service started successfully." "normal" "dialog-information"
@@ -27,16 +34,16 @@ if ! systemctl is-active --quiet tuned; then
   fi
 fi
 
-CURRENT_PROFILE=$(tuned-adm active | grep "Current active profile:" | awk '{print $NF}')
+CURRENT_PROFILE=$(LC_ALL=C tuned-adm active | grep "Current active profile:" | awk '{print $NF}')
 
 if [[ "$CURRENT_PROFILE" == "$PROFILE_BALANCED" ]]; then
-  if tuned-adm profile "$PROFILE_VIRTUAL"; then
+  if pkexec "$(command -v tuned-adm)" profile "$PROFILE_VIRTUAL"; then
     notify "Switched to $PROFILE_VIRTUAL successfully." "normal" "dialog-information"
   else
     notify "Failed to switch to $PROFILE_VIRTUAL." "critical" "dialog-error"
   fi
 elif [[ "$CURRENT_PROFILE" == "$PROFILE_VIRTUAL" ]]; then
-  if tuned-adm profile "$PROFILE_BALANCED"; then
+  if pkexec "$(command -v tuned-adm)" profile "$PROFILE_BALANCED"; then
     notify "Switched to $PROFILE_BALANCED successfully." "normal" "dialog-information"
   else
     notify "Failed to switch to $PROFILE_BALANCED." "critical" "dialog-error"
