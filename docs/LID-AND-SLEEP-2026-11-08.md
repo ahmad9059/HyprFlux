@@ -1,5 +1,8 @@
 # Laptop sleep — manual hibernate verified, lid cycle pending
 
+For the complete script map, reinstall requirements, and current ISO gaps, see
+[Hibernate fix and reinstall guide](HIBERNATE-FIX-AND-REINSTALL.md).
+
 ## Scope and current status
 
 Machine: ASUS ROG Zephyrus G15 GA503QR, BIOS 418, AMD Cezanne iGPU,
