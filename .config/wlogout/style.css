@@ -4,44 +4,69 @@
 @define-color logout-btn-bg rgba(200,220,255,0.0);
 @define-color logout-hover-bg #91D7E3;
 @define-color logout-hover-text #1e1e2e;
+@define-color color12 #7D4AB4;
+@define-color logout-danger #f7768e;
 /* ==== END GENERATED ==== */
+/* HyprFlux power menu: square cards, same look as the notification panel. */
+
 window {
-  font-family: Fira Code Medium;
-  font-size: 16pt;
-  color: @text-color; /* text */
+  font-family: "Adwaita Sans", "Noto Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: @text-color;
   background-color: @logout-bg;
 }
 
 button {
+  color: @text-color;
+  background-color: alpha(@text-color, 0.07);
   background-repeat: no-repeat;
-  background-position: center;
-  background-size: 20%;
-  background-color: @logout-btn-bg;
-  border-radius: 80px; /* Increased border radius for a more rounded look */
-  margin: 10px;
-  animation: gradient_f 10s ease-in infinite;
+  background-position: center 40%;
+  background-size: 34%;
+  border: 1px solid alpha(@color12, 0.35);
+  border-radius: 24px;
+  margin: 14px;
+  padding: 0 0 20px 0;
+  /* Wider than the longest label, so every column starts equal in width. */
+  min-width: 124px;
+  outline: none;
+  box-shadow: 0 10px 30px alpha(black, 0.30);
   transition:
-    all 0.3s cubic-bezier(0.55, 0, 0.28, 1.682),
-    box-shadow 0.2s ease-in-out,
-    background-color 0.2s ease-in-out;
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-size 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
+/* Keyboard focus is a ring; the fill is reserved for what will run on click. */
 button:focus {
-  background-size: 25%;
-  border: 0px;
+  border-color: alpha(@color12, 0.9);
+  box-shadow:
+    0 0 0 3px alpha(@color12, 0.35),
+    0 10px 30px alpha(black, 0.30);
 }
 
 button:hover {
-  background-color: @logout-hover-bg;
   color: @logout-hover-text;
-  background-size: 70%;
-  margin: 5px;
-  border-radius: 80px;
+  background-color: @logout-hover-bg;
+  border-color: @logout-hover-bg;
+  background-size: 40%;
 }
 
-/* Adjust the size of the icon or content inside the button */
-button span {
-  font-size: 1.2em; /* Increase the font size */
+button:active {
+  background-size: 36%;
+}
+
+/* Actions that end the session or power the machine off turn red. */
+#logout:hover,
+#reboot:hover,
+#shutdown:hover {
+  background-color: @logout-danger;
+  border-color: @logout-danger;
+}
+
+button label {
+  font-size: 1em;
 }
 
 #lock {
@@ -65,11 +90,11 @@ button span {
   background-image: image(url("./icons/sleep-hover.png"));
 }
 
-#shutdown {
-  background-image: image(url("./icons/power.png"));
+#hibernate {
+  background-image: image(url("./icons/hibernate.png"));
 }
-#shutdown:hover {
-  background-image: image(url("./icons/power-hover.png"));
+#hibernate:hover {
+  background-image: image(url("./icons/hibernate-hover.png"));
 }
 
 #reboot {
@@ -79,9 +104,9 @@ button span {
   background-image: image(url("./icons/restart-hover.png"));
 }
 
-#hibernate {
-  background-image: image(url("./icons/hibernate.png"));
+#shutdown {
+  background-image: image(url("./icons/power.png"));
 }
-#hibernate:hover {
-  background-image: image(url("./icons/hibernate-hover.png"));
+#shutdown:hover {
+  background-image: image(url("./icons/power-hover.png"));
 }

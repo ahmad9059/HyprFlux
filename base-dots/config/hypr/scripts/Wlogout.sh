@@ -1,57 +1,56 @@
 #!/bin/bash
 # HyprFlux — https://github.com/ahmad9059/HyprFlux
-# wlogout (Power, Screen Lock, Suspend, etc)
+# Power menu (wlogout): square cards sized to the focused monitor and shown on it.
+# Actions disabled by system policy or missing a resume path are
+# left out, so every visible button does what it says.
 
-# Set variables for parameters. First numbers corresponts to Monitor Resolution
-# i.e 2160 means 2160p
-A_2160=600
-B_2160=600
-A_1600=400
-B_1600=400
-A_1440=400
-B_1440=400
-A_1080=200
-B_1080=200
-A_720=50
-B_720=50
+scripts="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+wl_dir="${HYPRFLUX_WLOGOUT_DIR:-$HOME/.config/wlogout}"
+layout="$wl_dir/layout"
 
-# Check if wlogout is already running
-if pgrep -x "wlogout" > /dev/null; then
-    pkill -x "wlogout"
-    exit 0
+# Pressing the shortcut again closes the menu.
+if pgrep -x wlogout >/dev/null; then
+  pkill -x wlogout
+  exit 0
 fi
 
-# Detect monitor resolution and scaling factor
-resolution=$(hyprctl -j monitors | jq -r '.[] | select(.focused==true) | .height / .scale' | awk -F'.' '{print $1}')
-hypr_scale=$(hyprctl -j monitors | jq -r '.[] | select(.focused==true) | .scale')
-
-# Set parameters based on screen resolution and scaling factor
-if ((resolution >= 2160)); then
-    T_val=$(awk "BEGIN {printf \"%.0f\", $A_2160 * 2160 * $hypr_scale / $resolution}")
-    B_val=$(awk "BEGIN {printf \"%.0f\", $B_2160 * 2160 * $hypr_scale / $resolution}")
-    echo "Setting parameters for resolution >= 4k"
-    wlogout --protocol layer-shell -b 6 -T $T_val -B $B_val &
-elif ((resolution >= 1600 && resolution < 2160)); then
-    T_val=$(awk "BEGIN {printf \"%.0f\", $A_1600 * 1600 * $hypr_scale / $resolution}")
-    B_val=$(awk "BEGIN {printf \"%.0f\", $B_1600 * 1600 * $hypr_scale / $resolution}")
-    echo "Setting parameters for resolution >= 2.5k and < 4k"
-    wlogout --protocol layer-shell -b 6 -T $T_val -B $B_val &
-elif ((resolution >= 1440 && resolution < 1600)); then
-    T_val=$(awk "BEGIN {printf \"%.0f\", $A_1440 * 1440 * $hypr_scale / $resolution}")
-    B_val=$(awk "BEGIN {printf \"%.0f\", $B_1440 * 1440 * $hypr_scale / $resolution}")
-    echo "Setting parameters for resolution >= 2k and < 2.5k"
-    wlogout --protocol layer-shell -b 6 -T $T_val -B $B_val &
-elif ((resolution >= 1080 && resolution < 1440)); then
-    T_val=$(awk "BEGIN {printf \"%.0f\", $A_1080 * 1080 * $hypr_scale / $resolution}")
-    B_val=$(awk "BEGIN {printf \"%.0f\", $B_1080 * 1080 * $hypr_scale / $resolution}")
-    echo "Setting parameters for resolution >= 1080p and < 2k"
-    wlogout --protocol layer-shell -b 6 -T $T_val -B $B_val &
-elif ((resolution >= 720 && resolution < 1080)); then
-    T_val=$(awk "BEGIN {printf \"%.0f\", $A_720 * 720 * $hypr_scale / $resolution}")
-    B_val=$(awk "BEGIN {printf \"%.0f\", $B_720 * 720 * $hypr_scale / $resolution}")
-    echo "Setting parameters for resolution >= 720p and < 1080p"
-    wlogout --protocol layer-shell -b 3 -T $T_val -B $B_val &
-else
-    echo "Setting default parameters"
-    wlogout &
+# Fail closed if a filtered layout cannot be created. mktemp creates mode 0600.
+suspend=false
+hibernate=false
+"$scripts/SleepAction.sh" suspend --check && suspend=true
+"$scripts/SleepAction.sh" hibernate --check && hibernate=true
+if [[ "$suspend" != true || "$hibernate" != true ]]; then
+  filtered="$(mktemp "${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/hyprflux-wlogout-layout.XXXXXX")" || exit 1
+  trap 'rm -f -- "$filtered"' EXIT
+  jq -c --argjson suspend "$suspend" --argjson hibernate "$hibernate" \
+    'select((.label != "suspend" or $suspend) and (.label != "hibernate" or $hibernate))' \
+    "$layout" >"$filtered" 2>/dev/null || exit 1
+  [[ -s "$filtered" ]] || exit 1
+  layout="$filtered"
 fi
+
+buttons="$(jq -s 'length' "$layout" 2>/dev/null)"
+[[ "$buttons" =~ ^[1-9][0-9]*$ ]] || buttons=6
+
+args=(--protocol layer-shell --show-binds -l "$layout" -C "$wl_dir/style.css" -b "$buttons")
+
+# Focused monitor: Hyprland id (wlogout's -P index), logical width and height.
+# Rotated monitors swap width and height.
+read -r mon_id width height < <(hyprctl -j monitors 2>/dev/null | jq -r '
+  ([.[] | select(.focused == true)][0] // .[0] // empty) as $m
+  | (if ($m.transform % 2) == 1 then [$m.height, $m.width] else [$m.width, $m.height] end) as [$w, $h]
+  | "\($m.id) \($w / $m.scale | floor) \($h / $m.scale | floor)"' 2>/dev/null)
+
+if [[ "${mon_id:-}" =~ ^[0-9]+$ && "${width:-}" =~ ^[0-9]+$ && "${height:-}" =~ ^[0-9]+$ ]]; then
+  # Cards are squares: about a fifth of the screen height, never wider than
+  # 90% of the screen across the whole row.
+  card=$((height * 21 / 100))
+  ((card < 160)) && card=160
+  ((card > 300)) && card=300
+  ((card > width * 9 / 10 / buttons)) && card=$((width * 9 / 10 / buttons))
+  side=$(((width - buttons * card) / 2))
+  vertical=$(((height - card) / 2))
+  args+=(-P "$mon_id" -L "$side" -R "$side" -T "$vertical" -B "$vertical")
+fi
+
+wlogout "${args[@]}"

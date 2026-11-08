@@ -49,7 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed diffutils git hyprland lua python foot swaync python-gobject python-jsonschema rofi gcc pkgconf qt5-base qt6-base qt5ct qt6ct kvantum kvantum-qt5
+          pacman -S --noconfirm --needed diffutils git hyprland lua python foot swaync python-gobject python-jsonschema rofi gcc pkgconf qt5-base qt6-base qt5ct qt6ct kvantum kvantum-qt5 gtk3 jq
 
       - name: Checkout
         uses: actions/checkout@v4

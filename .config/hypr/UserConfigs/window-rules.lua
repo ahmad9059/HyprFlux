@@ -676,6 +676,14 @@ hl.layer_rule({
     match = { namespace = "notifications" },
 })
 
+-- Power menu (wlogout): frosted background so what is behind it is not readable
+hl.layer_rule({
+    name = "layerrule-wlogout",
+    blur = true,
+    ignore_alpha = 0,
+    match = { namespace = "logout_dialog" },
+})
+
 -- hl.layer_rule({ match = { namespace = "notif*" }, ignore_alpha = 0.5 })
 -- hl.layer_rule({ match = { namespace = "rofi" }, ignore_alpha = 0 }) -- ignorezero
 -- hl.layer_rule({ match = { namespace = "rofi" }, blur = true })

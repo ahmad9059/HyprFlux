@@ -5,6 +5,24 @@
     "keybind" : "l"
 }
 {
+    "label" : "logout",
+    "action" : "loginctl kill-session $XDG_SESSION_ID",
+    "text" : "Logout",
+    "keybind" : "e"
+}
+{
+    "label" : "suspend",
+    "action" : "$HOME/.config/hypr/scripts/SleepAction.sh suspend",
+    "text" : "Suspend",
+    "keybind" : "u"
+}
+{
+    "label" : "hibernate",
+    "action" : "$HOME/.config/hypr/scripts/Hibernate.sh",
+    "text" : "Hibernate",
+    "keybind" : "h"
+}
+{
     "label" : "reboot",
     "action" : "systemctl reboot",
     "text" : "Reboot",
@@ -15,22 +33,4 @@
     "action" : "systemctl poweroff",
     "text" : "Shutdown",
     "keybind" : "s"
-}
-{
-    "label" : "logout",
-    "action" : "loginctl kill-session $XDG_SESSION_ID",
-    "text" : "Logout",
-    "keybind" : "e"
-}
-{
-    "label" : "suspend",
-    "action" : "systemctl suspend",
-    "text" : "Suspend",
-    "keybind" : "u"
-}
-{
-    "label" : "hibernate",
-    "action" : "systemctl hibernate",
-    "text" : "Hibernate",
-    "keybind" : "h"
 }

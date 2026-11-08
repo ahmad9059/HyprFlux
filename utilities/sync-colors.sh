@@ -240,6 +240,8 @@ WLOGOUT_BLOCK+="@define-color logout-bg rgba($(rgba_dec "${COLORS[logout_bg]}"))
 WLOGOUT_BLOCK+="@define-color logout-btn-bg rgba($(rgba_dec "${COLORS[logout_btn_bg]}"));\n"
 WLOGOUT_BLOCK+="@define-color logout-hover-bg #$(hex "${COLORS[logout_hover_bg]}");\n"
 WLOGOUT_BLOCK+="@define-color logout-hover-text #$(hex "${COLORS[logout_hover_text]}");\n"
+WLOGOUT_BLOCK+="@define-color color12 #$(hex "${COLORS[color12]}");\n"
+WLOGOUT_BLOCK+="@define-color logout-danger #$(hex "${COLORS[notif_close_bg]}");\n"
 inject_css_block "$REPO_DIR/.config/wlogout/style.css" "$WLOGOUT_BLOCK"
 echo "injected: wlogout/style.css color block"
 

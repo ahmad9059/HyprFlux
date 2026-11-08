@@ -60,7 +60,7 @@ hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --inc"
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --dec"), { locked = true, repeating = true }) -- volume down
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --toggle-mic"), { locked = true }) -- mic mute
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd(scriptsDir .. "/Volume.sh --toggle"), { locked = true }) -- mute
-hl.bind("XF86Sleep", hl.dsp.exec_cmd("systemctl suspend"), { locked = true }) -- sleep button
+hl.bind("XF86Sleep", hl.dsp.exec_cmd(scriptsDir .. "/SleepAction.sh sleep"), { locked = true }) -- supported sleep action
 hl.bind("XF86Rfkill", hl.dsp.exec_cmd(scriptsDir .. "/AirplaneMode.sh"), { locked = true }) -- Airplane mode
 
 -- KEY_PLAYPAUSE maps to XF86AudioPlay in XKB (Linux evdev code + 8).
