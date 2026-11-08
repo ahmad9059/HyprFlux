@@ -59,16 +59,6 @@ copy_waybar() {
         cp -r "$DIRPATHw" "$DIRPATHw-backup-$BACKUP_DIR" 2>&1 | tee -a "$log"
         echo -e "${NOTE:-[NOTE]} - Backed up $DIRW to $DIRPATHw-backup-$BACKUP_DIR." 2>&1 | tee -a "$log"
         rm -rf "$DIRPATHw" && cp -r "config/$DIRW" "$DIRPATHw" 2>&1 | tee -a "$log"
-        for file in "config" "style.css"; do
-          symlink="$DIRPATHw-backup-$BACKUP_DIR/$file"
-          target_file="$DIRPATHw/$file"
-          if [ -L "$symlink" ]; then
-            symlink_target=$(readlink "$symlink")
-            if [ -f "$symlink_target" ]; then
-              rm -f "$target_file" && cp -f "$symlink_target" "$target_file"
-            fi
-          fi
-        done
         for dir in "$DIRPATHw-backup-$BACKUP_DIR/configs"/*; do
           [ -e "$dir" ] || continue
           if [ -d "$dir" ]; then
@@ -91,6 +81,24 @@ copy_waybar() {
             [ -e "$target_file" ] || cp "$file" "$HOME/.config/waybar/style/"
           fi
         done || true
+        # Restore selected custom layouts/styles only after unique targets have
+        # been restored. Relative links are relative to the Waybar directory,
+        # never to the installer's current working directory.
+        local file symlink symlink_target resolved target_file
+        for file in config style.css; do
+          symlink="$DIRPATHw-backup-$BACKUP_DIR/$file"
+          target_file="$DIRPATHw/$file"
+          if [ -L "$symlink" ]; then
+            symlink_target=$(readlink "$symlink")
+            case "$symlink_target" in
+              /*) resolved="$symlink_target" ;;
+              *) resolved="$DIRPATHw/$symlink_target" ;;
+            esac
+            if [ -f "$resolved" ]; then
+              ln -sf -- "$symlink_target" "$target_file"
+            fi
+          fi
+        done
         BACKUP_FILEw="$DIRPATHw-backup-$BACKUP_DIR/UserModules"
         [ -f "$BACKUP_FILEw" ] && cp -f "$BACKUP_FILEw" "$DIRPATHw/UserModules"
         break
@@ -110,7 +118,9 @@ copy_waybar() {
 
 copy_phase2() {
   local log="$1"
-  local DIR="cava fastfetch hypr kitty Kvantum qt5ct qt6ct rofi swaync waybar wlogout"
+  # Waybar is handled exactly once by copy_waybar; copying it again here would
+  # silently discard the UserModules/custom-preset restoration above.
+  local DIR="cava fastfetch hypr kitty Kvantum qt5ct qt6ct rofi swaync wlogout"
   for DIR_NAME in $DIR; do
     local DIRPATH="$HOME/.config/$DIR_NAME"
     if [ -d "$DIRPATH" ]; then

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# modules/06-waybar.sh — Waybar config verify and reload
+# modules/05-waybar.sh — Waybar config verify and reload
 # ============================================================
 should_skip "waybar" && return 0
 
@@ -20,8 +20,8 @@ fi
 
 log_ok "Waybar config and style verified."
 
-if pgrep -x "waybar" &>/dev/null; then
-  pkill -SIGUSR2 waybar || true
+if pgrep -u "$UID" -x "waybar" &>/dev/null; then
+  pkill -u "$UID" -SIGUSR2 -x waybar || true
   log_ok "Waybar reloaded."
 else
   log_warn "Waybar not running. Style will apply on next launch."

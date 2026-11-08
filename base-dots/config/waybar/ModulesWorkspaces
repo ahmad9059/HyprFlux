@@ -8,9 +8,8 @@
 	"all-outputs": true,
 	"format": "{icon}",
 	"show-special": false,
-	"on-click": "hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })",
-	"on-scroll-up": "hyprctl dispatch hl.dsp.focus({ workspace = \"e+1\" })",
-	"on-scroll-down": "hyprctl dispatch hl.dsp.focus({ workspace = \"e-1\" })",
+	"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+	"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
     "persistent-workspaces": {
       "*": 5
 	},
@@ -25,9 +24,8 @@
 	"all-outputs": true,
 	"format": "{icon}",
 	"show-special": false,
-	"on-click": "hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })",
-	"on-scroll-up": "hyprctl dispatch hl.dsp.focus({ workspace = \"e+1\" })",
-	"on-scroll-down": "hyprctl dispatch hl.dsp.focus({ workspace = \"e-1\" })",
+	"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+	"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
     "persistent-workspaces": {
       "*": 5
 	},
@@ -49,14 +47,12 @@
 	"active-only": false,
 	"all-outputs": true,
 	"format": "{icon}",
-	"on-click": "hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })",
-	"on-scroll-up": "hyprctl dispatch hl.dsp.focus({ workspace = \"e+1\" })",
-	"on-scroll-down": "hyprctl dispatch hl.dsp.focus({ workspace = \"e-1\" })",
+	"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+	"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
 	"show-special": false,
     "persistent-workspaces": {
       "*": 5
 	},
-	"format": "{icon}",
 	"format-icons": {
             "active": "<span font='12'>󰮯</span>",
             "empty": "<span font='8'></span>",
@@ -91,9 +87,8 @@
 	"all-outputs": true,
 	"format": "{icon}",
 	"show-special": false,
-	"on-click": "hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })",
-	"on-scroll-up": "hyprctl dispatch hl.dsp.focus({ workspace = \"e+1\" })",
-	"on-scroll-down": "hyprctl dispatch hl.dsp.focus({ workspace = \"e-1\" })",
+	"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+	"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
     "persistent-workspaces": {
       "*": 5
 	},
@@ -113,15 +108,13 @@
   
 //  NUMBERS and ICONS style
 "hyprland/workspaces#4": {
-	"format": "{name}",
 	"format": " {name} {icon} ",
 	//"format": " {icon} ",
 	"show-special": false,
-	"on-click": "hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })",
-	"on-scroll-up": "hyprctl dispatch hl.dsp.focus({ workspace = \"e+1\" })",
-	"on-scroll-down": "hyprctl dispatch hl.dsp.focus({ workspace = \"e-1\" })",
+	"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+	"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
 	"all-outputs": true,
-	"sort-by-number": true,
+	"sort-by": "number",
 	"format-icons": {
 		"1": " ",
 		"2": " ",
@@ -143,9 +136,8 @@
 	"all-outputs": true,
 	"format": "{icon}",
 	"show-special": false,
-	"on-click": "hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })",
-	"on-scroll-up": "hyprctl dispatch hl.dsp.focus({ workspace = \"e+1\" })",
-	"on-scroll-down": "hyprctl dispatch hl.dsp.focus({ workspace = \"e-1\" })",
+	"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+	"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
     "persistent-workspaces": {
       "*": 5
 	},
@@ -165,17 +157,15 @@
 // NUMBERS and ICONS style with window rewrite 
 "hyprland/workspaces#rw": {
 	"disable-scroll": true,
-	"all-outputs": true,
+	"all-outputs": false,
 	"warp-on-scroll": false,
-	"sort-by-number": true,
+	"sort-by": "number",
 	"show-special": false,
-	"on-click": "hyprctl dispatch hl.dsp.focus({ workspace = $WORKSPACE_ID })",
-	"on-scroll-up": "hyprctl dispatch hl.dsp.focus({ workspace = \"e+1\" })",
-	"on-scroll-down": "hyprctl dispatch hl.dsp.focus({ workspace = \"e-1\" })",
 	"persistent-workspaces": {
 		"*": 5
 	  },
-	"format": "{icon} {windows}",
+	"format": "{name} {windows}",
+	"unique-icons": true,
 	"format-window-separator": " ",
 	"window-rewrite-default": " ",
 	"window-rewrite": {		
@@ -206,9 +196,6 @@
 		"title<.*zapzap.*>": " ",
 		"title<.*messenger.*>": " ",
 		"title<.*facebook.*>": " ",
-		"title<.*reddit.*>": " ",
-
-
 		"title<.*ChatGPT.*>": "󰚩 ",
 		"title<.*deepseek.*>": "󰚩 ",
 		"title<.*qwen.*>": "󰚩 ",

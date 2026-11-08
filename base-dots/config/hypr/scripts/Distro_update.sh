@@ -14,6 +14,7 @@ exec kitty --title update -e bash -c '
     result=$?
     if (( result == 0 )); then
         notify-send -u low "System update" "Completed successfully"
+        python3 "$HOME/.config/hypr/scripts/WaybarStatus.py" refresh-updates || true
     else
         notify-send -u critical "System update failed" "Exit code: $result"
         read -r -p "Press Enter to close..." || true

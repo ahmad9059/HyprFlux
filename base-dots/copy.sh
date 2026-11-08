@@ -22,7 +22,7 @@
 #   - UserConfigs/UserScripts and hypr file restores.
 #   - Wallpaper handling (default + optional 1GB pack).
 #   - Backup cleanup (auto in express).
-#   - Final symlinks (waybar).
+#   - Waybar entrypoints are managed only by copy_waybar.
 #
 # Next modular steps:
 #   - Restore logic has been moved into lib_copy helpers; review for further
@@ -31,9 +31,6 @@
 
 clear
 wallpaper=$HOME/.config/hypr/wallpaper_effects/.wallpaper_current
-waybar_style="$HOME/.config/waybar/style/[Extra] Neon Circuit.css"
-waybar_config="$HOME/.config/waybar/configs/[TOP] Default"
-waybar_config_laptop="$HOME/.config/waybar/configs/[TOP] Default Laptop"
 
 # Set some colors for output messages
 OK="$(tput setaf 2)[OK]$(tput sgr0)"
@@ -409,27 +406,8 @@ chmod +x "$HOME/.config/hypr/UserScripts/"* 2>&1 | tee -a "$LOG"
 # Set executable for initial-boot.sh
 chmod +x "$HOME/.config/hypr/initial-boot.sh" 2>&1 | tee -a "$LOG"
 
-chassis_type=$(detect_waybar_config)
-if [ "$chassis_type" = "desktop" ]; then
-  config_file="$waybar_config"
-  config_remove=" Laptop"
-else
-  config_file="$waybar_config_laptop"
-  config_remove=""
-fi
-
-# Check if ~/.config/waybar/config does not exist or is a symlink
-if [ ! -e "$HOME/.config/waybar/config" ] || [ -L "$HOME/.config/waybar/config" ]; then
-  ln -sf "$config_file" "$HOME/.config/waybar/config" 2>&1 | tee -a "$LOG"
-fi
-
-# Remove inappropriate waybar configs
-rm -rf "$HOME/.config/waybar/configs/[TOP] Default$config_remove" \
-  "$HOME/.config/waybar/configs/[BOT] Default$config_remove" \
-  "$HOME/.config/waybar/configs/[TOP] Default$config_remove (old v1)" \
-  "$HOME/.config/waybar/configs/[TOP] Default$config_remove (old v2)" \
-  "$HOME/.config/waybar/configs/[TOP] Default$config_remove (old v3)" \
-  "$HOME/.config/waybar/configs/[TOP] Default$config_remove (old v4)" 2>&1 | tee -a "$LOG" || true
+# copy_waybar owns the real entrypoints and preserves personal presets/styles.
+# Do not replace them with links to removed upstream layouts or delete presets.
 
 printf "\n%.0s" {1..1}
 
@@ -473,10 +451,6 @@ else
   cleanup_backups prompt "$LOG"
 fi
 
-# Check if ~/.config/waybar/style.css does not exist or is a symlink
-if [ ! -e "$HOME/.config/waybar/style.css" ] || [ -L "$HOME/.config/waybar/style.css" ]; then
-  ln -sf "$waybar_style" "$HOME/.config/waybar/style.css" 2>&1 | tee -a "$LOG"
-fi
 
 printf "\n%.0s" {1..1}
 

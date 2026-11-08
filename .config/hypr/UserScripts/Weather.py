@@ -3,8 +3,13 @@
 # Weather for waybar + hyprlock, via wttr.in (no scraping, stdlib only).
 # Outputs waybar JSON on stdout and writes ~/.cache/.weather_cache for hyprlock.
 
+import html
+from datetime import datetime, time
 import json
 import os
+from pathlib import Path
+import re
+import tempfile
 import urllib.request
 
 WEATHER_URL = "https://wttr.in/?format=j1"
@@ -36,7 +41,9 @@ def category(code, isday):
         return "cloudyFoggyDay" if isday else "cloudyFoggyNight"
     if code in SNOW:
         return "snowyIcyDay" if isday else "snowyIcyNight"
-    if code in RAIN or code in SEVERE:
+    if code in SEVERE:
+        return "severe"
+    if code in RAIN:
         return "rainyDay" if isday else "rainyNight"
     return "default"
 
@@ -47,11 +54,35 @@ def fetch():
         return json.loads(r.read().decode())
 
 
+def weather_time(value):
+    # wttr.in uses English AM/PM even when the desktop LC_TIME is not English.
+    # Parsing %p through the process locale would silently choose the fallback.
+    match = re.search(r"\b(1[0-2]|0?[1-9]):([0-5]\d)\s*(AM|PM)$", value, re.IGNORECASE)
+    if not match:
+        raise ValueError("Invalid weather time")
+    hour, minute, marker = match.groups()
+    return time(int(hour) % 12 + (12 if marker.upper() == "PM" else 0), int(minute))
+
+
+def is_day(condition, today):
+    if str(condition.get("isday")) in ("0", "1"):
+        return str(condition["isday"]) == "1"
+    try:
+        observed = weather_time(condition["localObsDateTime"])
+        astronomy = today["astronomy"][0]
+        sunrise = weather_time(astronomy["sunrise"])
+        sunset = weather_time(astronomy["sunset"])
+        return sunrise <= observed < sunset
+    except (KeyError, IndexError, TypeError, ValueError):
+        return 6 <= datetime.now().hour < 18
+
+
 def main():
     try:
         data = fetch()
         cc = data["current_condition"][0]
         today = data["weather"][0]
+        code = int(cc.get("weatherCode", "0"))
     except Exception:
         print(json.dumps({
             "text": "󰂳 ?", "alt": "error",
@@ -59,8 +90,7 @@ def main():
         }))
         return
 
-    code = int(cc.get("weatherCode", "0"))
-    isday = cc.get("isday", "1") == "1"
+    isday = is_day(cc, today)
     status = cc.get("weatherDesc", [{}])[0].get("value", "Unknown")
     icon_key = category(code, isday)
     icon = weather_icons.get(icon_key, weather_icons["default"])
@@ -72,16 +102,16 @@ def main():
     visibility = cc.get("visibility", "?")
 
     tooltip = (
-        f"\t\t<span size=\"xx-large\">{temp}</span>\t\t\n"
+        f"\t\t<span size=\"xx-large\">{html.escape(str(temp))}</span>\t\t\n"
         f"<big> {icon}</big>\n"
-        f"<b>{status}</b>\n"
-        f"<small>Feels like {feels}c</small>\n\n"
-        f"<b>  {tmin}     {tmax}</b>\n"
-        f"  {wind} km/h\t  {humidity}%\n"
-        f"  {visibility} km"
+        f"<b>{html.escape(str(status))}</b>\n"
+        f"<small>Feels like {html.escape(str(feels))}°C</small>\n\n"
+        f"<b>  {html.escape(str(tmin))}     {html.escape(str(tmax))}</b>\n"
+        f"  {html.escape(str(wind))} km/h\t  {html.escape(str(humidity))}%\n"
+        f"  {html.escape(str(visibility))} km"
     )
 
-    out = {"text": f"{icon} {temp}°", "alt": status, "tooltip": tooltip, "class": icon_key}
+    out = {"text": f"{icon} {html.escape(str(temp))}°", "alt": status, "tooltip": tooltip, "class": icon_key}
     print(json.dumps(out))
 
     simple = (
@@ -91,11 +121,19 @@ def main():
         f"  {humidity}%\n"
         f"  {visibility} km\n"
     )
+    temporary = None
     try:
-        with open(os.path.expanduser("~/.cache/.weather_cache"), "w") as f:
+        cache = Path.home() / ".cache/.weather_cache"
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(mode="w", dir=cache.parent, prefix=".weather-", delete=False) as f:
+            temporary = Path(f.name)
             f.write(simple)
-    except Exception:
+        os.replace(temporary, cache)
+    except OSError:
         pass
+    finally:
+        if temporary:
+            temporary.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

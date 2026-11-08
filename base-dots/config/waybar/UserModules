@@ -1,7 +1,4 @@
-/* This is where you can add Extra Modules you wish. copy.sh will try to restore*/
-/* this file along with the unique configs and styles. */
-/* IMPORTANT, be mindful with , or ". else waybar will not start */
-
-{
-
-}
+// Personal module overrides. Included BEFORE the shared module banks: first wins.
+// Example: "clock": {"format": "{:%H:%M}"}
+// Layout options live in config/configs, not in this module override file.
+{}

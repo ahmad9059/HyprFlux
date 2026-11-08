@@ -7,7 +7,7 @@
 	"orientation": "inherit",
 	"drawer": {
 		"transition-duration": 500,
-		"children-class": "custom/menu",
+		"children-class": "drawer-child",
 		"transition-left-to-right": true
         },
 	"modules": [
@@ -34,7 +34,7 @@
 	"orientation": "inherit",
 	"drawer": {
 		"transition-duration": 500,
-		"children-class": "cpu",
+		"children-class": "drawer-child",
 		"transition-left-to-right": true
         },
 	"modules": [
@@ -56,7 +56,7 @@
 	"orientation": "inherit",
 	"drawer": {
 		"transition-duration": 500,
-		"children-class": "pulseaudio",
+		"children-class": "drawer-child",
 		"transition-left-to-right": true
         },
 	"modules": [
@@ -69,7 +69,7 @@
 	"orientation": "inherit",
 	"drawer": {
 		"transition-duration": 500,
-		"children-class": "bluetooth",
+		"children-class": "drawer-child",
 		"transition-left-to-right": true
         },
 	"modules": [
@@ -82,13 +82,12 @@
 	"orientation": "inherit",
 	"drawer": {
 		"transition-duration": 500,
-		"children-class": "custom/power",
+		"children-class": "drawer-child",
 		"transition-left-to-right": false
         },
 	"modules": [
 		"custom/power",
 		"custom/lock",
-		"keyboard-state",
 		"custom/keyboard",
 	]
 },
@@ -96,7 +95,7 @@
 	"orientation": "inherit",
 	"drawer": {
 		"transition-duration": 500,
-		"children-class": "custom/swaync",
+		"children-class": "drawer-child",
 		"transition-left-to-right": false
         },
 	"modules": [
@@ -124,13 +123,13 @@
      "orientation": "inherit",
      "drawer": {
         "transition-duration": 300,
-        "children-class": "not-memory",
+		"children-class": "drawer-child",
         "transition-left-to-right": false
        },
      "modules": [
         "custom/power",
         "custom/lock",
-        "custom/logout",
+		"custom/quit",
         "custom/reboot"
       ]
 },

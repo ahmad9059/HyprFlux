@@ -458,14 +458,13 @@ _hd_write_keyboard() {
 # ------------------------------------------------------------------
 # 4. Waybar temperature hwmon path (machine-specific)
 # ------------------------------------------------------------------
-# The waybar Modules file ships with the maintainer's hwmon path, which does
-# not exist (or points at the wrong sensor) on other machines. Detect a real
-# thermal sensor and rewrite the "temperature" block to use it.
+# Prefer a CPU sensor and identify it by driver name, not a mutable hwmon number.
+# Only shared defaults are updated; UserModules overrides retain precedence.
 _hd_write_temperature() {
   local wb_file="$HOME/.config/waybar/Modules"
   [[ -f "$wb_file" ]] || { log_warn "waybar Modules not found — skipping temperature path."; return 0; }
 
-  # Priority: dedicated CPU temp sensor (k10temp/coretemp) > acpitz > nvme > any
+  # Priority: dedicated CPU temp sensor > acpitz > other thermal sensors.
   local sensor=""
   local name path
 
@@ -506,37 +505,36 @@ _hd_write_temperature() {
 
   log_ok "Temperature sensor: $sensor"
 
-  # Rewrite the temperature block's hwmon-path to the detected sensor.
-  # The file is JSONC (comments allowed); we do a line-based replace:
-  #   "hwmon-path": [                    <- this line + following entries
-  #       "/sys/...",                    <- old entries
-  #   ]                                   <- array close
-  # becomes a single-line array.
-  #
-  # IMPORTANT: the replacement MUST end with a comma. The array is collapsed
-  # to one line and the property that follows it in the temperature object
-  # requires that comma — omitting it makes waybar fail to start with
-  # "Error parsing JSON ... Missing ',' or '}'".
-  #
-  # Always (re)write, even if the sensor is already present: this repairs any
-  # earlier malformed write. The rewrite is idempotent.
-  if ! grep -q '"hwmon-path"' "$wb_file" 2>/dev/null; then
-    log_warn "No hwmon-path block found in $wb_file — leaving temperature config unchanged."
-    return 0
-  fi
+  # Current module banks are strict JSON. Unknown/custom JSONC banks are left
+  # untouched instead of risking a destructive line-based rewrite.
+  if python3 - "$HOME/.config/waybar" "$sensor" <<'PY'
+import json
+from pathlib import Path
+import sys
 
-  if ! sed -i '/"hwmon-path": \[/,/\]/c\
-\t"hwmon-path": [ "'"$sensor"'" ],' "$wb_file" 2>/dev/null; then
-    log_warn "temperature path write failed (sed). Skipping."
-    return 0
-  fi
-
-  # Sanity-check the result: exactly the canonical single-line array with a
-  # trailing comma. Warn (never fatal) if it looks wrong.
-  if grep -qE '^[[:space:]]*"hwmon-path":[[:space:]]*\[[^]]*\],[[:space:]]*$' "$wb_file"; then
-    log_ok "Waybar temperature sensor set to $sensor."
+base, sensor = Path(sys.argv[1]), Path(sys.argv[2])
+name_file = sensor.parent / 'name'
+identity = name_file.read_text().strip() if name_file.is_file() else None
+for filename, key in [('Modules', 'temperature'), ('ModulesVertical', 'temperature#vertical')]:
+    path = base / filename
+    if not path.is_file():
+        continue
+    data = json.loads(path.read_text())
+    module = data.get(key)
+    if not isinstance(module, dict):
+        continue
+    for option in ('hwmon-path', 'hwmon-path-abs', 'hwmon-name', 'hwmon-by-name', 'thermal-zone', 'input-filename'):
+        module.pop(option, None)
+    if identity:
+        module.update({'hwmon-name': identity, 'input-filename': sensor.name})
+    else:
+        module['hwmon-path'] = [str(sensor)]
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
+PY
+  then
+    log_ok "Waybar temperature sensor configured with stable identity where available."
   else
-    log_warn "temperature hwmon-path rewrite looks malformed — check $wb_file."
+    log_warn "Could not update Waybar temperature defaults; check your module banks."
   fi
 }
 
